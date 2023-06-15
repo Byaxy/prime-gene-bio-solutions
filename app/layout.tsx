@@ -29,7 +29,7 @@ import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const drawerWidth = 240;
+const drawerWidth = 260;
 
 const theme = createTheme({
   palette: {
