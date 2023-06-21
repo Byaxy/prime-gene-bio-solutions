@@ -1,4 +1,4 @@
-import { comparePassword, generatePassword, hashPassword } from "@/util";
+import { comparePassword, generatePassword, hashPassword } from "@/utils";
 
 describe("tests utility functions", () => {
     it("generates random password", () => {

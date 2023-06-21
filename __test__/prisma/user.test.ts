@@ -1,4 +1,4 @@
-import { hashPassword, mockUser } from "@/util";
+import { hashPassword, mockUser } from "@/utils";
 import { PrismaClient } from "@prisma/client";
 
 describe("tests CRUD ops on user model", () => {
