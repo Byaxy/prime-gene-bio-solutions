@@ -17,7 +17,7 @@ module.exports = {
         primaryText: "rgba(45,54,99,.75)",
         primaryLight: "rgba(45,54,99,.1)",
         primaryDark: "#232a58",
-        RedColor: "#dc4545",
+        redColor: "#dc4545",
       },
     },
   },
