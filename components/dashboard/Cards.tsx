@@ -8,7 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Cards() {
   return (
-    <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+    <Box className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
       {cardsData &&
         cardsData.map((card) => (
           <Box

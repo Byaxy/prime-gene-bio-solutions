@@ -19,12 +19,11 @@ type HeaderCells = {
 export type DataCells = {
   id: number;
   date: string;
-  invoiceNumber: string;
-  customer: string;
+  purchaseOrderNumber: string;
+  supplier: string;
   total: string;
-  paid: string;
   paymentStatus: string;
-  saleStatus: string;
+  purchaseStatus: string;
 };
 
 export type DataType = {
@@ -32,7 +31,7 @@ export type DataType = {
   data: DataCells[];
 };
 
-export const salesData: DataType = {
+export const purchasesData: DataType = {
   columns: [
     {
       name: "No.",
@@ -48,16 +47,17 @@ export const salesData: DataType = {
       width: "110px",
     },
     {
-      name: "Invoice No.",
-      selector: (row: { invoiceNumber: string }) => row.invoiceNumber,
+      name: "Purchase Order No.",
+      selector: (row: { purchaseOrderNumber: string }) =>
+        row.purchaseOrderNumber,
       width: "160px",
       style: {
         fontWeight: "600",
       },
     },
     {
-      name: "Customer",
-      selector: (row: { customer: string }) => row.customer,
+      name: "Supplier",
+      selector: (row: { supplier: string }) => row.supplier,
     },
     {
       name: "Total",
@@ -65,14 +65,9 @@ export const salesData: DataType = {
       width: "90px",
     },
     {
-      name: "Paid",
-      selector: (row: { paid: string }) => row.paid,
-      width: "90px",
-    },
-    {
       name: "Payment Status",
       selector: (row: { paymentStatus: string }) => row.paymentStatus,
-      width: "150px",
+      width: "140px",
       conditionalCellStyles: [
         {
           when: (row: { paymentStatus: string }) =>
@@ -93,26 +88,29 @@ export const salesData: DataType = {
       ],
     },
     {
-      name: "Sale Status",
-      selector: (row: { saleStatus: string }) => row.saleStatus,
-      width: "120px",
+      name: "Purchase Status",
+      selector: (row: { purchaseStatus: string }) => row.purchaseStatus,
+      width: "140px",
       conditionalCellStyles: [
         {
-          when: (row: { saleStatus: string }) => row.saleStatus === "Pending",
+          when: (row: { purchaseStatus: string }) =>
+            row.purchaseStatus === "Pending",
           style: {
             color: "#FD8539",
             fontWeight: "700",
           },
         },
         {
-          when: (row: { saleStatus: string }) => row.saleStatus === "Completed",
+          when: (row: { purchaseStatus: string }) =>
+            row.purchaseStatus === "Recieved",
           style: {
             color: "#2ED480",
             fontWeight: "700",
           },
         },
         {
-          when: (row: { saleStatus: string }) => row.saleStatus === "Cancelled",
+          when: (row: { purchaseStatus: string }) =>
+            row.purchaseStatus === "Cancelled",
           style: {
             color: "#dc4545",
             fontWeight: "700",
@@ -125,52 +123,47 @@ export const salesData: DataType = {
     {
       id: 1,
       date: "15/06/2023",
-      invoiceNumber: "Inv.2023/06/001",
-      customer: "PARTNERS IN HEALTH",
+      purchaseOrderNumber: "PO2023/06/001",
+      supplier: "MICROPROFIT",
       total: "$12000",
-      paid: "$12000",
       paymentStatus: "Paid",
-      saleStatus: "Completed",
+      purchaseStatus: "Recieved",
     },
     {
       id: 2,
       date: "15/06/2023",
-      invoiceNumber: "Inv.2023/06/001",
-      customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
+      purchaseOrderNumber: "PO2023/06/001",
+      supplier: "MICROPROFIT",
       total: "$12000",
-      paid: "$2000",
       paymentStatus: "Pending",
-      saleStatus: "Completed",
+      purchaseStatus: "Recieved",
     },
     {
       id: 3,
       date: "15/06/2023",
-      invoiceNumber: "Inv.2023/06/001",
-      customer: "GIMS HOSPITAL",
-      total: "$12000",
-      paid: "$12000",
+      purchaseOrderNumber: "PO2023/06/001",
+      supplier: "Biorex Diagnostics Ltd",
+      total: "$11400",
       paymentStatus: "Paid",
-      saleStatus: "Pending",
+      purchaseStatus: "Pending",
     },
     {
       id: 4,
       date: "15/06/2023",
-      invoiceNumber: "Inv.2023/06/001",
-      customer: "Hope For Women",
-      total: "$12000",
-      paid: "$2000",
+      purchaseOrderNumber: "PO2023/06/001",
+      supplier: "HEMOCUE AB",
+      total: "$12450",
       paymentStatus: "Pending",
-      saleStatus: "Cancelled",
+      purchaseStatus: "Cancelled",
     },
     {
       id: 5,
       date: "15/06/2023",
-      invoiceNumber: "Inv.2023/06/001",
-      customer: "GIMS HOSPITAL",
-      total: "$12000",
-      paid: "$2000",
+      purchaseOrderNumber: "PO2023/06/001",
+      supplier: "HEMOCUE AB",
+      total: "$56000",
       paymentStatus: "Pending",
-      saleStatus: "Pending",
+      purchaseStatus: "Pending",
     },
   ],
 };

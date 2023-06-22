@@ -6,6 +6,11 @@ import {
   CssBaseline,
   Divider,
   IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Toolbar,
   useMediaQuery,
 } from "@mui/material";
@@ -23,9 +28,12 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import MuiDrawer from "@mui/material/Drawer";
 import { useEffect, useState } from "react";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { data } from "@/data/sidenavData";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -119,6 +127,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const [show, setShow] = useState(Number);
+  const [toggle, setToggle] = useState(false);
   const [open, setOpen] = useState(false);
   const matchesMidium = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -128,6 +141,17 @@ export default function RootLayout({
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleClick = (
+    event: React.MouseEvent<HTMLDivElement>,
+    id: number,
+    path: string
+  ) => {
+    event.preventDefault();
+    setShow(id);
+    setToggle((prev) => !prev);
+    router.push(path);
   };
 
   useEffect(() => {
@@ -145,12 +169,12 @@ export default function RootLayout({
           <Box className="flex">
             <CssBaseline />
             <AppBar
-              className="bg-primaryColor text-white fixed shadow-md"
+              className="bg-primaryDark text-white fixed shadow-md"
               open={open}
             >
               <Toolbar>
                 <IconButton
-                  className=" text-white bg-primaryDark hover:bg-primaryDark hover:text-mainColor shadow-md"
+                  className=" text-white bg-primaryColor hover:bg-primaryColor hover:text-mainColor shadow-md"
                   aria-label="open drawer"
                   onClick={handleDrawerOpen}
                   edge="start"
@@ -168,7 +192,9 @@ export default function RootLayout({
             </AppBar>
             {/** Sidebar Navigation */}
             <Drawer variant="permanent" open={open} className="bg-white">
+              {/** Drawer Header */}
               <DrawerHeader className="w-full flex flex-row justify-between items-center">
+                {/** logo */}
                 <Link
                   href={"/"}
                   className="no-underline flex items-center justify-center"
@@ -187,7 +213,137 @@ export default function RootLayout({
                 </IconButton>
               </DrawerHeader>
               <Divider />
-              <Sidebar open={open} />
+              {/** Side bar */}
+
+              <List className={`${open ? "px-2" : ""}`}>
+                {data.map((item) => (
+                  <>
+                    {item.subCategories ? (
+                      <>
+                        <ListItem
+                          key={item.id}
+                          disablePadding
+                          className={`${
+                            item.path === pathname
+                              ? "bg-primaryColor text-mainColor"
+                              : "text-primaryColor"
+                          } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor my-1`}
+                        >
+                          <ListItemButton
+                            onClick={(event) =>
+                              handleClick(event, item.id, item.path)
+                            }
+                            className={`${
+                              open ? "" : "justify-center"
+                            } flex items-center w-full px-2`}
+                          >
+                            <ListItemIcon
+                              title={item.title}
+                              className={`${open ? "mr-3" : "mx-auto"} ${
+                                item.path === pathname
+                                  ? "bg-primaryColor text-mainColor"
+                                  : "text-primaryColor"
+                              } min-w-0 justify-center group-hover:text-mainColor`}
+                            >
+                              {item.icon}
+                            </ListItemIcon>
+                            <ListItemText
+                              className={`${
+                                open ? "opacity-100" : "opacity-0"
+                              }`}
+                            >
+                              <span className="font-medium">{item.title}</span>
+                            </ListItemText>
+                            {show === item.id && toggle ? (
+                              <span
+                                className={`${
+                                  open ? "opacity-100" : "hidden"
+                                } flex items-center justify-center`}
+                              >
+                                <KeyboardArrowDownIcon />
+                              </span>
+                            ) : (
+                              <span
+                                className={`${
+                                  open ? "opacity-100" : "hidden"
+                                } flex items-center justify-center`}
+                              >
+                                <KeyboardArrowRightIcon />
+                              </span>
+                            )}
+                          </ListItemButton>
+                        </ListItem>
+                        {show === item.id && toggle ? (
+                          <ul className="list-none flex flex-col">
+                            {item.subCategories.map((item) => (
+                              <li
+                                key={item.title}
+                                className={`${
+                                  item.path === pathname
+                                    ? "bg-primaryColor text-mainColor"
+                                    : "text-primaryColor"
+                                } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor py-3 px-2 my-1`}
+                              >
+                                <Link
+                                  href={item.path}
+                                  className={`${
+                                    item.path === pathname
+                                      ? "text-mainColor"
+                                      : "text-primaryColor"
+                                  } flex items-center w-full no-underline group-hover:text-mainColor`}
+                                >
+                                  <span className="font-medium">
+                                    {item.title}
+                                  </span>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </>
+                    ) : (
+                      <>
+                        <ListItem
+                          key={item.id}
+                          disablePadding
+                          className={`${
+                            item.path === pathname
+                              ? "bg-primaryColor text-mainColor"
+                              : "text-primaryColor"
+                          } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor my-1`}
+                        >
+                          <ListItemButton
+                            onClick={(event) =>
+                              handleClick(event, item.id, item.path)
+                            }
+                            className={`${
+                              open ? "" : "justify-center"
+                            } flex items-center w-full px-2`}
+                          >
+                            <ListItemIcon
+                              title={item.title}
+                              className={`${open ? "mr-3" : "mx-auto"} ${
+                                item.path === pathname
+                                  ? "bg-primaryColor text-mainColor"
+                                  : "text-primaryColor"
+                              } min-w-0 justify-center group-hover:text-mainColor`}
+                            >
+                              {item.icon}
+                            </ListItemIcon>
+                            <ListItemText
+                              className={`${
+                                open ? "opacity-100" : "opacity-0"
+                              }`}
+                            >
+                              <span className="font-medium">{item.title}</span>
+                            </ListItemText>
+                          </ListItemButton>
+                        </ListItem>
+                      </>
+                    )}
+                  </>
+                ))}
+              </List>
             </Drawer>
 
             {/** Main Content */}

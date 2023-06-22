@@ -19,12 +19,13 @@ type HeaderCells = {
 export type DataCells = {
   id: number;
   date: string;
+  wayBillNumber: string;
   invoiceNumber: string;
   customer: string;
+  phoneNumber: string;
+  address: string;
   total: string;
-  paid: string;
-  paymentStatus: string;
-  saleStatus: string;
+  status: string;
 };
 
 export type DataType = {
@@ -32,7 +33,7 @@ export type DataType = {
   data: DataCells[];
 };
 
-export const salesData: DataType = {
+export const deliveriesData: DataType = {
   columns: [
     {
       name: "No.",
@@ -48,6 +49,14 @@ export const salesData: DataType = {
       width: "110px",
     },
     {
+      name: "Way Bill No.",
+      selector: (row: { wayBillNumber: string }) => row.wayBillNumber,
+      width: "160px",
+      style: {
+        fontWeight: "600",
+      },
+    },
+    {
       name: "Invoice No.",
       selector: (row: { invoiceNumber: string }) => row.invoiceNumber,
       width: "160px",
@@ -60,59 +69,42 @@ export const salesData: DataType = {
       selector: (row: { customer: string }) => row.customer,
     },
     {
+      name: "Phone Number",
+      selector: (row: { phoneNumber: string }) => row.phoneNumber,
+      width: "160px",
+    },
+    {
+      name: "Address",
+      selector: (row: { address: string }) => row.address,
+      width: "160px",
+    },
+    {
       name: "Total",
       selector: (row: { total: string }) => row.total,
-      width: "90px",
+      width: "100px",
     },
+
     {
-      name: "Paid",
-      selector: (row: { paid: string }) => row.paid,
-      width: "90px",
-    },
-    {
-      name: "Payment Status",
-      selector: (row: { paymentStatus: string }) => row.paymentStatus,
-      width: "150px",
-      conditionalCellStyles: [
-        {
-          when: (row: { paymentStatus: string }) =>
-            row.paymentStatus === "Pending",
-          style: {
-            color: "#FD8539",
-            fontWeight: "700",
-          },
-        },
-        {
-          when: (row: { paymentStatus: string }) =>
-            row.paymentStatus === "Paid",
-          style: {
-            color: "#2ED480",
-            fontWeight: "700",
-          },
-        },
-      ],
-    },
-    {
-      name: "Sale Status",
-      selector: (row: { saleStatus: string }) => row.saleStatus,
+      name: "Status",
+      selector: (row: { status: string }) => row.status,
       width: "120px",
       conditionalCellStyles: [
         {
-          when: (row: { saleStatus: string }) => row.saleStatus === "Pending",
+          when: (row: { status: string }) => row.status === "Pending",
           style: {
             color: "#FD8539",
             fontWeight: "700",
           },
         },
         {
-          when: (row: { saleStatus: string }) => row.saleStatus === "Completed",
+          when: (row: { status: string }) => row.status === "Completed",
           style: {
             color: "#2ED480",
             fontWeight: "700",
           },
         },
         {
-          when: (row: { saleStatus: string }) => row.saleStatus === "Cancelled",
+          when: (row: { status: string }) => row.status === "Cancelled",
           style: {
             color: "#dc4545",
             fontWeight: "700",
@@ -125,52 +117,57 @@ export const salesData: DataType = {
     {
       id: 1,
       date: "15/06/2023",
+      wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
       customer: "PARTNERS IN HEALTH",
+      phoneNumber: "+231778371515",
+      address: "Clara Town",
       total: "$12000",
-      paid: "$12000",
-      paymentStatus: "Paid",
-      saleStatus: "Completed",
+      status: "Completed",
     },
     {
       id: 2,
       date: "15/06/2023",
+      wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
       customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
+      phoneNumber: "+231778371515",
+      address: "Monrovia",
       total: "$12000",
-      paid: "$2000",
-      paymentStatus: "Pending",
-      saleStatus: "Completed",
+      status: "Completed",
     },
     {
       id: 3,
       date: "15/06/2023",
+      wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
       customer: "GIMS HOSPITAL",
+      phoneNumber: "+231778371515",
+      address: "Clara Town",
       total: "$12000",
-      paid: "$12000",
-      paymentStatus: "Paid",
-      saleStatus: "Pending",
+      status: "Pending",
     },
     {
       id: 4,
       date: "15/06/2023",
+      wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
       customer: "Hope For Women",
+      phoneNumber: "+231778371515",
+      address: "Bannersville",
       total: "$12000",
-      paid: "$2000",
-      paymentStatus: "Pending",
-      saleStatus: "Cancelled",
+      status: "Cancelled",
     },
     {
       id: 5,
       date: "15/06/2023",
+      wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
       customer: "GIMS HOSPITAL",
+      phoneNumber: "+231778371515",
+      address: "Congo Town",
       total: "$12000",
-      paid: "$2000",
-      paymentStatus: "Pending",
-      saleStatus: "Pending",
+      status: "Pending",
     },
   ],
 };
