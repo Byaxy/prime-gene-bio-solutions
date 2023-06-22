@@ -5,8 +5,8 @@
 import { PrismaClient } from '@prisma/client';
 
 // PrismaClient is attached to the `global` object in development to prevent
-// exhausting your database connection limit.
-//
+// exhausting your database connection limit. See https://github.com/prisma/prisma-examples/blob/latest/typescript/rest-nextjs-api-routes/src/lib/prisma.ts
+// 
 // Learn more:
 // https://pris.ly/d/help/next-js-best-practices
 

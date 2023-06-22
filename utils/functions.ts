@@ -12,10 +12,12 @@ export function generatePassword(length: number = 8): string {
     return password;
 }
 
-export async function hashPassword(password: string, saltRounds: number = 11): Promise<string> {
+export async function hashPassword(password: string | undefined, saltRounds: number = 11): Promise<string> {
+    if (!password) throw new Error("Password cannot be null or undefined");
     return bcrypt.hash(password, saltRounds);
 }
 
-export async function comparePassword(password: string, hash: string): Promise<boolean> {
+export async function comparePassword(password: string | undefined, hash: string): Promise<boolean> {
+    if (!password) return false;
     return bcrypt.compare(password, hash);
 }
