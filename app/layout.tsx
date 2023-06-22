@@ -30,6 +30,8 @@ import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
+import { SessionProvider } from "next-auth/react";
+import { Session } from "next-auth";
 import { usePathname, useRouter } from "next/navigation";
 import { data } from "@/data/sidenavData";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
@@ -122,14 +124,11 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout(
+  { children, session, ...pageProps } : { children: React.ReactNode, session: Session }
+) {
   const pathname = usePathname();
   const router = useRouter();
-
   const [show, setShow] = useState(Number);
   const [toggle, setToggle] = useState(false);
   const [open, setOpen] = useState(false);
@@ -166,6 +165,63 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider theme={theme}>
+          <SessionProvider session={session}>
+            <Box className="flex">
+              <CssBaseline />
+              <AppBar
+                className="bg-primaryColor text-white fixed shadow-md"
+                open={open}
+              >
+                <Toolbar>
+                  <IconButton
+                    className=" text-white bg-primaryDark hover:bg-primaryDark hover:text-mainColor shadow-md"
+                    aria-label="open drawer"
+                    onClick={handleDrawerOpen}
+                    edge="start"
+                    sx={{
+                      marginRight: 5,
+                      ...(open && { display: "none" }),
+                    }}
+                  >
+                    <MenuIcon titleAccess="Open Side Menu" />
+                  </IconButton>
+
+                  {/** Header */}
+                  <Header />
+                </Toolbar>
+              </AppBar>
+              {/** Sidebar Navigation */}
+              <Drawer variant="permanent" open={open} className="bg-white">
+                <DrawerHeader className="w-full flex flex-row justify-between items-center">
+                  <Link
+                    href={"/"}
+                    className="no-underline flex items-center justify-center"
+                  >
+                    <Image src={"/Logo.png"} alt="Logo" width={160} height={40} />
+                  </Link>
+                  <IconButton
+                    onClick={handleDrawerClose}
+                    className="text-white bg-primaryColor shadow-md hover:bg-primaryDark hover:text-mainColor"
+                  >
+                    {theme.direction === "rtl" ? (
+                      <ChevronRightIcon titleAccess="Open Side Menu" />
+                    ) : (
+                      <ChevronLeftIcon titleAccess="Close Side Menu" />
+                    )}
+                  </IconButton>
+                </DrawerHeader>
+                <Divider />
+                <Sidebar open={open} />
+              </Drawer>
+
+              {/** Main Content */}
+              <Box
+                className="min-h-screen w-full p-5 bg-grayColor"
+                component="main"
+              >
+                <DrawerHeader />
+                {children}
+              </Box>
           <Box className="flex">
             <CssBaseline />
             <AppBar
@@ -354,7 +410,7 @@ export default function RootLayout({
               <DrawerHeader />
               {children}
             </Box>
-          </Box>
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
