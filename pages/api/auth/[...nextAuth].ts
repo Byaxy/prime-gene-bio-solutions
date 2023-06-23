@@ -5,6 +5,10 @@ import { comparePassword } from "@/utils";
 import { AuthOptions } from "next-auth";
 
 export const authOptions: AuthOptions = {
+    theme: {
+        colorScheme: "light",
+        logo: "https://res.cloudinary.com/dbegexj6b/image/upload/v1687515631/Logo.png",
+    },
     providers: [
         CredentialsProvider({
             // `credentials` is used to generate a form on the sign in page.
