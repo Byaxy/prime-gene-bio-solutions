@@ -1,8 +1,6 @@
 import React, { ReactElement } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import DataTable from "react-data-table-component";
-import { DataType } from "@/data/salesData";
 
 export default function RecentComponent({
   title,
