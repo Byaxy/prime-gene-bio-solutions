@@ -4,6 +4,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react"
 
 export default function Header() {
   const router = useRouter();
@@ -17,7 +18,8 @@ export default function Header() {
   };
   const handleLogout = () => {
     handleShow();
-    router.push("/");
+    signOut();
+    // router.push("/");
   };
   const handleProfileClick = () => {
     handleShow();
