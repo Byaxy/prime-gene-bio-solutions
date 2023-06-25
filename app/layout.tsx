@@ -243,7 +243,7 @@ export default function RootLayout({
                 <Divider />
                 {/** Side bar */}
 
-                <List className={`${open ? "px-2" : ""}`}>
+                <List>
                   {data.map((item) => (
                     <>
                       {item.subCategories ? (
@@ -267,11 +267,16 @@ export default function RootLayout({
                             >
                               <ListItemIcon
                                 title={item.title}
-                                className={`${open ? "mr-3" : "mx-auto"} ${
-                                  item.path === pathname
-                                    ? "bg-primaryColor text-mainColor"
-                                    : "text-primaryColor"
-                                } min-w-0 justify-center group-hover:text-mainColor`}
+                                className={`group-hover:text-mainColor`}
+                                sx={{
+                                  justifyContent: "center",
+                                  ...(item.path === pathname
+                                    ? {
+                                        backgroundColor: "#2d3663",
+                                        color: "#47ccc8",
+                                      }
+                                    : { color: "#2d3663" }),
+                                }}
                               >
                                 {item.icon}
                               </ListItemIcon>
@@ -352,11 +357,16 @@ export default function RootLayout({
                             >
                               <ListItemIcon
                                 title={item.title}
-                                className={`${open ? "mr-3" : "mx-auto"} ${
-                                  item.path === pathname
-                                    ? "bg-primaryColor text-mainColor"
-                                    : "text-primaryColor"
-                                } min-w-0 justify-center group-hover:text-mainColor`}
+                                className={`group-hover:text-mainColor`}
+                                sx={{
+                                  justifyContent: "center",
+                                  ...(item.path === pathname
+                                    ? {
+                                        backgroundColor: "#2d3663",
+                                        color: "#47ccc8",
+                                      }
+                                    : { color: "#2d3663" }),
+                                }}
                               >
                                 {item.icon}
                               </ListItemIcon>
