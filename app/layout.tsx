@@ -39,7 +39,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const theme = createTheme({
   palette: {
@@ -183,7 +183,7 @@ export default function RootLayout({
               >
                 <Toolbar>
                   <IconButton
-                    className="hover:bg-white hover:text-mainColor shadow-md"
+                    className="shadow-md"
                     aria-label="open drawer"
                     onClick={handleDrawerOpen}
                     edge="start"
@@ -192,6 +192,10 @@ export default function RootLayout({
                       color: "#2d3663",
                       backgroundColor: "white",
                       ...(open && { display: "none" }),
+                      "&:hover": {
+                        backgroundColor: "white",
+                        color: "#47ccc8",
+                      },
                     }}
                   >
                     <MenuIcon titleAccess="Open Side Menu" />
@@ -219,7 +223,15 @@ export default function RootLayout({
                   </Link>
                   <IconButton
                     onClick={handleDrawerClose}
-                    className="text-white bg-primaryColor shadow-md hover:bg-primaryDark hover:text-mainColor"
+                    className="shadow-md"
+                    sx={{
+                      color: "white",
+                      backgroundColor: "#2d3663",
+                      "&:hover": {
+                        color: "#47ccc8",
+                        backgroundColor: "#232a58",
+                      },
+                    }}
                   >
                     {theme.direction === "rtl" ? (
                       <ChevronRightIcon titleAccess="Open Side Menu" />
