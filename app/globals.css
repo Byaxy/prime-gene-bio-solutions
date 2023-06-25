@@ -37,3 +37,17 @@
     transform: translateX(0);
   }
 }
+.bgCircles {
+  background-color: #edf3f6;
+  opacity: 1;
+  background-image: radial-gradient(circle at center center, #232a58, #edf3f6),
+    repeating-radial-gradient(
+      circle at center center,
+      #232a58,
+      #232a58,
+      39px,
+      transparent 78px,
+      transparent 39px
+    );
+  background-blend-mode: multiply;
+}

@@ -1,13 +1,29 @@
 "use client";
-import { Box, Typography } from "@mui/material";
 import React from "react";
+import { allproductsData } from "@/data/allProductsData";
+import DataTable from "react-data-table-component";
+import { customTableStyles } from "@/styles/TableStyles";
+import { useRouter } from "next/navigation";
+import ListPage from "@/components/ListPage";
 
 export default function ProductsPage() {
+  const router = useRouter();
+  const onRowClicked = (row: { code: number }) => {
+    router.push(`/products/${row.code}`);
+  };
   return (
-    <Box>
-      <Typography className="text-2xl text-primaryDark">
-        Products Page
-      </Typography>
-    </Box>
+    <ListPage
+      title="Products"
+      buttonText="Add Product"
+      buttonPath="/products/add-product"
+    >
+      <DataTable
+        data={allproductsData.data}
+        columns={allproductsData.columns}
+        customStyles={customTableStyles}
+        onRowClicked={onRowClicked}
+        className="scrollbar-hide"
+      />
+    </ListPage>
   );
 }
