@@ -8,8 +8,8 @@ import ListPage from "@/components/ListPage";
 
 export default function ProductsPage() {
   const router = useRouter();
-  const onRowClicked = (row: { code: number }) => {
-    router.push(`/products/${row.code}`);
+  const onRowClicked = (row: { id: number }) => {
+    router.push(`/products/${row.id}`);
   };
   return (
     <ListPage

@@ -20,7 +20,14 @@ export default function ListPage({
   return (
     <Box className="flex flex-col gap-5 w-full">
       <Box className="flex flex-row items-center justify-between w-full">
-        <Typography className="text-xl sm:text-2xl font-semibold text-primaryDark">
+        <Typography
+          variant="h3"
+          sx={{
+            color: "#232a58",
+            fontWeight: "bold",
+            fontSize: "26px",
+          }}
+        >
           {title}
         </Typography>
         <Button

@@ -20,7 +20,14 @@ export default function RecentComponent({
       className={`${customStyle} bg-white shadow-sm rounded-xl w-full flex flex-col gap-4 p-5`}
     >
       <Box className="flex flex-row items-start justify-between">
-        <Typography className="text-primaryDark text-2xl font-bold">
+        <Typography
+          variant="h4"
+          sx={{
+            color: "#232a58",
+            fontWeight: "bold",
+            fontSize: "22px",
+          }}
+        >
           {title}
         </Typography>
         <Button

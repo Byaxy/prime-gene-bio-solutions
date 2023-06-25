@@ -26,7 +26,8 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  code: number;
+  id: number;
+  code: string;
   name: string;
   image: string;
   brand: string;
@@ -67,7 +68,7 @@ export const allproductsData: DataType = {
     },
     {
       name: "Code",
-      selector: (row: { code: number }) => row.code,
+      selector: (row: { code: string }) => row.code,
       style: {
         fontWeight: "600",
       },
@@ -106,11 +107,11 @@ export const allproductsData: DataType = {
     },
     {
       name: "Actions",
-      cell: (row: { code: number }) => [
-        <Link href={`/products/edit-product/${row.code}`} key={row.code}>
+      cell: (row: { id: number }) => [
+        <Link href={`/products/edit-product/${row.id}`} key={row.id}>
           <EditIcon sx={{ color: "#475BE8" }} />
         </Link>,
-        <Link key={row.code} href="/products">
+        <Link key={row.id} href="/products">
           <DeleteIcon color="error" />
         </Link>,
       ],
@@ -124,29 +125,31 @@ export const allproductsData: DataType = {
   ],
   data: [
     {
+      id: 1,
       image: "/product.jpg",
-      code: 1,
-      name: "15/06/2023",
-      brand: "PO2023/06/001",
-      category: "MICROPROFIT",
-      cost: "$12000",
-      price: "Paid",
-      quantity: "Recieved",
-      unit: "",
-      alertQuantity: "",
+      code: "0085",
+      name: "Talley Counter",
+      brand: "Allele Diagnostic",
+      category: "General Lab Equipment",
+      cost: "$33.o",
+      price: "$200.00",
+      quantity: "1.00",
+      unit: "Pcs/Pk",
+      alertQuantity: "5",
       actions: "",
     },
     {
+      id: 2,
       image: "/product.jpg",
-      code: 2,
-      name: "15/06/2023",
-      brand: "PO2023/06/001",
-      category: "MICROPROFIT",
-      cost: "$12000",
-      price: "Paid",
-      quantity: "Recieved",
-      unit: "",
-      alertQuantity: "",
+      code: "00857",
+      name: "Sealent",
+      brand: "Allele Diagnostic",
+      category: "General Lab Equipment",
+      cost: "$33.00",
+      price: "$50.00",
+      quantity: "",
+      unit: "Pcs/Pk",
+      alertQuantity: "5",
       actions: "",
     },
   ],

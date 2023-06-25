@@ -5,7 +5,16 @@ import React from "react";
 export default function PeoplePage() {
   return (
     <Box>
-      <Typography className="text-2xl text-primaryDark">People Page</Typography>
+      <Typography
+        variant="h3"
+        sx={{
+          color: "#232a58",
+          fontWeight: "bold",
+          fontSize: "26px",
+        }}
+      >
+        People Page
+      </Typography>
     </Box>
   );
 }

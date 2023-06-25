@@ -11,7 +11,14 @@ import RecentPurchases from "@/components/dashboard/RecentPurchases";
 export default function Home() {
   return (
     <Box className="flex flex-col gap-5">
-      <Typography className="text-2xl sm:text-3xl font-bold text-primaryDark">
+      <Typography
+        variant="h3"
+        sx={{
+          color: "#232a58",
+          fontWeight: "bold",
+          fontSize: "26px",
+        }}
+      >
         Dashboard
       </Typography>
       <Cards />

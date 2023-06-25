@@ -44,11 +44,6 @@ export type DataType = {
 export const allSalesData: DataType = {
   columns: [
     {
-      name: "ID",
-      selector: (row: { id: number }) => row.id,
-      width: "110px",
-    },
-    {
       name: "Date",
       selector: (row: { date: string }) => row.date,
       width: "110px",
