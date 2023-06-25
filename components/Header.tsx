@@ -1,14 +1,16 @@
 import { Avatar, Box, Typography } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
   const router = useRouter();
-  const ref = useRef();
+  const session = useSession();
+
+  console.log(session.data?.user?.email);
 
   const [show, setShow] = useState(false);
   const userId = 1;
@@ -35,7 +37,7 @@ export default function Header() {
       <Typography className="hidden sm:flex flex-col justify-center text-white">
         <span className="text-lg">Charles Byakutaga</span>
         <span className="text-sm text-grayColor/60">
-          charlesbyaxy@gmail.com
+          {session.data?.user?.email}
         </span>
       </Typography>
       <Avatar

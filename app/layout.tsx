@@ -39,7 +39,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const drawerWidth = 260;
+const drawerWidth = 240;
 
 const theme = createTheme({
   palette: {
@@ -79,7 +79,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  justifyContent: "flex-end",
+  justifyContent: "space-between",
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
@@ -124,9 +124,14 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function RootLayout(
-  { children, session, ...pageProps } : { children: React.ReactNode, session: Session }
-) {
+export default function RootLayout({
+  children,
+  session,
+  ...pageProps
+}: {
+  children: React.ReactNode;
+  session: Session;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [show, setShow] = useState(Number);
@@ -199,7 +204,12 @@ export default function RootLayout(
                     href={"/"}
                     className="no-underline flex items-center justify-center"
                   >
-                    <Image src={"/Logo.png"} alt="Logo" width={160} height={40} />
+                    <Image
+                      src={"/Logo.png"}
+                      alt="Logo"
+                      width={160}
+                      height={40}
+                    />
                   </Link>
                   <IconButton
                     onClick={handleDrawerClose}
@@ -252,7 +262,9 @@ export default function RootLayout(
                                   open ? "opacity-100" : "opacity-0"
                                 }`}
                               >
-                                <span className="font-medium">{item.title}</span>
+                                <span className="font-medium">
+                                  {item.title}
+                                </span>
                               </ListItemText>
                               {show === item.id && toggle ? (
                                 <span
@@ -335,7 +347,9 @@ export default function RootLayout(
                                   open ? "opacity-100" : "opacity-0"
                                 }`}
                               >
-                                <span className="font-medium">{item.title}</span>
+                                <span className="font-medium">
+                                  {item.title}
+                                </span>
                               </ListItemText>
                             </ListItemButton>
                           </ListItem>
