@@ -270,6 +270,9 @@ export default function RootLayout({
                                 className={`group-hover:text-mainColor`}
                                 sx={{
                                   justifyContent: "center",
+                                  ...(open && {
+                                    justifyContent: "flex-start",
+                                  }),
                                   ...(item.path === pathname
                                     ? {
                                         backgroundColor: "#2d3663",
@@ -281,9 +284,7 @@ export default function RootLayout({
                                 {item.icon}
                               </ListItemIcon>
                               <ListItemText
-                                className={`${
-                                  open ? "opacity-100" : "opacity-0"
-                                }`}
+                                className={`${open ? "opacity-100" : "hidden"}`}
                               >
                                 <span className="font-medium">
                                   {item.title}
@@ -360,6 +361,9 @@ export default function RootLayout({
                                 className={`group-hover:text-mainColor`}
                                 sx={{
                                   justifyContent: "center",
+                                  ...(open && {
+                                    justifyContent: "flex-start",
+                                  }),
                                   ...(item.path === pathname
                                     ? {
                                         backgroundColor: "#2d3663",
@@ -371,9 +375,7 @@ export default function RootLayout({
                                 {item.icon}
                               </ListItemIcon>
                               <ListItemText
-                                className={`${
-                                  open ? "opacity-100" : "opacity-0"
-                                }`}
+                                className={`${open ? "opacity-100" : "hidden"}`}
                               >
                                 <span className="font-medium">
                                   {item.title}
