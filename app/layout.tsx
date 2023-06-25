@@ -73,7 +73,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: "hidden",
-  width: `calc(${theme.spacing(5.5)} + 1px)`,
+  width: `calc(${theme.spacing(8)} + 1px)`,
 });
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -361,9 +361,6 @@ export default function RootLayout({
                                 className={`group-hover:text-mainColor`}
                                 sx={{
                                   justifyContent: "flex-start",
-                                  ...(open && {
-                                    justifyContent: "flex-start",
-                                  }),
                                   ...(item.path === pathname
                                     ? {
                                         backgroundColor: "#2d3663",
