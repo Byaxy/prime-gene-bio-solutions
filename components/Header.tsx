@@ -1,5 +1,5 @@
 import { Avatar, Box, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
@@ -10,9 +10,9 @@ export default function Header() {
   const router = useRouter();
   const session = useSession();
 
-  console.log(session.data?.user?.email);
-
   const [show, setShow] = useState(false);
+  const [userInitials, setUserInitials] = useState("");
+
   const userId = 1;
 
   const handleShow = () => {
@@ -31,20 +31,35 @@ export default function Header() {
     handleShow();
     router.push(`/profile/${userId}`);
   };
+  useEffect(() => {
+    let initials = "";
+    const getInitials = () => {
+      const fullName = session.data?.user?.name;
+      const splitNames = fullName?.split(" ");
 
+      splitNames?.map((name, index) => {
+        initials += name[0].toUpperCase();
+      });
+      setUserInitials(initials);
+    };
+    getInitials();
+    console.log(userInitials);
+  }, [session.data?.user?.name, userInitials]);
   return (
     <Box className="relative w-full flex flex-row items-center justify-end gap-3">
       <Typography className="hidden sm:flex flex-col justify-center text-white">
-        <span className="text-lg">Charles Byakutaga</span>
+        <span className="text-xl capitalize">{session.data?.user?.name}</span>
         <span className="text-sm text-grayColor/60">
           {session.data?.user?.email}
         </span>
       </Typography>
       <Avatar
         onClick={handleShow}
-        className="bg-white text-primaryColor shadow-lg cursor-pointer"
+        className="shadow-lg cursor-pointer flex items-center justify-center"
       >
-        CB
+        <span className="flex items-center cursor-pointer justify-center text-primaryColor w-full h-full text-xl font-bold bg-white">
+          {userInitials}
+        </span>
       </Avatar>
       {show && (
         <Box className="slide-left absolute top-12 right-0 p-5 flex flex-col gap-1 w-[260px] sm:w-[300px] rounded-xl shadow-lg bg-grayColor z-10">

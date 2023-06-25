@@ -174,17 +174,23 @@ export default function RootLayout({
             <Box className="flex">
               <CssBaseline />
               <AppBar
-                className="bg-primaryDark text-white fixed shadow-md"
+                className="fixed shadow-md"
                 open={open}
+                sx={{
+                  backgroundColor: "#232a58",
+                  color: "white",
+                }}
               >
                 <Toolbar>
                   <IconButton
-                    className=" text-white bg-primaryColor hover:bg-primaryColor hover:text-mainColor shadow-md"
+                    className="hover:bg-white hover:text-mainColor shadow-md"
                     aria-label="open drawer"
                     onClick={handleDrawerOpen}
                     edge="start"
                     sx={{
                       marginRight: 5,
+                      color: "#2d3663",
+                      backgroundColor: "white",
                       ...(open && { display: "none" }),
                     }}
                   >
