@@ -27,7 +27,7 @@ export const authOptions: AuthOptions = {
                 });
                 if (user && (await comparePassword(credentials?.password, user.password))) {
                     // Any object returned will be saved in `user` property of the JWT
-                    return { id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname }
+                    return { id: user.id, email: user.email, name: `${user.firstname} ${user.lastname}` }
                 } 
                 // If you return null then an error will be displayed advising the user to check their details.
                 return null
