@@ -360,7 +360,7 @@ export default function RootLayout({
                                 title={item.title}
                                 className={`group-hover:text-mainColor`}
                                 sx={{
-                                  justifyContent: "center",
+                                  justifyContent: "flex-start",
                                   ...(open && {
                                     justifyContent: "flex-start",
                                   }),
