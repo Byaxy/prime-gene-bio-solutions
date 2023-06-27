@@ -29,19 +29,27 @@ model User {
 
 model Product {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  code String
+  code String @unique
   name String
-  image String[]
-  brand String
-  category String
+  images String[]
   cost Int
   price Int
   quantity Int
   alertQuantity Int @map("alert_quantity")
-  details String
-  type String
-  unit String
-  barcodeSymbology String @map("barcode_symbology")
+  details String?
+  // Foreign keys
+  productTypeId String @db.Uuid @map("type")
+  unitOfMeasureId String @db.Uuid @map("unit_of_measure")
+  productBrandId String @db.Uuid @map("brand")
+  productCategoryId String @db.Uuid @map("category")
+  barcodeSymbologyId String @db.Uuid @map("barcode_symbology")
+  // Reference fields to be used by client
+  productType ProductType @relation(fields: [productTypeId], references: [id])
+  unitOfMeasure UnitOfMeasure @relation(fields: [unitOfMeasureId], references: [id])
+  productBrand ProductBrand @relation(fields: [productBrandId], references: [id])
+  productCategory ProductCategory @relation(fields: [productCategoryId], references: [id])
+  barcodeSymbology BarcodeSymbology @relation(fields: [barcodeSymbologyId], references: [id])
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("product")
@@ -49,7 +57,9 @@ model Product {
 
 model ProductBrand {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
+  name String @unique
+  // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+  products Product[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("product_brand")
@@ -57,7 +67,9 @@ model ProductBrand {
 
 model ProductCategory {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
+  name String @unique
+  // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+  products Product[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("product_category")
@@ -65,7 +77,9 @@ model ProductCategory {
 
 model ProductType {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
+  name String @unique
+  // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+  products Product[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")  
   @@map("product_type")
@@ -73,13 +87,19 @@ model ProductType {
 
 model BarcodeSymbology {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String // [Code25, Code39, Code128, EAN8, EAN13, UPC-A, UPC-E]
+  name String @unique // [Code25, Code39, Code128, EAN8, EAN13, UPC-A, UPC-E]
+  // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+  products Product[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   @@map("barcode_symbology")
 }
 
-model ProductUnit {
+model UnitOfMeasure {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
+  // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+  products Product[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   @@map("product_unit")
