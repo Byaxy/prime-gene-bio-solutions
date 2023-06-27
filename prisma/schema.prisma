@@ -26,3 +26,61 @@ model User {
 
   @@map("users")
 }
+
+model Product {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code String
+  name String
+  image String[]
+  brand String
+  category String
+  cost Int
+  price Int
+  quantity Int
+  alertQuantity Int @map("alert_quantity")
+  details String
+  type String
+  unit String
+  barcodeSymbology String @map("barcode_symbology")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("product")
+}
+
+model ProductBrand {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("product_brand")
+}
+
+model ProductCategory {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("product_category")
+}
+
+model ProductType {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")  
+  @@map("product_type")
+}
+
+model BarcodeSymbology {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String // [Code25, Code39, Code128, EAN8, EAN13, UPC-A, UPC-E]
+  @@map("barcode_symbology")
+}
+
+model ProductUnit {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  @@map("product_unit")
+}
