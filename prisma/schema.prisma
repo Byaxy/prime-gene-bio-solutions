@@ -37,6 +37,7 @@ model Product {
   quantity Int
   alertQuantity Int @map("alert_quantity")
   details String?
+  isActive Boolean
   // Foreign keys
   productTypeId String @db.Uuid @map("type")
   unitOfMeasureId String @db.Uuid @map("unit_of_measure")

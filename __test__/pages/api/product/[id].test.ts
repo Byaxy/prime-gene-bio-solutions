@@ -1,6 +1,6 @@
 import HttpMocks from "node-mocks-http";
 import { IProduct, cleanUpMockProducts, generateRandomString, seedMockProducts } from "@/utils";
-import getProductApi from "@/pages/api/product/[id]";
+import productApi from "@/pages/api/product/[id]";
 import prismaClient from "@/utils/prisma-client";
 
 describe("tests api/product/id route", () => {
@@ -28,7 +28,7 @@ describe("tests api/product/id route", () => {
     it("only accepts GET, PUT or DELETE requests", async() => {
         req.method = "POST";
         req.query = { id: "efb3b969-6225-440c-9f82-1bf7877b9d96" };
-        await getProductApi(req, res);
+        await productApi(req, res);
         expect(res.statusCode).toBe(405);
         expect(res.statusMessage).toEqual("Method Not Allowed");
         expect(res.getHeader("Allow")).toEqual("GET, PUT, DELETE");
@@ -36,7 +36,7 @@ describe("tests api/product/id route", () => {
 
     it("returns 400 if product ID is not in route", async() => {
         req.method = "GET";
-        await getProductApi(req, res);
+        await productApi(req, res);
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toEqual("Bad Request");
     })
@@ -44,7 +44,7 @@ describe("tests api/product/id route", () => {
     it("returns 404 if GET product is not found", async() => {
         req.method = "GET";
         req.query = { id: "efb3b969-6225-440c-9f82-1bf7877b9d96" };
-        await getProductApi(req, res);
+        await productApi(req, res);
         expect(res.statusCode).toBe(404);
         expect(res.statusMessage).toEqual("Not Found");
     })
@@ -53,7 +53,7 @@ describe("tests api/product/id route", () => {
         req.method = "GET";
         const queryResult = await prismaClient.product.findFirst({ where: { name: product.name } });
         req.query = { id: queryResult?.id };
-        await getProductApi(req, res);
+        await productApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
@@ -77,7 +77,7 @@ describe("tests api/product/id route", () => {
         req.method = "PUT";
         req.query = { id: productId };
         req.body = {};
-        await getProductApi(req, res);
+        await productApi(req, res);
         const newProduct = await prismaClient.product.findUnique({ where: { id: productId } });
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
@@ -103,7 +103,7 @@ describe("tests api/product/id route", () => {
             alertQuantity: 1,
         };
         req.body = { ...changes };
-        await getProductApi(req, res);
+        await productApi(req, res);
         
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
@@ -126,7 +126,7 @@ describe("tests api/product/id route", () => {
         req.body = { productTypeId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0" }
         req.query = { id: productId };
 
-        await getProductApi(req, res);
+        await productApi(req, res);
 
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
@@ -138,7 +138,7 @@ describe("tests api/product/id route", () => {
         req.body = { productCategoryId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0" }
         req.query = { id: productId };
 
-        await getProductApi(req, res);
+        await productApi(req, res);
 
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
@@ -150,7 +150,7 @@ describe("tests api/product/id route", () => {
         req.body = { unitOfMeasureId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0" }
         req.query = { id: productId };
 
-        await getProductApi(req, res);
+        await productApi(req, res);
 
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
@@ -162,7 +162,7 @@ describe("tests api/product/id route", () => {
         req.body = { barcodeSymbologyId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0" }
         req.query = { id: productId };
 
-        await getProductApi(req, res);
+        await productApi(req, res);
 
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
@@ -174,10 +174,30 @@ describe("tests api/product/id route", () => {
         req.body = { productBrandId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0" }
         req.query = { id: productId };
 
-        await getProductApi(req, res);
+        await productApi(req, res);
 
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
         expect(res._getData()).toEqual("Invalid dependent item");
+    })
+
+    it("returns 404 if no product to delete", async() => {
+        req.method = "DELETE";
+        req.query = { id: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0" }
+
+        await productApi(req, res);
+        expect(res.statusCode).toBe(404);
+        expect(res.statusMessage).toBe("Not Found");
+    })
+
+    it("deletes a product", async() => {
+        req.method = "DELETE";
+        req.query = { id: productId }
+
+        await productApi(req, res);
+        const result = await prismaClient.product.findUnique({ where: { id: productId } });
+        expect(res.statusCode).toBe(200);
+        expect(res.statusMessage).toBe("OK");
+        expect(result?.isActive).toBe(false);
     })
 })

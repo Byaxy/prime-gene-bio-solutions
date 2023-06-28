@@ -56,7 +56,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
                 return res.status(500).end();
             }
-        
+        case "DELETE":
+            try {
+                const deleteResult = await prismaClient.product.update({ 
+                    where: { 
+                        id: req.query.id as string 
+                    },
+                    data: {
+                        isActive: false
+                    } 
+                });
+                return res.status(200).end();
+            } catch(e) {
+                if(e instanceof Prisma.PrismaClientKnownRequestError) {
+                    if(e.code === "P2025") return res.writeHead(404, statusMessages[404]);
+                }
+                return res.status(500).end();
+            }
         default:
             return res.writeHead(405, statusMessages[405], { "Allow": "GET, PUT, DELETE" }).end();
     }

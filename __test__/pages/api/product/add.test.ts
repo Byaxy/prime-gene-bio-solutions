@@ -76,8 +76,8 @@ describe("tests the api/product/add route", () => {
         req.method = "POST";
 
         await addProductApi(req, res);
-        expect(res.statusCode).toBe(200);
-        expect(res.statusMessage).toEqual("OK");
+        expect(res.statusCode).toBe(201);
+        expect(res.statusMessage).toEqual("Created");
 
         let result = await prismaClient.product.findUnique({
             where: {

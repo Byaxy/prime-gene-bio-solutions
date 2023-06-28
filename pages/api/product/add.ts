@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         price: Math.max(req.body.price, 0),
                         quantity: Math.max(req.body.quantity, 0),
                         alertQuantity: Math.max(req.body.alertQuantity, 0),
-                        images: req.body.images
+                        isActive: true
                     }
                 });
     
