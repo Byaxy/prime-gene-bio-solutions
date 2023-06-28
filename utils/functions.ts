@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 
-export function generatePassword(length: number = 8): string {
-    let chars: string = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export function generateRandomString(length: number = 8): string {
+    let chars: string = "0123456789abcdefghijklmnopqrstuvwxyz@#&ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let password: string = "";
 
     for (let i = 0; i < length; i++) {

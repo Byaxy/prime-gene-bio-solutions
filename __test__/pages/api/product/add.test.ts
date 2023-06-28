@@ -1,13 +1,9 @@
 import prismaClient from "@/utils/prisma-client";
 import HttpMocks from "node-mocks-http";
 import addProductApi from "@/pages/api/product/add";
+import { cleanUpMockProducts, seedProductForeignKeys } from "@/utils";
 
 describe("tests the api/product/add route", () => {
-    let productTypeId: string;
-    let unitOfMeasureId: string;
-    let productBrandId: string;
-    let productCategoryId: string;
-    let barcodeSymbologyId: string;
     let baseProduct: {[key: string]: any};
     let req: any;
     let res: any;
@@ -18,30 +14,15 @@ describe("tests the api/product/add route", () => {
     })
 
     beforeAll(async () => {
-        // Populate DB
-        productTypeId = (await prismaClient.productType.create({ data: { name: "TypeA" } })).id;
-        unitOfMeasureId = (await prismaClient.unitOfMeasure.create({ data: { name: "Pieces" } })).id;
-        productBrandId = (await prismaClient.productBrand.create({ data: { name: "Super" } })).id;
-        productCategoryId = (await prismaClient.productCategory.create({ data: { name: "CategoryA" } })).id;
-        barcodeSymbologyId = (await prismaClient.barcodeSymbology.create({ data: { name: "UPC-A" } })).id;
         // Mock data
         baseProduct = {
-            productTypeId,
-            unitOfMeasureId,
-            productBrandId,
-            productCategoryId,
-            barcodeSymbologyId
-        }
+            ...(await seedProductForeignKeys())
+        };
     })
 
     afterAll(async() => {
         // Clear DB
-        await prismaClient.product.deleteMany();
-        await prismaClient.productType.deleteMany();
-        await prismaClient.unitOfMeasure.deleteMany();
-        await prismaClient.productBrand.deleteMany();
-        await prismaClient.productCategory.deleteMany();
-        await prismaClient.barcodeSymbology.deleteMany();
+        await cleanUpMockProducts()
     })
 
     it("tests allowed methods", async () => {
