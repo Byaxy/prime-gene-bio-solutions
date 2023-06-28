@@ -3,12 +3,19 @@ import HttpMocks from "node-mocks-http";
 import addProductApi from "@/pages/api/product/add";
 
 describe("tests the api/product/add route", () => {
-    let productTypeId: string,
-    unitOfMeasureId: string,
-    productBrandId: string,
-    productCategoryId: string,
-    barcodeSymbologyId: string,
-    baseProduct: {[key: string]: any};
+    let productTypeId: string;
+    let unitOfMeasureId: string;
+    let productBrandId: string;
+    let productCategoryId: string;
+    let barcodeSymbologyId: string;
+    let baseProduct: {[key: string]: any};
+    let req: any;
+    let res: any;
+
+    beforeEach(() => {
+        req = HttpMocks.createRequest();
+        res = HttpMocks.createResponse();
+    })
 
     beforeAll(async () => {
         // Populate DB
@@ -38,8 +45,6 @@ describe("tests the api/product/add route", () => {
     })
 
     it("tests allowed methods", async () => {
-        let req = HttpMocks.createRequest();
-        let res = HttpMocks.createResponse();
         req.method = "HEAD";
         await addProductApi(req, res);
         expect(res.statusCode).toBe(405);
@@ -48,8 +53,6 @@ describe("tests the api/product/add route", () => {
     })
 
     it("inserts an item in the database", async() => {
-        let req = HttpMocks.createRequest();
-        let res = HttpMocks.createResponse();
         let product = {
             code: "PDT-1",
             name: "Product 1",
@@ -78,8 +81,6 @@ describe("tests the api/product/add route", () => {
     })
 
     it("cleans data before saving", async() => {
-        let req = HttpMocks.createRequest();
-        let res = HttpMocks.createResponse();
         let product = {
             code: "PDT-2",
             name: "Product 2",
@@ -113,9 +114,7 @@ describe("tests the api/product/add route", () => {
         });
     })
 
-    it("fails on missing required fields", async() => {
-        let req = HttpMocks.createRequest();
-        let res = HttpMocks.createResponse();  
+    it("fails on missing required fields", async() => {  
 
         req.body = {};
         req.method = "POST";
@@ -126,25 +125,98 @@ describe("tests the api/product/add route", () => {
         expect(res._getData()).toEqual("Some required fields are missing. Please check the data sent and try again");
     })
 
-    it("fails on invalid foreign keys", async () => {
-        let req = HttpMocks.createRequest();
-        let res = HttpMocks.createResponse();
-        let product = {
+    it("fails on invalid product brand", async () => {
+        req.method = "POST";
+        req.body = {
             code: "PDT-3",
             name: "Product 3",
             cost: 10,
             price: 20,
             quantity: 30,
             alertQuantity: 40,
-            productBrandId: "5083d173-d2f0-48a3-9c3b-f0a9c12d4503",
-            productTypeId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0",
-            productCategoryId: "d9f81eda-2cf6-4f18-b9b7-0dfc40b2f93c",
-            barcodeSymbologyId: "97016496-6c53-4b14-8ecd-cad638463b11",
-            unitOfMeasureId: "1542121d-89b9-42a1-989e-0b41f01cb853"
+            ...baseProduct,
+            productBrandId: "5083d173-d2f0-48a3-9c3b-f0a9c12d4503",   
         }
 
-        req.body = { ...product };
+        await addProductApi(req, res);
+
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toBe("Bad Request");
+        expect(res._getData()).toEqual("Invalid dependent item");
+    })
+
+    it("fails on invalid product type", async () => {
         req.method = "POST";
+        req.body = {
+            code: "PDT-3",
+            name: "Product 3",
+            cost: 10,
+            price: 20,
+            quantity: 30,
+            alertQuantity: 40,
+            ...baseProduct,
+            productTypeId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0",   
+        }
+
+        await addProductApi(req, res);
+
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toBe("Bad Request");
+        expect(res._getData()).toEqual("Invalid dependent item");
+    })
+
+    it("fails on invalid product category", async() => {
+        req.method = "POST";
+        req.body = {
+            code: "PDT-3",
+            name: "Product 3",
+            cost: 10,
+            price: 20,
+            quantity: 30,
+            alertQuantity: 40,
+            ...baseProduct,
+            productCategoryId: "d9f81eda-2cf6-4f18-b9b7-0dfc40b2f93c",
+        }
+
+        await addProductApi(req, res);
+
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toBe("Bad Request");
+        expect(res._getData()).toEqual("Invalid dependent item");        
+    })
+
+    it("fails on invalid barcode symbology", async() => {
+        req.method = "POST";
+        req.body = {
+            code: "PDT-3",
+            name: "Product 3",
+            cost: 10,
+            price: 20,
+            quantity: 30,
+            alertQuantity: 40,
+            ...baseProduct,
+            barcodeSymbologyId: "97016496-6c53-4b14-8ecd-cad638463b11",
+        }
+
+        await addProductApi(req, res);
+
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toBe("Bad Request");
+        expect(res._getData()).toEqual("Invalid dependent item");
+    })
+
+    it("fails on invalid unit of measure", async() => {
+        req.method = "POST";
+        req.body = {
+            code: "PDT-3",
+            name: "Product 3",
+            cost: 10,
+            price: 20,
+            quantity: 30,
+            alertQuantity: 40,
+            ...baseProduct,
+            unitOfMeasureId: "1542121d-89b9-42a1-989e-0b41f01cb853"
+        }
 
         await addProductApi(req, res);
 

@@ -30,7 +30,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if(e instanceof Prisma.PrismaClientValidationError) {
                     return res.writeHead(400, statusMessages[400]).send("Some required fields are missing. Please check the data sent and try again");
                 } else if(e instanceof Prisma.PrismaClientKnownRequestError) {
-                    console.log(e.meta);
                     if(e.code === "P2003") {
                         return res.writeHead(400, statusMessages[400]).send("Invalid dependent item");
                     }
