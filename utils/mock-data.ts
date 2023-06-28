@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { generateRandomString } from "./functions";
 import prismaClient from "./prisma-client";
 import { IProduct, IProductRelationships } from "./types";
@@ -11,15 +12,26 @@ export const mockUser = {
 
 export async function seedProductForeignKeys(): Promise<IProductRelationships> {
     if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
+    let fields: IProductRelationships;
 
-    let fields: IProductRelationships = {
-        productTypeId: (await prismaClient.productType.create({ data: { name: "TypeA" } })).id,
-        unitOfMeasureId: (await prismaClient.unitOfMeasure.create({ data: { name: "Pieces" } })).id,
-        productBrandId: (await prismaClient.productBrand.create({ data: { name: "Super" } })).id,
-        productCategoryId: (await prismaClient.productCategory.create({ data: { name: "CategoryA" } })).id,
-        barcodeSymbologyId: (await prismaClient.barcodeSymbology.create({ data: { name: "UPC-A" } })).id,
+    try {
+        fields = {
+            productTypeId: (await prismaClient.productType.create({ data: { name: "TypeA" } })).id,
+            unitOfMeasureId: (await prismaClient.unitOfMeasure.create({ data: { name: "Pieces" } })).id,
+            productBrandId: (await prismaClient.productBrand.create({ data: { name: "Super" } })).id,
+            productCategoryId: (await prismaClient.productCategory.create({ data: { name: "CategoryA" } })).id,
+            barcodeSymbologyId: (await prismaClient.barcodeSymbology.create({ data: { name: "UPC-A" } })).id,
+        }
+    } catch(e) {
+        // Keys were already created; Just fetch from DB and return them
+        fields = {
+            productTypeId: (await prismaClient.productType.findUnique({ where: { name: "TypeA" } }))?.id as string,
+            unitOfMeasureId: (await prismaClient.unitOfMeasure.findUnique({ where: { name: "Pieces" } }))?.id as string,
+            productBrandId: (await prismaClient.productBrand.findUnique({ where: { name: "Super" } }))?.id as string,
+            productCategoryId: (await prismaClient.productCategory.findUnique({ where: { name: "CategoryA" } }))?.id as string,
+            barcodeSymbologyId: (await prismaClient.barcodeSymbology.findUnique({ where: { name: "UPC-A" } }))?.id as string,
+        }
     }
-
     return fields;
 }
 
@@ -34,7 +46,7 @@ export async function seedMockProducts(qty: number = 1): Promise<IProduct | IPro
     for(let i = 0; i < qty; i++) {
         products.push({
             name: generateRandomString(),
-            code: generateRandomString(),
+            code: generateRandomString(12),
             cost: i * 5,
             price: i * 5,
             quantity: i * 5,

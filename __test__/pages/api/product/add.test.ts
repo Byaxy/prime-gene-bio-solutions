@@ -1,7 +1,7 @@
 import prismaClient from "@/utils/prisma-client";
 import HttpMocks from "node-mocks-http";
 import addProductApi from "@/pages/api/product/add";
-import { cleanUpMockProducts, seedProductForeignKeys } from "@/utils";
+import { IProduct, cleanUpMockProducts, seedMockProducts, seedProductForeignKeys } from "@/utils";
 
 describe("tests the api/product/add route", () => {
     let baseProduct: {[key: string]: any};
@@ -59,6 +59,19 @@ describe("tests the api/product/add route", () => {
 
         expect(result).toBeDefined();
         expect(result).toMatchObject(product);
+    })
+
+    it("fails to save product due to duplicate product code", async() => {
+        let products = await seedMockProducts(2) as IProduct[];
+        await prismaClient.product.create({ data: { ...products[0], code: "PROD-3" } });
+        products[1].code = "PROD-3";
+        req.method = "POST";
+        req.body = {...products[1] };
+
+        await addProductApi(req, res);
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toEqual("Bad Request");
+        expect(res._getData()).toEqual("Unique constraint failed on the fields: (`code`)");
     })
 
     it("cleans data before saving", async() => {

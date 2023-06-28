@@ -21,4 +21,5 @@ export interface IProduct extends IProductRelationships {
     alertQuantity: number;
     details?: string;
     images?: string[];
+    isActive: boolean
 }
