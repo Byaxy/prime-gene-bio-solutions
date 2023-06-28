@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest -t \"tests api/product/api route\" --detectOpenHandles",
+    "test": "jest -t \"tests api/product/id route\" --detectOpenHandles",
     "migrate:dev": "prisma migrate dev",
     "postinstall": "prisma generate"
   },
