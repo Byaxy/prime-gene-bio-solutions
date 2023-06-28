@@ -1,20 +1,29 @@
 "use client";
-import { Box, Typography } from "@mui/material";
-import React from "react";
+import { allPurchasesData } from "@/data/allPurchasesData";
+import DataTable from "react-data-table-component";
+import { customTableStyles } from "@/styles/TableStyles";
+import { useRouter } from "next/navigation";
+import ListPage from "@/components/ListPage";
 
 export default function PurchasesPage() {
+  const router = useRouter();
+  const onRowClicked = (row: { id: number }) => {
+    router.push(`/purchases/${row.id}`);
+  };
   return (
-    <Box>
-      <Typography
-        variant="h3"
-        sx={{
-          color: "#232a58",
-          fontWeight: "bold",
-          fontSize: "26px",
-        }}
-      >
-        Purchases Page
-      </Typography>
-    </Box>
+    <ListPage
+      title="Purchases"
+      buttonText="Add Purchase"
+      buttonPath="/purchases/add-purchase"
+    >
+      <DataTable
+        data={allPurchasesData.data}
+        columns={allPurchasesData.columns}
+        customStyles={customTableStyles}
+        onRowClicked={onRowClicked}
+        className="scrollbar-hide"
+        pagination
+      />
+    </ListPage>
   );
 }
