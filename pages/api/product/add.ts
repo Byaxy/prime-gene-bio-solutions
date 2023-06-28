@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 });
     
-                return res.status(200).end();
+                return res.writeHead(201, statusMessages[201]).end();
             } catch(e) {
                 if(e instanceof Prisma.PrismaClientValidationError) {
                     return res.writeHead(400, statusMessages[400]).send("Some required fields are missing. Please check the data sent and try again");

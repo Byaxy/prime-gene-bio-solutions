@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import { statusMessages } from "@/utils";
 import prismaClient from "@/utils/prisma-client";
+import { Prisma } from "@prisma/client";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getServerSession(req, res, authOptions);
@@ -35,7 +36,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             if (!result) return res.writeHead(404, statusMessages[404]).end();
             return res.status(200).json(result);
+        case "PUT":
+            try {
+                await prismaClient.product.update({
+                    where: {
+                        id: req.query.id as string
+                    },
+                    data: {
+                        ...req.body
+                    }
+                });
+
+                return res.status(200).end();
+            } catch(e) {
+                if(e instanceof Prisma.PrismaClientKnownRequestError) {
+                    if(e.code === "P2003") {
+                        return res.writeHead(400, statusMessages[400]).send("Invalid dependent item");
+                    }
+                }
+                return res.status(500).end();
+            }
+        
         default:
-            return res.writeHead(405, statusMessages[405], { "Allow": "GET, PUT" }).end();
+            return res.writeHead(405, statusMessages[405], { "Allow": "GET, PUT, DELETE" }).end();
     }
 }
