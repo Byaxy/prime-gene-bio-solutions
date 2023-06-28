@@ -41,6 +41,10 @@ export const data = [
         title: "Deliveries",
         path: "/sales/deliveries",
       },
+      {
+        title: "Way Bill",
+        path: "/sales/way-bill",
+      },
     ],
   },
   {

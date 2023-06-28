@@ -23,6 +23,7 @@ export default function ProductsPage() {
         customStyles={customTableStyles}
         onRowClicked={onRowClicked}
         className="scrollbar-hide"
+        pagination
       />
     </ListPage>
   );
