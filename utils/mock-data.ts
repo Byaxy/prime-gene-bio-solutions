@@ -1,6 +1,6 @@
 import { generateRandomString } from "./functions";
 import prismaClient from "./prisma-client";
-import { IProduct, IProductBrand, IProductRelationships } from "./types";
+import { IProduct, IProductBrand, IProductRelationships, IUnitOfMeasure } from "./types";
 
 export const mockUser = {
     firstname: "jane",
@@ -86,17 +86,18 @@ export async function cleanUpMockProducts() {
 
 export async function seedMockProductBrands(qty: number = 1): Promise<IProductBrand | IProductBrand[]> {
     if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
-
     let list = [];
-
-    for(let i = 0; i < qty; i++) {
-        list.push({
-            name: generateRandomString(6),
-        });
-    }
-
+    for(let i = 0; i < qty; i++) list.push({ name: generateRandomString(6) });
     await prismaClient.productBrand.createMany({ data: list });
+    if(qty == 1) return list[0] ?? [];
+    return list;
+}
 
+export async function seedMockUnitOfMeasures(qty: number = 1): Promise<IUnitOfMeasure | IUnitOfMeasure[]> {
+    if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
+    let list = [];
+    for(let i = 0; i < qty; i++) list.push({ name: generateRandomString(6) });
+    await prismaClient.unitOfMeasure.createMany({ data: list });
     if(qty == 1) return list[0] ?? [];
     return list;
 }
