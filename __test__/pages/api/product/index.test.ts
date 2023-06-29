@@ -1,14 +1,21 @@
 import HttpMocks from "node-mocks-http";
-import { cleanUpMockProducts, seedMockProducts } from "@/utils";
+import { IProduct, cleanUpMockProducts, seedMockProducts } from "@/utils";
 import getProductsApi from "@/pages/api/product";
+import prismaClient from "@/utils/prisma-client";
 
 describe("tests api/product/api route", () => {
     let req: any;
     let res: any;
+    let products: IProduct[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
         res = HttpMocks.createResponse();
+    })
+
+    beforeAll(async () => {
+        // Mock data
+        products = await seedMockProducts(3) as IProduct[];
     })
 
     afterAll(async () => {
@@ -24,23 +31,46 @@ describe("tests api/product/api route", () => {
         expect(res.getHeader("Allow")).toEqual("GET");
     })
 
-    it("returns empty array if no products", async() => {
+    it("fetches archived products", async() => {
+        // Archive an item
+        await prismaClient.product.update({ 
+            where: { 
+                code: products[0].code
+            },
+            data: {
+                isActive: false
+            }
+        })
+
+        req.method = "GET";
+        req.query = { isActive: "false" };
+        await getProductsApi(req, res);
+        expect(res.statusCode).toBe(200);
+        expect(res.statusMessage).toEqual("OK");
+        expect(res._getJSONData()).toBeDefined();
+        expect(res._getJSONData()).toHaveLength(1);        
+    })
+
+    it("fetches active products by default", async() => {
+        req.method = "GET";
+        await getProductsApi(req, res);
+        expect(res.statusCode).toBe(200);
+        expect(res.statusMessage).toEqual("OK");
+        expect(res._getJSONData()).toBeDefined();
+        expect(res._getJSONData()).toHaveLength(2);
+    })
+})
+
+describe("tests api/product/index route if table is empty", () => {
+    let req: any = HttpMocks.createRequest();
+    let res: any = HttpMocks.createResponse();
+
+    it("returns empty array if no brands", async() => {
         req.method = "GET";
         await getProductsApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
         expect(res._getJSONData()).toHaveLength(0);
-    })
-
-    it("fetches all products", async() => {
-        req.method = "GET";
-        // Mock data
-        await seedMockProducts(3);
-        await getProductsApi(req, res);
-        expect(res.statusCode).toBe(200);
-        expect(res.statusMessage).toEqual("OK");
-        expect(res._getJSONData()).toBeDefined();
-        expect(res._getJSONData()).toHaveLength(3);
     })
 })

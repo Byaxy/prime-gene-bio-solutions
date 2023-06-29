@@ -13,6 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case "GET":
             // Get product and related fields. See https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#select-specific-relation-fields
             const result = await prismaClient.product.findMany({
+                where: {
+                    isActive: req.query.isActive === "false" ? false : true
+                },
                 select: {
                     images: true,
                     code: true,

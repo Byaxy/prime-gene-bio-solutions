@@ -12,7 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch(req.method) {
         case "GET":
             // Get all items. See https://www.prisma.io/docs/concepts/components/prisma-client/crud#get-all-records
-            const result = await prismaClient.productBrand.findMany();
+            const result = await prismaClient.productBrand.findMany({
+                where: {
+                    isActive: req.query.isActive === "false" ? false : true
+                }
+            });
             return res.status(200).json(result);
         default:
             return res.writeHead(405, statusMessages[405], { "Allow": "GET" }).end();
