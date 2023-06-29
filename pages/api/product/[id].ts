@@ -49,7 +49,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 return res.status(200).end();
             } catch(e) {
-                if(e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e instanceof Prisma.PrismaClientValidationError) {
+                    // User tried to send a key in JSON but the key is not in the DB model e.g
+                    // { fieldA: "valueA" } will fail because the ProductModel does not have a
+                    // field called fieldA
+                    return res.writeHead(400, statusMessages[400]).send("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
+                } else if(e instanceof Prisma.PrismaClientKnownRequestError) {
                     if(e.code === "P2003") {
                         return res.writeHead(400, statusMessages[400]).send("Invalid dependent item");
                     }

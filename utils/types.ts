@@ -24,7 +24,7 @@ export interface IProduct extends IProductRelationships, IBaseModel {
     price: number;
     quantity: number;
     alertQuantity: number;
-    details?: string;
+    details?: string | null;
     images?: string[];
     isActive: boolean
 }

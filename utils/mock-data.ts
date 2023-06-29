@@ -58,6 +58,8 @@ export async function seedMockProducts(qty: number = 1): Promise<IProduct | IPro
             quantity: i * 5,
             alertQuantity: i * 5,
             isActive: true,
+            details: null,
+            images: [],
             ...baseProduct
         });
     }
