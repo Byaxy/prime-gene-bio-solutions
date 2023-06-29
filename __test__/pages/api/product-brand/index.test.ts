@@ -1,8 +1,9 @@
 import HttpMocks from "node-mocks-http";
-import { cleanUpMockProducts, seedMockProducts } from "@/utils";
-import getProductsApi from "@/pages/api/product";
+import { seedMockProductBrands } from "@/utils";
+import productBrandApi from "@/pages/api/product-brand";
+import prismaClient from "@/utils/prisma-client";
 
-describe("tests api/product/api route", () => {
+describe("tests api/product-brand/index route", () => {
     let req: any;
     let res: any;
 
@@ -13,31 +14,31 @@ describe("tests api/product/api route", () => {
 
     afterAll(async () => {
         // Clear DB
-        await cleanUpMockProducts();
+        await prismaClient.productBrand.deleteMany();
     })
 
     it("only accepts GET requests", async() => {
         req.method = "POST";
-        await getProductsApi(req, res);
+        await productBrandApi(req, res);
         expect(res.statusCode).toBe(405);
         expect(res.statusMessage).toEqual("Method Not Allowed");
         expect(res.getHeader("Allow")).toEqual("GET");
     })
 
-    it("returns empty array if no products", async() => {
+    it("returns empty array if no brands", async() => {
         req.method = "GET";
-        await getProductsApi(req, res);
+        await productBrandApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
         expect(res._getJSONData()).toHaveLength(0);
     })
 
-    it("fetches all products", async() => {
+    it("fetches all brands", async() => {
         req.method = "GET";
         // Mock data
-        await seedMockProducts(3);
-        await getProductsApi(req, res);
+        await seedMockProductBrands(3);
+        await productBrandApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
