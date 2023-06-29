@@ -82,13 +82,28 @@ describe("tests api/product/id route", () => {
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
         expect({ 
+            ...product,
             id: productId, 
-            details: null, 
-            images: [], 
             createdAt: newProduct?.createdAt, 
             updatedAt: newProduct?.updatedAt,
-            ...product
         }).toEqual(newProduct);
+    })
+
+    it("ignore extra fields not in product model", async() => {
+        req.method = "PUT";
+        req.query = { id: productId };
+        req.body = { field: "test" };
+        await productApi(req, res);
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toBe("Bad Request");
+        expect(res._getData()).toEqual("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
+        const olderVersion = await prismaClient.product.findUnique({ where: { id: productId } });
+        expect({
+            ...product,
+            id: productId,
+            createdAt: olderVersion?.createdAt,
+            updatedAt: olderVersion?.updatedAt,
+        }).toEqual(olderVersion);
     })
 
     it("updates a product", async() => {

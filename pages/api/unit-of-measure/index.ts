@@ -11,22 +11,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     switch(req.method) {
         case "GET":
-            // Get product and related fields. See https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#select-specific-relation-fields
-            const result = await prismaClient.product.findMany({
+            // Get all items. See https://www.prisma.io/docs/concepts/components/prisma-client/crud#get-all-records
+            const result = await prismaClient.unitOfMeasure.findMany({
                 where: {
                     isActive: req.query.isActive === "false" ? false : true
-                },
-                select: {
-                    images: true,
-                    code: true,
-                    name: true,
-                    cost: true,
-                    price: true,
-                    quantity: true,
-                    alertQuantity: true,
-                    productBrand: { select: { name: true } },
-                    productCategory: { select: { name: true } },
-                    unitOfMeasure: { select: { name: true } },
                 }
             });
             return res.status(200).json(result);

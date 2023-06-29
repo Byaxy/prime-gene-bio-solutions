@@ -1,12 +1,12 @@
 import HttpMocks from "node-mocks-http";
-import { IProduct, cleanUpMockProducts, seedMockProducts } from "@/utils";
-import getProductsApi from "@/pages/api/product";
+import { IProductCategory, seedMockProductCategories } from "@/utils";
+import productCategoryApi from "@/pages/api/product-category";
 import prismaClient from "@/utils/prisma-client";
 
-describe("tests api/product/api route", () => {
+describe("tests api/product-category/index route", () => {
     let req: any;
     let res: any;
-    let products: IProduct[];
+    let categories: IProductCategory[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -15,27 +15,27 @@ describe("tests api/product/api route", () => {
 
     beforeAll(async () => {
         // Mock data
-        products = await seedMockProducts(3) as IProduct[];
+        categories = await seedMockProductCategories(3) as IProductCategory[];
     })
 
     afterAll(async () => {
         // Clear DB
-        await cleanUpMockProducts();
+        await prismaClient.productCategory.deleteMany();
     })
 
     it("only accepts GET requests", async() => {
         req.method = "POST";
-        await getProductsApi(req, res);
+        await productCategoryApi(req, res);
         expect(res.statusCode).toBe(405);
         expect(res.statusMessage).toEqual("Method Not Allowed");
         expect(res.getHeader("Allow")).toEqual("GET");
     })
 
-    it("fetches archived products", async() => {
+    it("fetches archived categories", async() => {
         // Archive an item
-        await prismaClient.product.update({ 
+        await prismaClient.productCategory.update({ 
             where: { 
-                code: products[0].code
+                name: categories[0].name
             },
             data: {
                 isActive: false
@@ -44,16 +44,16 @@ describe("tests api/product/api route", () => {
 
         req.method = "GET";
         req.query = { isActive: "false" };
-        await getProductsApi(req, res);
+        await productCategoryApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
         expect(res._getJSONData()).toHaveLength(1);        
     })
 
-    it("fetches active products by default", async() => {
+    it("fetches active categories by default", async() => {
         req.method = "GET";
-        await getProductsApi(req, res);
+        await productCategoryApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
@@ -61,13 +61,13 @@ describe("tests api/product/api route", () => {
     })
 })
 
-describe("tests api/product/index route if table is empty", () => {
+describe("tests api/product-category/index route if table is empty", () => {
     let req: any = HttpMocks.createRequest();
     let res: any = HttpMocks.createResponse();
 
-    it("returns empty array if no brands", async() => {
+    it("returns empty array if no categories", async() => {
         req.method = "GET";
-        await getProductsApi(req, res);
+        await productCategoryApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();

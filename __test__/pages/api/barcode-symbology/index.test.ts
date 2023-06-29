@@ -1,12 +1,12 @@
 import HttpMocks from "node-mocks-http";
-import { IProduct, cleanUpMockProducts, seedMockProducts } from "@/utils";
-import getProductsApi from "@/pages/api/product";
+import { IProductBrand, seedMockBarcodeSymbologies } from "@/utils";
+import barcodeSymbologyApi from "@/pages/api/barcode-symbology";
 import prismaClient from "@/utils/prisma-client";
 
-describe("tests api/product/api route", () => {
+describe("tests api/barcode-symbology/index route", () => {
     let req: any;
     let res: any;
-    let products: IProduct[];
+    let barcodes: IProductBrand[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -15,27 +15,27 @@ describe("tests api/product/api route", () => {
 
     beforeAll(async () => {
         // Mock data
-        products = await seedMockProducts(3) as IProduct[];
+        barcodes = await seedMockBarcodeSymbologies(3) as IProductBrand[];
     })
 
     afterAll(async () => {
         // Clear DB
-        await cleanUpMockProducts();
+        await prismaClient.barcodeSymbology.deleteMany();
     })
 
     it("only accepts GET requests", async() => {
         req.method = "POST";
-        await getProductsApi(req, res);
+        await barcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(405);
         expect(res.statusMessage).toEqual("Method Not Allowed");
         expect(res.getHeader("Allow")).toEqual("GET");
     })
 
-    it("fetches archived products", async() => {
+    it("fetches archived barcodes", async() => {
         // Archive an item
-        await prismaClient.product.update({ 
+        await prismaClient.barcodeSymbology.update({ 
             where: { 
-                code: products[0].code
+                name: barcodes[0].name
             },
             data: {
                 isActive: false
@@ -44,16 +44,16 @@ describe("tests api/product/api route", () => {
 
         req.method = "GET";
         req.query = { isActive: "false" };
-        await getProductsApi(req, res);
+        await barcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
         expect(res._getJSONData()).toHaveLength(1);        
     })
 
-    it("fetches active products by default", async() => {
+    it("fetches active barcodes by default", async() => {
         req.method = "GET";
-        await getProductsApi(req, res);
+        await barcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
@@ -61,13 +61,13 @@ describe("tests api/product/api route", () => {
     })
 })
 
-describe("tests api/product/index route if table is empty", () => {
+describe("tests api/barcode-symbology/index route if table is empty", () => {
     let req: any = HttpMocks.createRequest();
     let res: any = HttpMocks.createResponse();
 
-    it("returns empty array if no brands", async() => {
+    it("returns empty array if no barcodes", async() => {
         req.method = "GET";
-        await getProductsApi(req, res);
+        await barcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();

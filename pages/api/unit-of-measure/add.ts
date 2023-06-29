@@ -14,15 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch(req.method) {
         case "POST":
             try {
-                await prismaClient.product.create({
-                    data: {
-                        ...req.body,
-                        cost: Math.max(req.body.cost, 0),
-                        price: Math.max(req.body.price, 0),
-                        quantity: Math.max(req.body.quantity, 0),
-                        alertQuantity: Math.max(req.body.alertQuantity, 0),
-                        isActive: true
-                    }
+                await prismaClient.unitOfMeasure.create({
+                    data: { ...req.body }
                 });
     
                 return res.writeHead(201, statusMessages[201]).end();
@@ -35,9 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     if(e.code === "P2002") {
                         let lines = e.message.split("\n");
                         return res.writeHead(400, statusMessages[400]).send(lines.at(-1));
-                    } else if(e.code === "P2003") {
-                        // Provided foreign key not in DB. See https://www.prisma.io/docs/reference/api-reference/error-reference#p2002
-                        return res.writeHead(400, statusMessages[400]).send("Invalid dependent item");
                     }
                 }
                 return res.status(500).end();

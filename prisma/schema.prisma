@@ -37,7 +37,7 @@ model Product {
   quantity Int
   alertQuantity Int @map("alert_quantity")
   details String?
-  isActive Boolean
+  isActive Boolean @default(true)
   // Foreign keys
   productTypeId String @db.Uuid @map("type")
   unitOfMeasureId String @db.Uuid @map("unit_of_measure")
@@ -59,6 +59,7 @@ model Product {
 model ProductBrand {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
+  isActive Boolean @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
   createdAt DateTime @default(now()) @map("created_at")
@@ -69,6 +70,7 @@ model ProductBrand {
 model ProductCategory {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
+  isActive Boolean @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
   createdAt DateTime @default(now()) @map("created_at")
@@ -79,6 +81,7 @@ model ProductCategory {
 model ProductType {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
+  isActive Boolean @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
   createdAt DateTime @default(now()) @map("created_at")
@@ -89,6 +92,7 @@ model ProductType {
 model BarcodeSymbology {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique // [Code25, Code39, Code128, EAN8, EAN13, UPC-A, UPC-E]
+  isActive Boolean @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
   createdAt DateTime @default(now()) @map("created_at")
@@ -99,6 +103,7 @@ model BarcodeSymbology {
 model UnitOfMeasure {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
+  isActive Boolean @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
   createdAt DateTime @default(now()) @map("created_at")
