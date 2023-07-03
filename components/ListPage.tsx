@@ -41,14 +41,16 @@ export default function ListPage({
           </span>
         </Button>
       </Box>
-      <Box className="bg-white rounded-lg shadow-md p-5">
+      <Box className="bg-white w-full rounded-lg shadow-md p-5">
         <TextField
           label="Search"
           size="small"
           variant="outlined"
           className="w-[100%] sm:w-[45%]"
         />
-        <Box className="mt-4">{children}</Box>
+        <Box className="relative mt-4 w-full overflow-x-scroll scrollbar-hide">
+          {children}
+        </Box>
       </Box>
     </Box>
   );
