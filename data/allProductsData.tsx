@@ -56,8 +56,8 @@ export const allproductsData: DataType = {
           className="rounded-full"
           src={row.image}
           alt="Product Image"
-          height={50}
-          width={50}
+          height={40}
+          width={40}
         />
       ),
       style: {
