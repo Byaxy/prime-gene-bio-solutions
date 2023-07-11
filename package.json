@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --detectOpenHandles",
+    "test": "jest -t \"tests recursive subcategories\" --detectOpenHandles",
     "migrate:dev": "prisma migrate dev",
     "postinstall": "prisma generate"
   },

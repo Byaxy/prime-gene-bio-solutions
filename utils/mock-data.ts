@@ -22,7 +22,9 @@ export async function seedProductForeignKeys(): Promise<IProductRelationships> {
             productTypeId: (await prismaClient.productType.create({ data: { name: "TypeA" } })).id,
             unitOfMeasureId: (await prismaClient.unitOfMeasure.create({ data: { name: "Pieces" } })).id,
             productBrandId: (await prismaClient.productBrand.create({ data: { name: "Super" } })).id,
-            productCategoryId: (await prismaClient.productCategory.create({ data: { name: "CategoryA" } })).id,
+            productCategoryId: (await prismaClient.productCategory.create({ 
+                data: { name: "CategoryA", code: "RED" } 
+            })).id,
             barcodeSymbologyId: (await prismaClient.barcodeSymbology.create({ data: { name: "UPC-A" } })).id,
         }
     } catch(e) {
@@ -111,13 +113,21 @@ export async function seedMockProductTypes(qty: number = 1): Promise<IProductTyp
     return list;
 }
 
-export async function seedMockProductCategories(qty: number = 1): Promise<IProductCategory | IProductCategory[]> {
+export async function seedMockProductCategories(qty: number = 1, parentId: string | null = null): Promise<IProductCategory | IProductCategory[]> {
     if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
-    let list = [];
-    for(let i = 0; i < qty; i++) list.push({ name: generateRandomString(6) });
-    await prismaClient.productCategory.createMany({ data: list });
-    if(qty == 1) return list[0] ?? [];
-    return list;
+
+    let result = await prismaClient.$transaction(
+        [...Array(qty)].map((category) => prismaClient.productCategory.create({ 
+            data: {
+                name: generateRandomString(6),
+                code: generateRandomString(6),
+                parentCategoryId: parentId            
+            }
+        }))
+    );
+
+    if(qty == 1) return result[0] ?? [];
+    return result;
 }
 
 export async function seedMockBarcodeSymbologies(qty: number = 1): Promise<IBarcodeSymbology | IBarcodeSymbology[]> {

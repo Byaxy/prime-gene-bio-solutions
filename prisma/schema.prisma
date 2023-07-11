@@ -69,9 +69,14 @@ model ProductBrand {
 
 model ProductCategory {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code String @unique
   name String @unique
+  description String?
   isActive Boolean @default(true)
-  // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
+  // Recursive parent-child categories relationship. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations/self-relations
+  subCategories ProductCategory[] @relation("ParentChildCategories")
+  parentCategory ProductCategory? @relation("ParentChildCategories", fields: [parentCategoryId], references: [id])
+  parentCategoryId String? @db.Uuid @map("parent_category")
   products Product[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
