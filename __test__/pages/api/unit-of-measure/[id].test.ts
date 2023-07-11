@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IUnitOfMeasure, generateRandomString, seedMockUnitOfMeasures } from "@/utils";
+import { generateRandomString, seedMockUnitOfMeasures } from "@/utils";
 import unitOfMeasureApi from "@/pages/api/unit-of-measure/[id]";
 import prismaClient from "@/utils/prisma-client";
+import { UnitOfMeasure } from "@prisma/client";
 
 describe("tests api/unit-of-measure/id route", () => {
     let req: any;
     let res: any;
-    let unitOfMeasure: IUnitOfMeasure;
+    let unitOfMeasure: UnitOfMeasure;
     let unitOfMeasureId: string;
 
     beforeEach(() => {
@@ -16,7 +17,7 @@ describe("tests api/unit-of-measure/id route", () => {
 
     beforeAll(async () => {
         // Mock data
-        unitOfMeasure = await seedMockUnitOfMeasures(1) as IUnitOfMeasure;
+        unitOfMeasure = (await seedMockUnitOfMeasures(1))[0];
         unitOfMeasureId = (await prismaClient.unitOfMeasure.findUnique({ where: { name: unitOfMeasure.name } }))?.id as string;
     })
 
@@ -68,14 +69,14 @@ describe("tests api/unit-of-measure/id route", () => {
         await unitOfMeasureApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
-        const olderVersion = await prismaClient.unitOfMeasure.findUnique({ where: { id: unitOfMeasureId } }) as IUnitOfMeasure;
+        const olderVersion = await prismaClient.unitOfMeasure.findUnique({ where: { id: unitOfMeasureId } });
         expect({
             id: unitOfMeasureId,
             name: unitOfMeasure.name,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,
-        }).toMatchObject(olderVersion);
+        }).toEqual(olderVersion);
     })
 
     it("ignore extra fields not in unit-of-measure model", async() => {
@@ -86,7 +87,7 @@ describe("tests api/unit-of-measure/id route", () => {
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
         expect(res._getData()).toEqual("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
-        const olderVersion = await prismaClient.unitOfMeasure.findUnique({ where: { id: unitOfMeasureId } }) as IUnitOfMeasure;
+        const olderVersion = await prismaClient.unitOfMeasure.findUnique({ where: { id: unitOfMeasureId } });
         expect({
             id: unitOfMeasureId,
             name: unitOfMeasure.name,

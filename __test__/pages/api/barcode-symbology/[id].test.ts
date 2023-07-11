@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProductBrand, generateRandomString, seedMockBarcodeSymbologies } from "@/utils";
+import { generateRandomString, seedMockBarcodeSymbologies } from "@/utils";
 import barcodeSymbologyApi from "@/pages/api/barcode-symbology/[id]";
 import prismaClient from "@/utils/prisma-client";
+import { BarcodeSymbology } from "@prisma/client";
 
 describe("tests api/barcode-symbology/id route", () => {
     let req: any;
     let res: any;
-    let barcodeSymbology: IProductBrand;
+    let barcodeSymbology: BarcodeSymbology;
     let barcodeSymbologyId: string;
 
     beforeEach(() => {
@@ -16,7 +17,7 @@ describe("tests api/barcode-symbology/id route", () => {
 
     beforeAll(async () => {
         // Mock data
-        barcodeSymbology = await seedMockBarcodeSymbologies(1) as IProductBrand;
+        barcodeSymbology = (await seedMockBarcodeSymbologies(1))[0];
         barcodeSymbologyId = (await prismaClient.barcodeSymbology.findUnique({ where: { name: barcodeSymbology.name } }))?.id as string;
     })
 
@@ -68,14 +69,14 @@ describe("tests api/barcode-symbology/id route", () => {
         await barcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
-        const olderVersion = await prismaClient.barcodeSymbology.findUnique({ where: { id: barcodeSymbologyId } }) as IProductBrand;
+        const olderVersion = await prismaClient.barcodeSymbology.findUnique({ where: { id: barcodeSymbologyId } });
         expect({
             id: barcodeSymbologyId,
             name: barcodeSymbology.name,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,
-        }).toMatchObject(olderVersion);
+        }).toEqual(olderVersion);
     })
 
     it("ignore extra fields not in barcode-symbology model", async() => {
@@ -86,7 +87,7 @@ describe("tests api/barcode-symbology/id route", () => {
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
         expect(res._getData()).toEqual("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
-        const olderVersion = await prismaClient.barcodeSymbology.findUnique({ where: { id: barcodeSymbologyId } }) as IProductBrand;
+        const olderVersion = await prismaClient.barcodeSymbology.findUnique({ where: { id: barcodeSymbologyId } });
         expect({
             id: barcodeSymbologyId,
             name: barcodeSymbology.name,

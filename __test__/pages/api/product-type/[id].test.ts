@@ -1,13 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProductCategory, generateRandomString, seedMockProductCategories } from "@/utils";
+import { generateRandomString, seedMockProductCategories } from "@/utils";
 import productCategoryApi from "@/pages/api/product-category/[id]";
 import prismaClient from "@/utils/prisma-client";
+import { ProductCategory } from "@prisma/client";
 
 describe("tests api/product-category/id route", () => {
     let req: any;
     let res: any;
-    let productCategory: IProductCategory;
-    let productCategoryId: string;
+    let productCategory: ProductCategory;
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -16,8 +16,7 @@ describe("tests api/product-category/id route", () => {
 
     beforeAll(async () => {
         // Mock data
-        productCategory = await seedMockProductCategories(1) as IProductCategory;
-        productCategoryId = (await prismaClient.productCategory.findUnique({ where: { name: productCategory.name } }))?.id as string;
+        productCategory = (await seedMockProductCategories(1))[0];
     })
 
     afterAll(async () => {
@@ -51,7 +50,7 @@ describe("tests api/product-category/id route", () => {
 
     it("fetches product-category by Id", async() => {
         req.method = "GET";
-        req.query = { id: productCategoryId };
+        req.query = { id: productCategory.id };
         await productCategoryApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
@@ -61,44 +60,34 @@ describe("tests api/product-category/id route", () => {
         });
     })
 
-    it("does not update product-category if req.body has fields missing from product-category model", async () => {
+    it("does not update product-category if req.body is empty", async () => {
         req.method = "PUT";
-        req.query = { id: productCategoryId };
+        req.query = { id: productCategory.id };
         req.body = {};
         await productCategoryApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
-        const olderVersion = await prismaClient.productCategory.findUnique({ where: { id: productCategoryId } }) as IProductCategory;
-        expect({
-            id: productCategoryId,
-            name: productCategory.name,
-            isActive: true,
-            createdAt: olderVersion?.createdAt, 
-            updatedAt: olderVersion?.updatedAt,
-        }).toMatchObject(olderVersion);
+        const olderVersion = await prismaClient.productCategory.findUnique({ where: { id: productCategory.id } });
+        expect({ ...productCategory }).toEqual(olderVersion);
     })
 
     it("ignore extra fields not in product-category model", async() => {
         req.method = "PUT";
-        req.query = { id: productCategoryId };
+        req.query = { id: productCategory.id };
         req.body = { field: "test" };
         await productCategoryApi(req, res);
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
         expect(res._getData()).toEqual("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
-        const olderVersion = await prismaClient.productCategory.findUnique({ where: { id: productCategoryId } }) as IProductCategory;
+        const olderVersion = await prismaClient.productCategory.findUnique({ where: { id: productCategory.id } });
         expect({
-            id: productCategoryId,
-            name: productCategory.name,
-            isActive: true,
-            createdAt: olderVersion?.createdAt, 
-            updatedAt: olderVersion?.updatedAt,
+            ...productCategory
         }).toEqual(olderVersion);
     })
 
     it("updates a product-category", async() => {
         req.method = "PUT";
-        req.query = { id: productCategoryId };
+        req.query = { id: productCategory.id };
         let changes = {
             name: generateRandomString(),
         };
@@ -108,12 +97,10 @@ describe("tests api/product-category/id route", () => {
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toEqual("OK");
         
-        const newCategory = await prismaClient.productCategory.findUnique({ where: { name: changes.name } });
+        const updatedCategory = await prismaClient.productCategory.findUnique({ where: { name: changes.name } });
 
-        expect(newCategory).toBeDefined();
-        expect({ ...changes }).toEqual({ 
-            name: newCategory?.name,
-        });
+        expect(updatedCategory).toBeDefined();
+        expect({  ...productCategory, ...changes, updatedAt: updatedCategory?.updatedAt }).toEqual({ ...updatedCategory });
     })
 
     it("returns 404 if no product to delete", async() => {
@@ -127,10 +114,10 @@ describe("tests api/product-category/id route", () => {
 
     it("deletes a product", async() => {
         req.method = "DELETE";
-        req.query = { id: productCategoryId }
+        req.query = { id: productCategory.id }
 
         await productCategoryApi(req, res);
-        const result = await prismaClient.productCategory.findUnique({ where: { id: productCategoryId } });
+        const result = await prismaClient.productCategory.findUnique({ where: { id: productCategory.id } });
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
         expect(result?.isActive).toBe(false);

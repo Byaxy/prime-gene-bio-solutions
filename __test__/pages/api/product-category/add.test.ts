@@ -27,11 +27,12 @@ describe("tests the api/product-category/add route", () => {
 
     it("inserts a category in the database", async() => {
         req.method = "POST";
-        let product = {
-            name: generateRandomString()
+        let category = {
+            name: generateRandomString(),
+            code: generateRandomString(),
         }
 
-        req.body = { ...product };
+        req.body = { ...category };
 
         await addProductCategoryApi(req, res);
         expect(res.statusCode).toBe(201);
@@ -39,20 +40,28 @@ describe("tests the api/product-category/add route", () => {
 
         let result = await prismaClient.productCategory.findUnique({
             where: {
-                name: product.name
+                name: category.name
             }
         });
 
         expect(result).toBeDefined();
-        expect(result).toMatchObject(product);
+        expect(result).toEqual(JSON.parse(
+            res._getData(),
+            // Dates were converted to strings when response was stringified.
+            // Reconvert them to date objects
+            function (key, value) {
+                if (key === "createdAt" || key === "updatedAt") return new Date(value);
+                return value;
+            }
+        ));
     })
 
     it("fails to save category due to duplicate name", async() => {
-        let product = { name: generateRandomString() };
+        let product = { name: generateRandomString(), code: generateRandomString() };
 
         await prismaClient.productCategory.create({ data: { ...product } });
         req.method = "POST";
-        req.body = { name: product.name };
+        req.body = { name: product.name, code: generateRandomString() };
 
         await addProductCategoryApi(req, res);
         expect(res.statusCode).toBe(400);
@@ -61,7 +70,6 @@ describe("tests the api/product-category/add route", () => {
     })
 
     it("fails on missing required fields", async() => {  
-
         req.body = {};
         req.method = "POST";
         await addProductCategoryApi(req, res);

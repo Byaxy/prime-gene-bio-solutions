@@ -1,6 +1,7 @@
 import { generateRandomString } from "./functions";
 import prismaClient from "./prisma-client";
-import { IBarcodeSymbology, IProduct, IProductBrand, IProductCategory, IProductRelationships, IProductType, IUnitOfMeasure } from "./types";
+import { ProductCategory, ProductType, ProductBrand, BarcodeSymbology, Product, UnitOfMeasure } from "@prisma/client";
+import { IProductRelationships } from "./types";
 
 export const mockUser = {
     firstname: "jane",
@@ -45,31 +46,29 @@ export async function seedProductForeignKeys(): Promise<IProductRelationships> {
  * @param qty number of products to create. Defaults to 1
  * @returns product(s) that were created and saved in the DB
  */
-export async function seedMockProducts(qty: number = 1): Promise<IProduct | IProduct[]> {
+export async function seedMockProducts(qty: number = 1): Promise<Product[]> {
     if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
     
     let baseProduct = { ...(await seedProductForeignKeys()) };
-    let products = [];
 
-    for(let i = 0; i < qty; i++) {
-        products.push({
-            name: generateRandomString(),
-            code: generateRandomString(12),
-            cost: i * 5,
-            price: i * 5,
-            quantity: i * 5,
-            alertQuantity: i * 5,
-            isActive: true,
-            details: null,
-            images: [],
-            ...baseProduct
-        });
-    }
+    let result = await prismaClient.$transaction(
+        [...Array(qty)].map((_, i) => prismaClient.product.create({ 
+            data: {
+                name: generateRandomString(),
+                code: generateRandomString(12),
+                cost: i * 5,
+                price: i * 5,
+                quantity: i * 5,
+                alertQuantity: i * 5,
+                isActive: true,
+                details: null,
+                images: [],
+                ...baseProduct
+            }
+        }))
+    );
 
-    await prismaClient.product.createMany({ data: products });
-
-    if(qty == 1) return products[0];
-    return products;
+    return result;
 }
 
 /**
@@ -86,38 +85,46 @@ export async function cleanUpMockProducts() {
     await prismaClient.barcodeSymbology.deleteMany();
 }
 
-export async function seedMockProductBrands(qty: number = 1): Promise<IProductBrand | IProductBrand[]> {
+export async function seedMockProductBrands(qty: number = 1): Promise<ProductBrand[]> {
     if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
-    let list = [];
-    for(let i = 0; i < qty; i++) list.push({ name: generateRandomString(6) });
-    await prismaClient.productBrand.createMany({ data: list });
-    if(qty == 1) return list[0] ?? [];
-    return list;
-}
-
-export async function seedMockUnitOfMeasures(qty: number = 1): Promise<IUnitOfMeasure | IUnitOfMeasure[]> {
-    if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
-    let list = [];
-    for(let i = 0; i < qty; i++) list.push({ name: generateRandomString(6) });
-    await prismaClient.unitOfMeasure.createMany({ data: list });
-    if(qty == 1) return list[0] ?? [];
-    return list;
-}
-
-export async function seedMockProductTypes(qty: number = 1): Promise<IProductType | IProductType[]> {
-    if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
-    let list = [];
-    for(let i = 0; i < qty; i++) list.push({ name: generateRandomString(6) });
-    await prismaClient.productType.createMany({ data: list });
-    if(qty == 1) return list[0] ?? [];
-    return list;
-}
-
-export async function seedMockProductCategories(qty: number = 1, parentId: string | null = null): Promise<IProductCategory | IProductCategory[]> {
-    if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
-
     let result = await prismaClient.$transaction(
-        [...Array(qty)].map((category) => prismaClient.productCategory.create({ 
+        [...Array(qty)].map((_) => prismaClient.productBrand.create({ 
+            data: {
+                name: generateRandomString(6),
+            }
+        }))
+    );
+    return result;
+}
+
+export async function seedMockUnitOfMeasures(qty: number = 1): Promise<UnitOfMeasure[]> {
+    if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
+    let result = await prismaClient.$transaction(
+        [...Array(qty)].map((_) => prismaClient.unitOfMeasure.create({ 
+            data: {
+                name: generateRandomString(6),
+            }
+        }))
+    );
+    return result;
+}
+
+export async function seedMockProductTypes(qty: number = 1): Promise<ProductType[]> {
+    if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
+    let result = await prismaClient.$transaction(
+        [...Array(qty)].map((_) => prismaClient.productType.create({ 
+            data: {
+                name: generateRandomString(6),
+            }
+        }))
+    );
+    return result;
+}
+
+export async function seedMockProductCategories(qty: number = 1, parentId: string | null = null): Promise<ProductCategory[]> {
+    if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
+    let result = await prismaClient.$transaction(
+        [...Array(qty)].map((_) => prismaClient.productCategory.create({ 
             data: {
                 name: generateRandomString(6),
                 code: generateRandomString(6),
@@ -125,16 +132,17 @@ export async function seedMockProductCategories(qty: number = 1, parentId: strin
             }
         }))
     );
-
-    if(qty == 1) return result[0] ?? [];
     return result;
 }
 
-export async function seedMockBarcodeSymbologies(qty: number = 1): Promise<IBarcodeSymbology | IBarcodeSymbology[]> {
+export async function seedMockBarcodeSymbologies(qty: number = 1): Promise<BarcodeSymbology[]> {
     if (process.env.NODE_ENV !== "test") throw new Error("Illegal function call");
-    let list = [];
-    for(let i = 0; i < qty; i++) list.push({ name: generateRandomString(6) });
-    await prismaClient.barcodeSymbology.createMany({ data: list });
-    if(qty == 1) return list[0] ?? [];
-    return list;
+    let result = await prismaClient.$transaction(
+        [...Array(qty)].map((_) => prismaClient.barcodeSymbology.create({ 
+            data: {
+                name: generateRandomString(6),
+            }
+        }))
+    );
+    return result;
 }

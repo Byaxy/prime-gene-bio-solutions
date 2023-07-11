@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProduct, cleanUpMockProducts, seedMockProducts } from "@/utils";
+import { cleanUpMockProducts, seedMockProducts } from "@/utils";
 import getProductsApi from "@/pages/api/product";
 import prismaClient from "@/utils/prisma-client";
+import { Product } from "@prisma/client";
 
 describe("tests api/product/api route", () => {
     let req: any;
     let res: any;
-    let products: IProduct[];
+    let products: Product[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -15,7 +16,7 @@ describe("tests api/product/api route", () => {
 
     beforeAll(async () => {
         // Mock data
-        products = await seedMockProducts(3) as IProduct[];
+        products = await seedMockProducts(3);
     })
 
     afterAll(async () => {

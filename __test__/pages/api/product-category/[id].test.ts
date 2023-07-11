@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProductType, generateRandomString, seedMockProductTypes } from "@/utils";
+import { generateRandomString, seedMockProductTypes } from "@/utils";
 import productTypeApi from "@/pages/api/product-type/[id]";
 import prismaClient from "@/utils/prisma-client";
+import { ProductType } from "@prisma/client";
 
 describe("tests api/product-type/id route", () => {
     let req: any;
     let res: any;
-    let productType: IProductType;
+    let productType: ProductType;
     let productTypeId: string;
 
     beforeEach(() => {
@@ -16,7 +17,7 @@ describe("tests api/product-type/id route", () => {
 
     beforeAll(async () => {
         // Mock data
-        productType = await seedMockProductTypes(1) as IProductType;
+        productType = (await seedMockProductTypes())[0];
         productTypeId = (await prismaClient.productType.findUnique({ where: { name: productType.name } }))?.id as string;
     })
 
@@ -68,14 +69,14 @@ describe("tests api/product-type/id route", () => {
         await productTypeApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
-        const olderVersion = await prismaClient.productType.findUnique({ where: { id: productTypeId } }) as IProductType;
+        const olderVersion = await prismaClient.productType.findUnique({ where: { id: productTypeId } });
         expect({
             id: productTypeId,
             name: productType.name,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,
-        }).toMatchObject(olderVersion);
+        }).toEqual(olderVersion);
     })
 
     it("ignore extra fields not in product-type model", async() => {
@@ -86,7 +87,7 @@ describe("tests api/product-type/id route", () => {
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
         expect(res._getData()).toEqual("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
-        const olderVersion = await prismaClient.productType.findUnique({ where: { id: productTypeId } }) as IProductType;
+        const olderVersion = await prismaClient.productType.findUnique({ where: { id: productTypeId } });
         expect({
             id: productTypeId,
             name: productType.name,

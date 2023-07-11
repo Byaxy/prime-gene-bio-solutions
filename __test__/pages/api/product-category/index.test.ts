@@ -1,5 +1,5 @@
 import HttpMocks from "node-mocks-http";
-import { IProductCategory, seedMockProductCategories } from "@/utils";
+import { seedMockProductCategories } from "@/utils";
 import productCategoryApi from "@/pages/api/product-category";
 import prismaClient from "@/utils/prisma-client";
 import { ProductCategory } from "@prisma/client";
@@ -7,7 +7,7 @@ import { ProductCategory } from "@prisma/client";
 describe("tests api/product-category/index route", () => {
     let req: any;
     let res: any;
-    let categories: IProductCategory[];
+    let categories: ProductCategory[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -16,7 +16,7 @@ describe("tests api/product-category/index route", () => {
 
     beforeAll(async () => {
         // Mock data
-        categories = await seedMockProductCategories(3) as IProductCategory[];
+        categories = await seedMockProductCategories(3);
     })
 
     afterAll(async () => {
@@ -77,17 +77,17 @@ describe("tests api/product-category/index route if table is empty", () => {
 })
 
 describe("tests recursive subcategories", () => {
-    let categories: IProductCategory[] = [];
+    let categories: ProductCategory[] = [];
 
     beforeAll(async () => {
         // Generate parent
-        let parent = await seedMockProductCategories() as IProductCategory;
+        let parent = (await seedMockProductCategories())[0];
         categories.push(parent);
         // Generate sub-categories
-        let children = await seedMockProductCategories(3, parent.id) as IProductCategory[];
+        let children = await seedMockProductCategories(3, parent.id);
 
         // Generate sub-sub-categories
-        let grandChildren = await seedMockProductCategories(2, children[0].id) as IProductCategory[];
+        let grandChildren = await seedMockProductCategories(2, children[0].id);
         grandChildren.forEach(el => categories.push(el));
     });
 

@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProduct, cleanUpMockProducts, generateRandomString, seedMockProducts } from "@/utils";
+import { cleanUpMockProducts, generateRandomString, seedMockProducts } from "@/utils";
 import productApi from "@/pages/api/product/[id]";
 import prismaClient from "@/utils/prisma-client";
+import { Product } from "@prisma/client";
 
 describe("tests api/product/id route", () => {
     let req: any;
     let res: any;
-    let product: IProduct;
+    let product: Product;
     let productId: string;
 
     beforeEach(() => {
@@ -16,7 +17,7 @@ describe("tests api/product/id route", () => {
 
     beforeAll(async () => {
         // Mock data
-        product = await seedMockProducts(1) as IProduct;
+        product = (await seedMockProducts(1))[0];
         productId = (await prismaClient.product.findUnique({ where: { code: product.code } }))?.id as string;
     })
 
