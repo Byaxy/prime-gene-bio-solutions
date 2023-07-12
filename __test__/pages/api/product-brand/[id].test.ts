@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProductBrand, generateRandomString, seedMockProductBrands } from "@/utils";
+import { generateRandomString, seedMockProductBrands } from "@/utils";
 import productBrandApi from "@/pages/api/product-brand/[id]";
 import prismaClient from "@/utils/prisma-client";
+import { ProductBrand } from "@prisma/client";
 
 describe("tests api/product-brand/id route", () => {
     let req: any;
     let res: any;
-    let productBrand: IProductBrand;
+    let productBrand: ProductBrand;
     let productBrandId: string;
 
     beforeEach(() => {
@@ -16,7 +17,7 @@ describe("tests api/product-brand/id route", () => {
 
     beforeAll(async () => {
         // Mock data
-        productBrand = await seedMockProductBrands(1) as IProductBrand;
+        productBrand = (await seedMockProductBrands(1))[0];
         productBrandId = (await prismaClient.productBrand.findUnique({ where: { name: productBrand.name } }))?.id as string;
     })
 
@@ -68,14 +69,14 @@ describe("tests api/product-brand/id route", () => {
         await productBrandApi(req, res);
         expect(res.statusCode).toBe(200);
         expect(res.statusMessage).toBe("OK");
-        const olderVersion = await prismaClient.productBrand.findUnique({ where: { id: productBrandId } }) as IProductBrand;
+        const olderVersion = await prismaClient.productBrand.findUnique({ where: { id: productBrandId } });
         expect({
             id: productBrandId,
             name: productBrand.name,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,
-        }).toMatchObject(olderVersion);
+        }).toEqual(olderVersion);
     })
 
     it("ignore extra fields not in product-brand model", async() => {
@@ -86,7 +87,7 @@ describe("tests api/product-brand/id route", () => {
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
         expect(res._getData()).toEqual("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
-        const olderVersion = await prismaClient.productBrand.findUnique({ where: { id: productBrandId } }) as IProductBrand;
+        const olderVersion = await prismaClient.productBrand.findUnique({ where: { id: productBrandId } });
         expect({
             id: productBrandId,
             name: productBrand.name,

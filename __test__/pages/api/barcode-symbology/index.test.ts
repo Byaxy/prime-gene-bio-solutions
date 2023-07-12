@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProductBrand, seedMockBarcodeSymbologies } from "@/utils";
+import { seedMockBarcodeSymbologies } from "@/utils";
 import barcodeSymbologyApi from "@/pages/api/barcode-symbology";
 import prismaClient from "@/utils/prisma-client";
+import { BarcodeSymbology } from "@prisma/client";
 
 describe("tests api/barcode-symbology/index route", () => {
     let req: any;
     let res: any;
-    let barcodes: IProductBrand[];
+    let barcodes: BarcodeSymbology[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -15,7 +16,7 @@ describe("tests api/barcode-symbology/index route", () => {
 
     beforeAll(async () => {
         // Mock data
-        barcodes = await seedMockBarcodeSymbologies(3) as IProductBrand[];
+        barcodes = await seedMockBarcodeSymbologies(3);
     })
 
     afterAll(async () => {

@@ -14,7 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             // Get all items. See https://www.prisma.io/docs/concepts/components/prisma-client/crud#get-all-records
             const result = await prismaClient.productCategory.findMany({
                 where: {
-                    isActive: req.query.isActive === "false" ? false : true
+                    isActive: req.query.isActive === "false" ? false : true,
+                    parentCategoryId: null // Only OG categories i.e. no parents
                 }
             });
             return res.status(200).json(result);

@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IProductCategory, seedMockProductCategories } from "@/utils";
+import { seedMockProductCategories } from "@/utils";
 import productCategoryApi from "@/pages/api/product-category";
 import prismaClient from "@/utils/prisma-client";
+import { ProductCategory } from "@prisma/client";
 
 describe("tests api/product-category/index route", () => {
     let req: any;
     let res: any;
-    let categories: IProductCategory[];
+    let categories: ProductCategory[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -15,7 +16,7 @@ describe("tests api/product-category/index route", () => {
 
     beforeAll(async () => {
         // Mock data
-        categories = await seedMockProductCategories(3) as IProductCategory[];
+        categories = await seedMockProductCategories(3);
     })
 
     afterAll(async () => {
@@ -58,6 +59,15 @@ describe("tests api/product-category/index route", () => {
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
         expect(res._getJSONData()).toHaveLength(2);
+    })
+
+    it("does not fetch sub-categories", async() => {
+        let result = await seedMockProductCategories(1, categories[0].id);
+        req.method = "GET";
+        await productCategoryApi(req, res);
+        const subset = res._getJSONData().filter((el: ProductCategory) => el.id === result[0].id);
+        expect(res._getJSONData()).toHaveLength(2);
+        expect(subset).toHaveLength(0);
     })
 })
 

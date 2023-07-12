@@ -14,11 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch(req.method) {
         case "POST":
             try {
-                await prismaClient.productCategory.create({
+                const result = await prismaClient.productCategory.create({
                     data: { ...req.body }
                 });
     
-                return res.writeHead(201, statusMessages[201]).end();
+                return res.writeHead(201, statusMessages[201]).json(result);
             } catch(e) {
                 if(e instanceof Prisma.PrismaClientValidationError) {
                     // Missing required fields are missing. See https://www.prisma.io/docs/reference/api-reference/error-reference#prismaclientvalidationerror

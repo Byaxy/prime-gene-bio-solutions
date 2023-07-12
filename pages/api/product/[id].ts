@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
-import { statusMessages } from "@/utils";
+import { getProductCategoryBreadcrumb, statusMessages } from "@/utils";
 import prismaClient from "@/utils/prisma-client";
 import { Prisma } from "@prisma/client";
 
@@ -31,11 +31,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     productCategory: { select: { name: true } },
                     unitOfMeasure: { select: { name: true } },
                     productType: { select: { name: true } },
-                    barcodeSymbology: { select: { name: true } }
+                    barcodeSymbology: { select: { name: true } },
+                    productCategoryId: true
                 }
             });
             if (!result) return res.writeHead(404, statusMessages[404]).end();
-            return res.status(200).json(result);
+            const breadcrumbs = await getProductCategoryBreadcrumb(result.productCategoryId);
+            let { productCategoryId, ...rest } = result;
+            return res.status(200).json({ ...rest, breadcrumbs });
         case "PUT":
             try {
                 await prismaClient.product.update({

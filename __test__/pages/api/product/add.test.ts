@@ -1,7 +1,7 @@
 import prismaClient from "@/utils/prisma-client";
 import HttpMocks from "node-mocks-http";
 import addProductApi from "@/pages/api/product/add";
-import { IProduct, cleanUpMockProducts, seedMockProducts, seedProductForeignKeys } from "@/utils";
+import { cleanUpMockProducts, generateRandomString, seedMockProducts, seedProductForeignKeys } from "@/utils";
 
 describe("tests the api/product/add route", () => {
     let baseProduct: {[key: string]: any};
@@ -62,11 +62,14 @@ describe("tests the api/product/add route", () => {
     })
 
     it("fails to save product due to duplicate product code", async() => {
-        let products = await seedMockProducts(2) as IProduct[];
-        await prismaClient.product.create({ data: { ...products[0], code: "PROD-3" } });
-        products[1].code = "PROD-3";
+        let [ product ] = await seedMockProducts();
+        const duplicate = {
+            ...product,
+            id: undefined,
+            name: generateRandomString()
+        }
         req.method = "POST";
-        req.body = {...products[1] };
+        req.body = {...duplicate };
 
         await addProductApi(req, res);
         expect(res.statusCode).toBe(400);

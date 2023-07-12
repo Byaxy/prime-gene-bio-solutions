@@ -1,12 +1,13 @@
 import HttpMocks from "node-mocks-http";
-import { IUnitOfMeasure, seedMockUnitOfMeasures } from "@/utils";
+import { seedMockUnitOfMeasures } from "@/utils";
 import unitOfMeasureApi from "@/pages/api/unit-of-measure";
 import prismaClient from "@/utils/prisma-client";
+import { UnitOfMeasure } from "@prisma/client";
 
 describe("tests api/unit-of-measure/index route", () => {
     let req: any;
     let res: any;
-    let unitOfMeasure: IUnitOfMeasure[];
+    let unitOfMeasure: UnitOfMeasure[];
 
     beforeEach(() => {
         req = HttpMocks.createRequest();
@@ -15,7 +16,7 @@ describe("tests api/unit-of-measure/index route", () => {
 
     beforeAll(async () => {
         // Mock data
-        unitOfMeasure = await seedMockUnitOfMeasures(3) as IUnitOfMeasure[];
+        unitOfMeasure = await seedMockUnitOfMeasures(3);
     })
 
     afterAll(async () => {
