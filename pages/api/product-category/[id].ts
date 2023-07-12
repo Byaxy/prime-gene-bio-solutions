@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
-import { statusMessages } from "@/utils";
+import { getProductCategoryBreadcrumb, statusMessages } from "@/utils";
 import prismaClient from "@/utils/prisma-client";
 import { Prisma } from "@prisma/client";
 
@@ -19,10 +19,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const result = await prismaClient.productCategory.findUnique({
                 where: {
                     id: req.query.id as string
+                },
+                include: {
+                    subCategories: true
                 }
             });
             if (!result) return res.writeHead(404, statusMessages[404]).end();
-            return res.status(200).json(result);
+            let breadcrumbs = await getProductCategoryBreadcrumb(result.id);
+            return res.status(200).json({ ...result, breadcrumbs });
         case "PUT":
             try {
                 await prismaClient.productCategory.update({

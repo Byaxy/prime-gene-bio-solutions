@@ -60,6 +60,15 @@ describe("tests api/product-category/index route", () => {
         expect(res._getJSONData()).toBeDefined();
         expect(res._getJSONData()).toHaveLength(2);
     })
+
+    it("does not fetch sub-categories", async() => {
+        let result = await seedMockProductCategories(1, categories[0].id);
+        req.method = "GET";
+        await productCategoryApi(req, res);
+        const subset = res._getJSONData().filter((el: ProductCategory) => el.id === result[0].id);
+        expect(res._getJSONData()).toHaveLength(2);
+        expect(subset).toHaveLength(0);
+    })
 })
 
 describe("tests api/product-category/index route if table is empty", () => {
@@ -73,61 +82,5 @@ describe("tests api/product-category/index route if table is empty", () => {
         expect(res.statusMessage).toEqual("OK");
         expect(res._getJSONData()).toBeDefined();
         expect(res._getJSONData()).toHaveLength(0);
-    })
-})
-
-describe("tests recursive subcategories", () => {
-    let categories: ProductCategory[] = [];
-
-    beforeAll(async () => {
-        // Generate parent
-        let parent = (await seedMockProductCategories())[0];
-        categories.push(parent);
-        // Generate sub-categories
-        let children = await seedMockProductCategories(3, parent.id);
-
-        // Generate sub-sub-categories
-        let grandChildren = await seedMockProductCategories(2, children[0].id);
-        grandChildren.forEach(el => categories.push(el));
-    });
-
-    afterAll(async () => {
-        await prismaClient.productCategory.deleteMany();
-    });
-
-    it("fetches a category and its sub categories", async() => {
-        let result = await prismaClient.productCategory.findFirst({
-            where: {
-                id: categories[0].id
-            },
-            include: {
-                subCategories: true
-            }
-        });
-
-        expect(result?.subCategories).toHaveLength(3);
-    })
-
-    it("gets ancestry tree given child category id", async() => {
-        let child = categories.at(-1);
-
-        const result = await prismaClient.$queryRaw<ProductCategory[]>`
-            WITH RECURSIVE subcategories AS (
-                SELECT id, name, code, description, parent_category AS "parentCategoryId"
-                FROM product_category 
-                WHERE id = ${child?.id} 
-                UNION 
-                SELECT p.id, p.name, p.code, p.description, p.parent_category AS "parentCategoryId"
-                FROM product_category p 
-                INNER JOIN subcategories s 
-                ON s."parentCategoryId" = p.id
-            )
-            SELECT * FROM subcategories
-        `;
-
-        expect(result).toHaveLength(3);
-        expect(result[0].parentCategoryId).toEqual(result[1].id);
-        expect(result[1].parentCategoryId).toEqual(result[2].id);
-        expect(result[2].parentCategoryId).toBeNull();
     })
 })

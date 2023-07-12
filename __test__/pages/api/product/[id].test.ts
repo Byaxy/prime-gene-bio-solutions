@@ -70,7 +70,8 @@ describe("tests api/product/id route", () => {
             unitOfMeasure: { name: "Pieces" },
             productCategory: { name: "CategoryA" },
             productBrand: { name: "Super" },
-            barcodeSymbology: { name: "UPC-A" }
+            barcodeSymbology: { name: "UPC-A" },
+            breadcrumbs: []
         });
     })
 
