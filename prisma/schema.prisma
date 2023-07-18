@@ -20,9 +20,9 @@ model User {
   lastname String
   email String @unique
   password String
-  role Role @default(USER)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  role Role? @default(USER)
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -37,33 +37,35 @@ model Product {
   quantity Int
   alertQuantity Int @map("alert_quantity")
   details String?
-  isActive Boolean @default(true)
+  isActive Boolean? @default(true)
   // Foreign keys
   productTypeId String @db.Uuid @map("type")
   unitOfMeasureId String @db.Uuid @map("unit_of_measure")
   productBrandId String @db.Uuid @map("brand")
   productCategoryId String @db.Uuid @map("category")
-  barcodeSymbologyId String @db.Uuid @map("barcode_symbology")
+  // barcodeSymbologyId String @db.Uuid @map("barcode_symbology")
   // Reference fields to be used by client
   productType ProductType @relation(fields: [productTypeId], references: [id])
   unitOfMeasure UnitOfMeasure @relation(fields: [unitOfMeasureId], references: [id])
   productBrand ProductBrand @relation(fields: [productBrandId], references: [id])
   productCategory ProductCategory @relation(fields: [productCategoryId], references: [id])
-  barcodeSymbology BarcodeSymbology @relation(fields: [barcodeSymbologyId], references: [id])
+  // barcodeSymbology BarcodeSymbology @relation(fields: [barcodeSymbologyId], references: [id])
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
   @@map("product")
 }
 
 model ProductBrand {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
-  isActive Boolean @default(true)
+  code String @unique
+  image String?
+  isActive Boolean? @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
   @@map("product_brand")
 }
 
@@ -72,46 +74,48 @@ model ProductCategory {
   code String @unique
   name String @unique
   description String?
-  isActive Boolean @default(true)
+  isActive Boolean? @default(true)
   // Recursive parent-child categories relationship. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations/self-relations
   subCategories ProductCategory[] @relation("ParentChildCategories")
   parentCategory ProductCategory? @relation("ParentChildCategories", fields: [parentCategoryId], references: [id])
   parentCategoryId String? @db.Uuid @map("parent_category")
   products Product[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
   @@map("product_category")
 }
 
 model ProductType {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
-  isActive Boolean @default(true)
+  description String?
+  isActive Boolean? @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")  
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")  
   @@map("product_type")
 }
 
 model BarcodeSymbology {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique // [Code25, Code39, Code128, EAN8, EAN13, UPC-A, UPC-E]
-  isActive Boolean @default(true)
+  isActive Boolean? @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
-  products Product[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  // products Product[]
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
   @@map("barcode_symbology")
 }
 
 model UnitOfMeasure {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique
-  isActive Boolean @default(true)
+  code String @unique
+  isActive Boolean? @default(true)
   // Prisma relation fields. Don't get created in db. See https://www.prisma.io/docs/concepts/components/prisma-schema/relations
   products Product[]
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
   @@map("product_unit")
 }

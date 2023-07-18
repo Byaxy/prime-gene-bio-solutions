@@ -70,7 +70,7 @@ describe("tests api/product/id route", () => {
             unitOfMeasure: { name: "Pieces" },
             productCategory: { name: "CategoryA" },
             productBrand: { name: "Super" },
-            barcodeSymbology: { name: "UPC-A" },
+            // barcodeSymbology: { name: "UPC-A" },
             breadcrumbs: []
         });
     })
@@ -174,7 +174,7 @@ describe("tests api/product/id route", () => {
         expect(res._getData()).toEqual("Invalid dependent item");
     })
 
-    it("fails on invalid barcode symbology", async () => {
+    /*it("fails on invalid barcode symbology", async () => {
         req.method = "PUT";
         req.body = { barcodeSymbologyId: "a295438e-58a6-4fa7-8cc1-70af34a3b8c0" }
         req.query = { id: productId };
@@ -184,7 +184,7 @@ describe("tests api/product/id route", () => {
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");
         expect(res._getData()).toEqual("Invalid dependent item");
-    })
+    })*/
 
     it("fails on invalid product brand", async () => {
         req.method = "PUT";

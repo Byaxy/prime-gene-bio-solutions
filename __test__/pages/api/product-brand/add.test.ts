@@ -27,11 +27,12 @@ describe("tests the api/product-brand/add route", () => {
 
     it("inserts a brand in the database", async() => {
         req.method = "POST";
-        let product = {
-            name: generateRandomString()
+        let productBrand = {
+            name: generateRandomString(),
+            code: generateRandomString()
         }
 
-        req.body = { ...product };
+        req.body = { ...productBrand };
 
         await addProductBrandApi(req, res);
         expect(res.statusCode).toBe(201);
@@ -39,25 +40,38 @@ describe("tests the api/product-brand/add route", () => {
 
         let result = await prismaClient.productBrand.findUnique({
             where: {
-                name: product.name
+                name: productBrand.name
             }
         });
 
         expect(result).toBeDefined();
-        expect(result).toMatchObject(product);
+        expect(result).toMatchObject(productBrand);
     })
 
     it("fails to save brand due to duplicate name", async() => {
-        let product = { name: generateRandomString() };
+        let productBrand = { name: generateRandomString(), code: generateRandomString() };
 
-        await prismaClient.productBrand.create({ data: { ...product } });
+        await prismaClient.productBrand.create({ data: { ...productBrand } });
         req.method = "POST";
-        req.body = { name: product.name };
+        req.body = { name: productBrand.name, code: generateRandomString() };
 
         await addProductBrandApi(req, res);
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toEqual("Bad Request");
         expect(res._getData()).toEqual("Unique constraint failed on the fields: (`name`)");
+    })
+
+    it("fails to save brand due to duplicate code", async() => {
+        let productBrand = { name: generateRandomString(), code: generateRandomString() };
+
+        await prismaClient.productBrand.create({ data: { ...productBrand } });
+        req.method = "POST";
+        req.body = { name: generateRandomString(), code: productBrand.code };
+
+        await addProductBrandApi(req, res);
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toEqual("Bad Request");
+        expect(res._getData()).toEqual("Unique constraint failed on the fields: (`code`)");
     })
 
     it("fails on missing required fields", async() => {  

@@ -28,7 +28,8 @@ describe("tests the api/unit-of-measure/add route", () => {
     it("inserts a brand in the database", async() => {
         req.method = "POST";
         let product = {
-            name: generateRandomString()
+            name: generateRandomString(),
+            code: generateRandomString()
         }
 
         req.body = { ...product };
@@ -47,17 +48,30 @@ describe("tests the api/unit-of-measure/add route", () => {
         expect(result).toMatchObject(product);
     })
 
-    it("fails to save brand due to duplicate name", async() => {
-        let product = { name: generateRandomString() };
+    it("fails to save unit of measure due to duplicate name", async() => {
+        let uom = { name: generateRandomString(), code: generateRandomString() };
 
-        await prismaClient.unitOfMeasure.create({ data: { ...product } });
+        await prismaClient.unitOfMeasure.create({ data: { ...uom } });
         req.method = "POST";
-        req.body = { name: product.name };
+        req.body = { name: uom.name, code: generateRandomString() };
 
         await addUnitOfMeasureApi(req, res);
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toEqual("Bad Request");
         expect(res._getData()).toEqual("Unique constraint failed on the fields: (`name`)");
+    })
+
+    it("fails to save unit of measure due to duplicate code", async() => {
+        let uom = { name: generateRandomString(), code: generateRandomString() };
+
+        await prismaClient.unitOfMeasure.create({ data: { ...uom } });
+        req.method = "POST";
+        req.body = { name: generateRandomString(), code: uom.code };
+
+        await addUnitOfMeasureApi(req, res);
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toEqual("Bad Request");
+        expect(res._getData()).toEqual("Unique constraint failed on the fields: (`code`)");
     })
 
     it("fails on missing required fields", async() => {  

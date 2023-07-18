@@ -73,6 +73,7 @@ describe("tests api/product-type/id route", () => {
         expect({
             id: productTypeId,
             name: productType.name,
+            description: null,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,
@@ -91,6 +92,7 @@ describe("tests api/product-type/id route", () => {
         expect({
             id: productTypeId,
             name: productType.name,
+            description: null,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,

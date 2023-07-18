@@ -31,7 +31,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     productCategory: { select: { name: true } },
                     unitOfMeasure: { select: { name: true } },
                     productType: { select: { name: true } },
-                    barcodeSymbology: { select: { name: true } },
                     productCategoryId: true
                 }
             });
