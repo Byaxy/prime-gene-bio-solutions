@@ -73,6 +73,7 @@ describe("tests api/unit-of-measure/id route", () => {
         expect({
             id: unitOfMeasureId,
             name: unitOfMeasure.name,
+            code: unitOfMeasure.code,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,
@@ -91,6 +92,7 @@ describe("tests api/unit-of-measure/id route", () => {
         expect({
             id: unitOfMeasureId,
             name: unitOfMeasure.name,
+            code: unitOfMeasure.code,
             isActive: true,
             createdAt: olderVersion?.createdAt, 
             updatedAt: olderVersion?.updatedAt,

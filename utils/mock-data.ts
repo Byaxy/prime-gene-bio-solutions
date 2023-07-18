@@ -1,6 +1,6 @@
-import { generateRandomString } from "./functions";
+import { generateRandomString, hashPassword } from "./functions";
 import prismaClient from "./prisma-client";
-import { ProductCategory, ProductType, ProductBrand, BarcodeSymbology, Product, UnitOfMeasure } from "@prisma/client";
+import { ProductCategory, ProductType, ProductBrand, BarcodeSymbology, Product, UnitOfMeasure, User } from "@prisma/client";
 import { IProductRelationships } from "./types";
 
 export const mockUser = {
@@ -9,6 +9,32 @@ export const mockUser = {
     email: "jane.doe@gmail.com",
     password: generateRandomString(),
 }
+
+/** 
+ * Generate test user
+ * @returns the created user
+*/
+export async function seedMockUser(): Promise<User | null> {
+    try {
+        console.log(mockUser);
+        const result = await prismaClient.user.create({
+            data: { 
+                ...mockUser, 
+                password: (await hashPassword(mockUser.password)) 
+            }
+        });
+        return result;
+    } catch(e) {
+        // Probably user was already existing
+        const user = await prismaClient.user.findUnique({ 
+            where: {
+                email: mockUser.email
+            }
+        });
+        return user;
+    }
+}
+
 
 /**
  * Generate values for the foreign key fields in the product model
@@ -21,12 +47,12 @@ export async function seedProductForeignKeys(): Promise<IProductRelationships> {
     try {
         fields = {
             productTypeId: (await prismaClient.productType.create({ data: { name: "TypeA" } })).id,
-            unitOfMeasureId: (await prismaClient.unitOfMeasure.create({ data: { name: "Pieces" } })).id,
-            productBrandId: (await prismaClient.productBrand.create({ data: { name: "Super" } })).id,
+            unitOfMeasureId: (await prismaClient.unitOfMeasure.create({ data: { name: "Pieces", code: "Red" } })).id,
+            productBrandId: (await prismaClient.productBrand.create({ data: { name: "Super", code: "Blue" } })).id,
             productCategoryId: (await prismaClient.productCategory.create({ 
                 data: { name: "CategoryA", code: "RED" } 
             })).id,
-            barcodeSymbologyId: (await prismaClient.barcodeSymbology.create({ data: { name: "UPC-A" } })).id,
+            // barcodeSymbologyId: (await prismaClient.barcodeSymbology.create({ data: { name: "UPC-A" } })).id,
         }
     } catch(e) {
         // Keys were already created; Just fetch from DB and return them
@@ -35,7 +61,7 @@ export async function seedProductForeignKeys(): Promise<IProductRelationships> {
             unitOfMeasureId: (await prismaClient.unitOfMeasure.findUnique({ where: { name: "Pieces" } }))?.id as string,
             productBrandId: (await prismaClient.productBrand.findUnique({ where: { name: "Super" } }))?.id as string,
             productCategoryId: (await prismaClient.productCategory.findUnique({ where: { name: "CategoryA" } }))?.id as string,
-            barcodeSymbologyId: (await prismaClient.barcodeSymbology.findUnique({ where: { name: "UPC-A" } }))?.id as string,
+            // barcodeSymbologyId: (await prismaClient.barcodeSymbology.findUnique({ where: { name: "UPC-A" } }))?.id as string,
         }
     }
     return fields;
@@ -91,6 +117,7 @@ export async function seedMockProductBrands(qty: number = 1): Promise<ProductBra
         [...Array(qty)].map((_) => prismaClient.productBrand.create({ 
             data: {
                 name: generateRandomString(6),
+                code: generateRandomString(6)
             }
         }))
     );
@@ -103,6 +130,7 @@ export async function seedMockUnitOfMeasures(qty: number = 1): Promise<UnitOfMea
         [...Array(qty)].map((_) => prismaClient.unitOfMeasure.create({ 
             data: {
                 name: generateRandomString(6),
+                code: generateRandomString(6)
             }
         }))
     );

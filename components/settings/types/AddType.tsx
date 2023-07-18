@@ -8,15 +8,16 @@ import { Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { FormInputText } from "@/components/form-components/FormInputText";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { ProductType } from "@prisma/client";
 
-interface IFormInput {
-  typeName: string;
-  typeDescription: string;
-}
+// Even though these fields are optional in schema.prisma, the auto-generated type
+// marks them as required. Therefore, omit these fields manually.
+// See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
+type FormInput = Omit<ProductType, "id" | "isActive" | "createdAt" | "updatedAt">;
 
-const defaultValues = {
-  typeName: "",
-  typeDescription: "",
+const defaultValues: FormInput = {
+  name: "",
+  description: "",
 };
 type AddTypeProps = {
   open: boolean;
@@ -27,11 +28,11 @@ export default function AddType({
   open,
   handleClose,
 }: AddTypeProps): ReactNode {
-  const { handleSubmit, reset, control } = useForm<IFormInput>({
+  const { handleSubmit, reset, control } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
 
-  const onSubmit = (data: IFormInput) => {
+  const onSubmit = (data: FormInput) => {
     console.log(data);
     reset();
   };

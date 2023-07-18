@@ -1,4 +1,4 @@
-import { comparePassword, generateRandomString, hashPassword } from "@/utils";
+import { comparePassword, generateRandomString, hashPassword, mockUser, seedMockUser } from "@/utils";
 
 describe("tests utility functions", () => {
     it("generates random string", () => {
@@ -21,4 +21,10 @@ describe("tests utility functions", () => {
         let result = await comparePassword(password, hash);
         expect(result).toBe(true);
     })
+
+    /*it("creates a user", async() => {
+        const user = await seedMockUser();
+        expect(user).toBeDefined();
+        expect(user).toEqual(mockUser);
+    })*/
 })

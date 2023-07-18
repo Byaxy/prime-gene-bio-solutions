@@ -48,11 +48,11 @@ describe("tests the api/product-type/add route", () => {
     })
 
     it("fails to save type due to duplicate name", async() => {
-        let product = { name: generateRandomString() };
+        let productType = { name: generateRandomString() };
 
-        await prismaClient.productType.create({ data: { ...product } });
+        await prismaClient.productType.create({ data: { ...productType } });
         req.method = "POST";
-        req.body = { name: product.name };
+        req.body = { name: productType.name };
 
         await addProductTypeApi(req, res);
         expect(res.statusCode).toBe(400);

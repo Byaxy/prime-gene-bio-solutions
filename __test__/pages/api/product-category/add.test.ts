@@ -57,16 +57,29 @@ describe("tests the api/product-category/add route", () => {
     })
 
     it("fails to save category due to duplicate name", async() => {
-        let product = { name: generateRandomString(), code: generateRandomString() };
+        let productCategory = { name: generateRandomString(), code: generateRandomString() };
 
-        await prismaClient.productCategory.create({ data: { ...product } });
+        await prismaClient.productCategory.create({ data: { ...productCategory } });
         req.method = "POST";
-        req.body = { name: product.name, code: generateRandomString() };
+        req.body = { name: productCategory.name, code: generateRandomString() };
 
         await addProductCategoryApi(req, res);
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toEqual("Bad Request");
         expect(res._getData()).toEqual("Unique constraint failed on the fields: (`name`)");
+    })
+
+    it("fails to save category due to duplicate code", async() => {
+        let productCategory = { name: generateRandomString(), code: generateRandomString() };
+
+        await prismaClient.productCategory.create({ data: { ...productCategory } });
+        req.method = "POST";
+        req.body = { name: generateRandomString(), code: productCategory.code };
+
+        await addProductCategoryApi(req, res);
+        expect(res.statusCode).toBe(400);
+        expect(res.statusMessage).toEqual("Bad Request");
+        expect(res._getData()).toEqual("Unique constraint failed on the fields: (`code`)");
     })
 
     it("fails on missing required fields", async() => {  

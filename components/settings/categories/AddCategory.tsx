@@ -9,19 +9,18 @@ import { useForm } from "react-hook-form";
 import { FormInputText } from "@/components/form-components/FormInputText";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
+import { ProductCategory } from "@prisma/client";
 
-interface IFormInput {
-  categoryName: string;
-  categoryCode: string;
-  categoryDescription: string;
-  parentCategory: string;
-}
+// Even though these fields are optional in schema.prisma, the auto-generated type
+// marks them as required. Therefore, omit these fields manually.
+// See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
+type FormInput = Omit<ProductCategory, "id" | "isActive" | "createdAt" | "updatedAt">;
 
-const defaultValues = {
-  categoryName: "",
-  categoryCode: "",
-  categoryDescription: "",
-  parentCategory: "",
+const defaultValues: FormInput = {
+  name: "",
+  code: "",
+  description: "",
+  parentCategoryId: "",
 };
 
 type AddCategoryProps = {
@@ -44,11 +43,11 @@ export default function AddCategory({
   open,
   handleClose,
 }: AddCategoryProps): ReactNode {
-  const { handleSubmit, reset, control } = useForm<IFormInput>({
+  const { handleSubmit, reset, control } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
 
-  const onSubmit = (data: IFormInput) => {
+  const onSubmit = (data: FormInput) => {
     console.log(data);
     reset();
   };
@@ -74,46 +73,46 @@ export default function AddCategory({
               are required input fields.
             </p>
           </DialogContentText>
-          <label htmlFor="categoryName">
+          <label htmlFor="name">
             <span className="text-primaryDark font-semibold">
               Category Name
             </span>
             <span className="text-redColor"> *</span>
           </label>
           <FormInputText
-            name="categoryName"
+            name="name"
             control={control}
             label="Category Name"
           />
-          <label htmlFor="categoryCode">
+          <label htmlFor="code">
             <span className="text-primaryDark font-semibold">
               Category Code
             </span>
             <span className="text-redColor"> *</span>
           </label>
           <FormInputText
-            name="categoryCode"
+            name="code"
             control={control}
             label="Category Code"
           />
-          <label htmlFor="categoryDescription">
+          <label htmlFor="description">
             <span className="text-primaryDark font-semibold">
               Category Description
             </span>
           </label>
           <FormInputText
-            name="categoryDescription"
+            name="description"
             control={control}
             label="Category Description"
           />
           <div className="flex flex-col w-full gap-2">
-            <label htmlFor="categoryDescription">
+            <label htmlFor="parentCategoryId">
               <span className="text-primaryDark font-semibold">
                 Parent Category
               </span>
             </label>
             <FormInputDropdown
-              name="parentCategory"
+              name="parentCategoryId"
               control={control}
               label="Parent Category"
               options={options}

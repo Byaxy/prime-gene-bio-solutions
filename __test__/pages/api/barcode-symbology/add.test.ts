@@ -1,6 +1,6 @@
 import prismaClient from "@/utils/prisma-client";
 import HttpMocks from "node-mocks-http";
-import addProductBrandApi from "@/pages/api/barcode-symbology/add";
+import addBarcodeSymbologyApi from "@/pages/api/barcode-symbology/add";
 import { generateRandomString } from "@/utils";
 
 describe("tests the api/barcode-symbology/add route", () => {
@@ -19,7 +19,7 @@ describe("tests the api/barcode-symbology/add route", () => {
 
     it("tests allowed methods", async () => {
         req.method = "HEAD";
-        await addProductBrandApi(req, res);
+        await addBarcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(405);
         expect(res.statusMessage).toEqual("Method Not Allowed");
         expect(res.getHeader("Allow")).toEqual("POST");
@@ -27,34 +27,34 @@ describe("tests the api/barcode-symbology/add route", () => {
 
     it("inserts a brand in the database", async() => {
         req.method = "POST";
-        let product = {
+        let barcode = {
             name: generateRandomString()
         }
 
-        req.body = { ...product };
+        req.body = { ...barcode };
 
-        await addProductBrandApi(req, res);
+        await addBarcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(201);
         expect(res.statusMessage).toEqual("Created");
 
         let result = await prismaClient.barcodeSymbology.findUnique({
             where: {
-                name: product.name
+                name: barcode.name
             }
         });
 
         expect(result).toBeDefined();
-        expect(result).toMatchObject(product);
+        expect(result).toMatchObject(barcode);
     })
 
-    it("fails to save brand due to duplicate name", async() => {
-        let product = { name: generateRandomString() };
+    it("fails to save barcode symbology due to duplicate name", async() => {
+        let barcode = { name: generateRandomString() };
 
-        await prismaClient.barcodeSymbology.create({ data: { ...product } });
+        await prismaClient.barcodeSymbology.create({ data: { ...barcode } });
         req.method = "POST";
-        req.body = { name: product.name };
+        req.body = { name: barcode.name };
 
-        await addProductBrandApi(req, res);
+        await addBarcodeSymbologyApi(req, res);
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toEqual("Bad Request");
         expect(res._getData()).toEqual("Unique constraint failed on the fields: (`name`)");
@@ -64,7 +64,7 @@ describe("tests the api/barcode-symbology/add route", () => {
 
         req.body = {};
         req.method = "POST";
-        await addProductBrandApi(req, res);
+        await addBarcodeSymbologyApi(req, res);
 
         expect(res.statusCode).toBe(400);
         expect(res.statusMessage).toBe("Bad Request");

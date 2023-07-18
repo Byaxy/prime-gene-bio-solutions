@@ -9,17 +9,17 @@ import { useForm } from "react-hook-form";
 import { FormInputText } from "@/components/form-components/FormInputText";
 import CancelIcon from "@mui/icons-material/Cancel";
 import FormImageUpload from "@/components/form-components/FormImageUpload";
+import { ProductBrand } from "@prisma/client";
 
-interface IFormInput {
-  brandName: string;
-  brandCode: string;
-  brandImage: string;
-}
+// Even though these fields are optional in schema.prisma, the auto-generated type
+// marks them as required. Therefore, omit these fields manually.
+// See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
+type FormInput = Omit<ProductBrand, "id" | "isActive" | "createdAt" | "updatedAt">;
 
-const defaultValues = {
-  brandName: "",
-  brandCode: "",
-  brandImage: "",
+const defaultValues: FormInput = {
+  name: "",
+  code: "",
+  image: "",
 };
 
 type AddBrandProps = {
@@ -31,12 +31,22 @@ export default function AddBrand({
   open,
   handleClose,
 }: AddBrandProps): ReactNode {
-  const { handleSubmit, reset, control } = useForm<IFormInput>({
+  const { handleSubmit, reset, control } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
 
-  const onSubmit = (data: IFormInput) => {
-    console.log(data);
+  const onSubmit = async (data: FormInput) => {       
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }
+  
+    const response = await fetch("/api/product-brand/add", options)
+
+    const result = await response.json()
     reset();
   };
 
@@ -59,21 +69,21 @@ export default function AddBrand({
               are required input fields.
             </p>
           </DialogContentText>
-          <label htmlFor="brandName">
+          <label htmlFor="name">
             <span className="text-primaryDark font-semibold">Brand Name</span>
             <span className="text-redColor"> *</span>
           </label>
           <FormInputText
-            name="brandName"
+            name="name"
             control={control}
             label="Brand Name"
           />
-          <label htmlFor="brandCode">
+          <label htmlFor="code">
             <span className="text-primaryDark font-semibold">Brand Code</span>
             <span className="text-redColor"> *</span>
           </label>
           <FormInputText
-            name="brandCode"
+            name="code"
             control={control}
             label="Brand Code"
           />

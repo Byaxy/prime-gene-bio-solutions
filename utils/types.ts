@@ -8,5 +8,5 @@ export interface IProductRelationships {
     unitOfMeasureId: string;
     productBrandId: string;
     productCategoryId: string;
-    barcodeSymbologyId: string;
+    // barcodeSymbologyId: string;
 }

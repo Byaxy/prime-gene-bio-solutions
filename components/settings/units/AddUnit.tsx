@@ -8,16 +8,18 @@ import { Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { FormInputText } from "@/components/form-components/FormInputText";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { UnitOfMeasure } from "@prisma/client";
 
-interface IFormInput {
-  unitName: string;
-  unitCode: string;
-}
+// Even though these fields are optional in schema.prisma, the auto-generated type
+// marks them as required. Therefore, omit these fields manually.
+// See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
+type FormInput = Omit<UnitOfMeasure, "id" | "isActive" | "createdAt" | "updatedAt">;
 
-const defaultValues = {
-  unitName: "",
-  unitCode: "",
+const defaultValues: FormInput = {
+  name: "",
+  code: "",
 };
+
 type AddUnitProps = {
   open: boolean;
   handleClose: () => void;
@@ -27,11 +29,11 @@ export default function AddUnit({
   open,
   handleClose,
 }: AddUnitProps): ReactNode {
-  const { handleSubmit, reset, control } = useForm<IFormInput>({
+  const { handleSubmit, reset, control } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
 
-  const onSubmit = (data: IFormInput) => {
+  const onSubmit = (data: FormInput) => {
     console.log(data);
     reset();
   };
@@ -55,16 +57,16 @@ export default function AddUnit({
               are required input fields.
             </p>
           </DialogContentText>
-          <label htmlFor="unitName">
+          <label htmlFor="name">
             <span className="text-primaryDark font-semibold">Unit Name</span>
             <span className="text-redColor"> *</span>
           </label>
-          <FormInputText name="unitName" control={control} label="Unit Name" />
-          <label htmlFor="unitCode">
+          <FormInputText name="name" control={control} label="Unit Name" />
+          <label htmlFor="code">
             <span className="text-primaryDark font-semibold">Unit Code</span>
             <span className="text-redColor"> *</span>
           </label>
-          <FormInputText name="unitCode" control={control} label="Unit Code" />
+          <FormInputText name="code" control={control} label="Unit Code" />
         </DialogContent>
         <DialogActions>
           <Button variant="outlined" onClick={() => reset()}>
