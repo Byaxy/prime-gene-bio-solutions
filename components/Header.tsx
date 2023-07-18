@@ -37,13 +37,12 @@ export default function Header() {
       const fullName = session.data?.user?.name;
       const splitNames = fullName?.split(" ");
 
-      splitNames?.map((name, index) => {
+      splitNames?.map((name) => {
         initials += name[0].toUpperCase();
       });
       setUserInitials(initials);
     };
     getInitials();
-    console.log(userInitials);
   }, [session.data?.user?.name, userInitials]);
   return (
     <Box className="relative w-full flex flex-row items-center justify-end gap-3">

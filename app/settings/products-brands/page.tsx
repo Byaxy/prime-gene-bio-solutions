@@ -1,14 +1,13 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { allproductsData } from "@/data/allProductsData";
+import { brandsData } from "@/data/brandsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
-import ListPage from "@/components/ListPage";
-import ListComponent from "@/components/ListComponent";
 import AddBrand from "@/components/settings/brands/AddBrand";
+import ListComponent from "@/components/ListComponent";
 
-export default function ProductsPage() {
+export default function ProductBrandsPage() {
   const [add, setAdd] = useState<boolean>(false);
 
   const onAddClicked = useCallback((): void => {
@@ -25,16 +24,15 @@ export default function ProductsPage() {
   };
   return (
     <ListComponent
-      title="Products"
-      buttonText="Add Product"
+      title="Products Brands"
+      buttonText="Add Brand"
       buttonAction={onAddClicked}
     >
       <>
-        {/** TO DO: Replace with AddProduct component */}
         <AddBrand open={add} handleClose={handleClose} />
         <DataTable
-          data={allproductsData.data}
-          columns={allproductsData.columns}
+          data={brandsData.data}
+          columns={brandsData.columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"

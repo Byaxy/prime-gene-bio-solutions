@@ -26,7 +26,7 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  id: number;
+  id: string;
   code: string;
   name: string;
   image: string;
@@ -56,8 +56,8 @@ export const allproductsData: DataType = {
           className="rounded-full"
           src={row.image}
           alt="Product Image"
-          height={50}
-          width={50}
+          height={40}
+          width={40}
         />
       ),
       style: {
@@ -107,7 +107,7 @@ export const allproductsData: DataType = {
     },
     {
       name: "Actions",
-      cell: (row: { id: number }) => [
+      cell: (row: { id: string }) => [
         <Link href={`/products/edit-product/${row.id}`} key={row.id}>
           <EditIcon sx={{ color: "#475BE8" }} />
         </Link>,
@@ -125,7 +125,7 @@ export const allproductsData: DataType = {
   ],
   data: [
     {
-      id: 1,
+      id: "1",
       image: "/product.jpg",
       code: "0085",
       name: "Talley Counter",
@@ -139,7 +139,7 @@ export const allproductsData: DataType = {
       actions: "",
     },
     {
-      id: 2,
+      id: "2",
       image: "/product.jpg",
       code: "00857",
       name: "Sealent",

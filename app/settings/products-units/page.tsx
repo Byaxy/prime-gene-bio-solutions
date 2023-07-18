@@ -1,15 +1,15 @@
 "use client";
-import React, { useCallback, useState } from "react";
-import { allproductsData } from "@/data/allProductsData";
+import { useCallback, useState } from "react";
+import { unitsData } from "@/data/unitsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
-import { useRouter } from "next/navigation";
-import ListPage from "@/components/ListPage";
 import ListComponent from "@/components/ListComponent";
-import AddBrand from "@/components/settings/brands/AddBrand";
+import AddUnit from "@/components/settings/units/AddUnit";
+import { useRouter } from "next/navigation";
 
-export default function ProductsPage() {
+export default function ProductsUnitsPage(): JSX.Element {
   const [add, setAdd] = useState<boolean>(false);
+  const router = useRouter();
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
@@ -19,22 +19,20 @@ export default function ProductsPage() {
     setAdd(false);
   }, []);
 
-  const router = useRouter();
   const onRowClicked = (row: { id: string }) => {
-    router.push(`/settings/products-brands/${row.id}`);
+    router.push(`/settings/products-units/${row.id}`);
   };
   return (
     <ListComponent
-      title="Products"
-      buttonText="Add Product"
+      title="Products Units"
+      buttonText="Add Unit"
       buttonAction={onAddClicked}
     >
       <>
-        {/** TO DO: Replace with AddProduct component */}
-        <AddBrand open={add} handleClose={handleClose} />
+        <AddUnit open={add} handleClose={handleClose} />
         <DataTable
-          data={allproductsData.data}
-          columns={allproductsData.columns}
+          data={unitsData.data}
+          columns={unitsData.columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"
