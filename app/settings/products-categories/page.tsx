@@ -1,30 +1,43 @@
 "use client";
-import React from "react";
-import { allSalesData } from "@/data/allSalesData";
+import React, { useCallback, useState } from "react";
+import { categoriesData } from "@/data/categoriesData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
-import ListPage from "@/components/ListPage";
+import ListComponent from "@/components/ListComponent";
+import AddCategory from "@/components/settings/categories/AddCategory";
 
 export default function ProductCategoriesPage() {
+  const [add, setAdd] = useState<boolean>(false);
+
+  const onAddClicked = useCallback((): void => {
+    setAdd(true);
+  }, []);
+
+  const handleClose = useCallback((): void => {
+    setAdd(false);
+  }, []);
   const router = useRouter();
-  const onRowClicked = (row: { id: number }) => {
+  const onRowClicked = (row: { id: string }) => {
     router.push(`/settings/products-categories/${row.id}`);
   };
   return (
-    <ListPage
+    <ListComponent
       title="Products Categories"
       buttonText="Add Category"
-      buttonPath="/settings/products-categories/add-category"
+      buttonAction={onAddClicked}
     >
-      <DataTable
-        data={allSalesData.data}
-        columns={allSalesData.columns}
-        customStyles={customTableStyles}
-        onRowClicked={onRowClicked}
-        className="scrollbar-hide"
-        pagination
-      />
-    </ListPage>
+      <>
+        <AddCategory open={add} handleClose={handleClose} />
+        <DataTable
+          data={categoriesData.data}
+          columns={categoriesData.columns}
+          customStyles={customTableStyles}
+          onRowClicked={onRowClicked}
+          className="scrollbar-hide"
+          pagination
+        />
+      </>
+    </ListComponent>
   );
 }

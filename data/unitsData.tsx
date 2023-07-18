@@ -1,7 +1,6 @@
 import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Image from "next/image";
 
 type HeaderCells = {
   name: string;
@@ -29,7 +28,6 @@ type HeaderCells = {
 export type DataCells = {
   id: string;
   date: string;
-  image: string;
   code: string;
   name: string;
 };
@@ -39,7 +37,7 @@ export type DataType = {
   data: DataCells[];
 };
 
-export const brandsData: DataType = {
+export const unitsData: DataType = {
   columns: [
     {
       name: "Date",
@@ -47,42 +45,23 @@ export const brandsData: DataType = {
       width: "180px",
     },
     {
-      name: "Image",
-      selector: (row: { image: string }) => row.image,
-      width: "100px",
-      cell: (row: { image: string }) => (
-        <Image
-          className="rounded-full"
-          src={row.image}
-          alt="Product Image"
-          height={40}
-          width={40}
-        />
-      ),
-      style: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-    },
-    {
-      name: "Brand Code",
+      name: "Unit Code",
       selector: (row: { code: string }) => row.code,
     },
     {
-      name: "Brand Name",
+      name: "Unit Name",
       selector: (row: { name: string }) => row.name,
     },
     {
       name: "Actions",
       cell: (row: { id: string }) => [
         <Link
-          href={`/settings/products-brands/edit-brand/${row.id}`}
+          href={`/settings/products-units/edit-unit/${row.id}`}
           key={row.id}
         >
           <EditIcon sx={{ color: "#475BE8" }} />
         </Link>,
-        <Link key={row.id} href="/settings/products-brands">
+        <Link key={row.id} href="/settings/products-units">
           <DeleteIcon color="error" />
         </Link>,
       ],
@@ -98,37 +77,26 @@ export const brandsData: DataType = {
     {
       id: "1",
       date: "15/06/2023",
-      image: "/biorex.jpg",
-      code: "BK",
-      name: "BIOREX UK",
+      code: "Vol/Pk",
+      name: "Volume/Pack",
     },
     {
       id: "2",
       date: "16/05/2023",
-      image: "/citotest.png",
-      code: "CITOTEST",
-      name: "Citotest Scientific Co Ltd",
+      code: "Pcs/Pk",
+      name: "Pieces/Pack",
     },
     {
       id: "3",
       date: "14/05/2023",
-      image: "/dlab.png",
-      code: "DLAB",
-      name: "DLAB",
+      code: "Pks",
+      name: "Packs",
     },
     {
       id: "4",
       date: "10/02/2023",
-      image: "/tulip.png",
-      code: "Tulip 011",
-      name: "Tulip Diagnostics",
-    },
-    {
-      id: "5",
-      date: "12/04/2023",
-      image: "/hemocue.png",
-      code: "HEMOCUE",
-      name: "HEMOCUE AB",
+      code: "Rolls",
+      name: "Rolls",
     },
   ],
 };

@@ -37,7 +37,7 @@ export default function SettingsPage() {
               >
                 {item.title}
               </Typography>
-              <Typography className="text-lg text-primaryText">
+              <Typography className="text-lg text-primaryText/50">
                 {item.description}
               </Typography>
             </div>
