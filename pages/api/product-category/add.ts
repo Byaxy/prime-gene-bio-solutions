@@ -18,7 +18,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     data: { ...req.body }
                 });
     
-                return res.writeHead(201, statusMessages[201]).json(result);
+                res.statusMessage = statusMessages[201];
+                return res.status(201).json(result);
             } catch(e) {
                 if(e instanceof Prisma.PrismaClientValidationError) {
                     // Missing required fields are missing. See https://www.prisma.io/docs/reference/api-reference/error-reference#prismaclientvalidationerror

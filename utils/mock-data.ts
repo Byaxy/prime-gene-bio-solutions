@@ -1,6 +1,6 @@
-import { generateRandomString } from "./functions";
+import { generateRandomString, hashPassword } from "./functions";
 import prismaClient from "./prisma-client";
-import { ProductCategory, ProductType, ProductBrand, BarcodeSymbology, Product, UnitOfMeasure } from "@prisma/client";
+import { ProductCategory, ProductType, ProductBrand, BarcodeSymbology, Product, UnitOfMeasure, User } from "@prisma/client";
 import { IProductRelationships } from "./types";
 
 export const mockUser = {
@@ -9,6 +9,32 @@ export const mockUser = {
     email: "jane.doe@gmail.com",
     password: generateRandomString(),
 }
+
+/** 
+ * Generate test user
+ * @returns the created user
+*/
+export async function seedMockUser(): Promise<User | null> {
+    try {
+        console.log(mockUser);
+        const result = await prismaClient.user.create({
+            data: { 
+                ...mockUser, 
+                password: (await hashPassword(mockUser.password)) 
+            }
+        });
+        return result;
+    } catch(e) {
+        // Probably user was already existing
+        const user = await prismaClient.user.findUnique({ 
+            where: {
+                email: mockUser.email
+            }
+        });
+        return user;
+    }
+}
+
 
 /**
  * Generate values for the foreign key fields in the product model
