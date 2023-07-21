@@ -23,12 +23,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             } catch(e) {
                 if(e instanceof Prisma.PrismaClientValidationError) {
                     // Missing required fields are missing. See https://www.prisma.io/docs/reference/api-reference/error-reference#prismaclientvalidationerror
-                    return res.writeHead(400, statusMessages[400]).send("Some required fields are missing. Please check the data sent and try again");
+                    return res.writeHead(400, statusMessages[400], { "Content-Type": "text/plain" }).end("Some required fields are missing. Please check the data sent and try again");
                 } else if(e instanceof Prisma.PrismaClientKnownRequestError) {
                     // Unique constraint failed. See https://www.prisma.io/docs/reference/api-reference/error-reference#p2002
                     if(e.code === "P2002") {
                         let lines = e.message.split("\n");
-                        return res.writeHead(400, statusMessages[400]).send(lines.at(-1));
+                        return res.writeHead(400, statusMessages[400], { "Content-Type": "text/plain" }).end(lines.at(-1));
                     }
                 }
                 return res.status(500).end();

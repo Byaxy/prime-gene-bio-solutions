@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     // User tried to send a key in JSON but the key is not in the DB model e.g
                     // { fieldA: "valueA" } will fail because the ProductModel does not have a
                     // field called fieldA
-                    return res.writeHead(400, statusMessages[400]).send("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
+                    return res.writeHead(400, statusMessages[400], { "Content-Type": "text/plain" }).end("Invalid key found in the JSON object sent. Please refer to the spec and try again!");
                 }
                 return res.status(500).end();
             }
@@ -62,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 if(e instanceof Prisma.PrismaClientKnownRequestError) {
                     // Error thrown if item to be deleted is not found
                     // See https://www.prisma.io/docs/reference/api-reference/error-reference#p2025
-                    if(e.code === "P2025") return res.writeHead(404, statusMessages[404]);
+                    if(e.code === "P2025") return res.writeHead(404, statusMessages[404]).end();
                 }
                 return res.status(500).end();
             }
