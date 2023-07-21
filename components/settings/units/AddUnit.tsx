@@ -33,8 +33,18 @@ export default function AddUnit({
     defaultValues: defaultValues,
   });
 
-  const onSubmit = (data: FormInput) => {
-    console.log(data);
+  const onSubmit = async (data: FormInput) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }
+  
+    const response = await fetch("/api/unit-of-measure/add", options);
+
+    const result = await response.json();
     reset();
   };
 

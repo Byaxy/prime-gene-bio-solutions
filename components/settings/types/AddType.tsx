@@ -32,8 +32,18 @@ export default function AddType({
     defaultValues: defaultValues,
   });
 
-  const onSubmit = (data: FormInput) => {
-    console.log(data);
+  const onSubmit = async (data: FormInput) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }
+  
+    const response = await fetch("/api/product-type/add", options);
+
+    const result = await response.json();
     reset();
   };
 
@@ -56,19 +66,19 @@ export default function AddType({
               are required input fields.
             </p>
           </DialogContentText>
-          <label htmlFor="typeName">
+          <label htmlFor="name">
             <span className="text-primaryDark font-semibold">Type Name</span>
             <span className="text-redColor"> *</span>
           </label>
-          <FormInputText name="typeName" control={control} label="Type Name" />
-          <label htmlFor="typeDescription">
+          <FormInputText name="name" control={control} label="Type Name" />
+          <label htmlFor="description">
             <span className="text-primaryDark font-semibold">
               Type Description
             </span>
             <span className="text-redColor"> *</span>
           </label>
           <FormInputText
-            name="typeDescription"
+            name="description"
             control={control}
             label="Type Description"
           />
