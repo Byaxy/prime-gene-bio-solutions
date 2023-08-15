@@ -17,7 +17,7 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  id: number;
+  id: string;
   date: string;
   wayBillNumber: string;
   invoiceNumber: string;
@@ -35,14 +35,6 @@ export type DataType = {
 
 export const deliveriesData: DataType = {
   columns: [
-    {
-      name: "No.",
-      selector: (row: { id: number }) => row.id,
-      width: "55px",
-      style: {
-        fontWeight: "600",
-      },
-    },
     {
       name: "Date",
       selector: (row: { date: string }) => row.date,
@@ -115,7 +107,7 @@ export const deliveriesData: DataType = {
   ],
   data: [
     {
-      id: 1,
+      id: "1",
       date: "15/06/2023",
       wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
@@ -126,7 +118,7 @@ export const deliveriesData: DataType = {
       status: "Completed",
     },
     {
-      id: 2,
+      id: "2",
       date: "15/06/2023",
       wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
@@ -137,7 +129,7 @@ export const deliveriesData: DataType = {
       status: "Completed",
     },
     {
-      id: 3,
+      id: "3",
       date: "15/06/2023",
       wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
@@ -148,7 +140,7 @@ export const deliveriesData: DataType = {
       status: "Pending",
     },
     {
-      id: 4,
+      id: "4",
       date: "15/06/2023",
       wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",
@@ -159,7 +151,7 @@ export const deliveriesData: DataType = {
       status: "Cancelled",
     },
     {
-      id: 5,
+      id: "5",
       date: "15/06/2023",
       wayBillNumber: "PFI2023/06/001",
       invoiceNumber: "Inv.2023/06/001",

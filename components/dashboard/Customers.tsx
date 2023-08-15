@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 export default function Customers() {
   const router = useRouter();
-  const onRowClicked = (row: { id: number }) => {
+  const onRowClicked = (row: { id: string }) => {
     router.push(`/people/customers/${row.id}`);
   };
   return (

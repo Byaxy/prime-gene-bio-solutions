@@ -31,7 +31,9 @@ export type DataCells = {
   expenseTitle: string;
   description: string;
   amount: string;
+  paymentMethod: string;
   createdBy: string;
+  file: string;
 };
 
 export type DataType = {
@@ -95,6 +97,8 @@ export const allExpensesData: DataType = {
       description: "",
       amount: "$12000",
       createdBy: "Jone Doe",
+      paymentMethod: "",
+      file: "",
     },
     {
       id: 2,
@@ -104,6 +108,8 @@ export const allExpensesData: DataType = {
       description: "",
       amount: "$12000",
       createdBy: "Jone Doe",
+      paymentMethod: "",
+      file: "",
     },
     {
       id: 3,
@@ -113,6 +119,8 @@ export const allExpensesData: DataType = {
       description: "",
       amount: "$11400",
       createdBy: "Jone Doe",
+      paymentMethod: "",
+      file: "",
     },
     {
       id: 4,
@@ -122,6 +130,8 @@ export const allExpensesData: DataType = {
       description: "",
       amount: "$12450",
       createdBy: "Jone Doe",
+      paymentMethod: "",
+      file: "",
     },
     {
       id: 5,
@@ -131,6 +141,8 @@ export const allExpensesData: DataType = {
       description: "",
       amount: "$56000",
       createdBy: "Jone Doe",
+      paymentMethod: "",
+      file: "",
     },
   ],
 };

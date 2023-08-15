@@ -6,21 +6,27 @@ import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
 import AddBrand from "@/components/settings/brands/AddBrand";
 import ListComponent from "@/components/ListComponent";
+import ViewBrandDetails from "@/components/settings/brands/ViewBrandDetails";
 
 export default function ProductBrandsPage() {
   const [add, setAdd] = useState<boolean>(false);
+  const [view, setView] = useState<boolean>(false);
+  const [brandID, setBrandID] = useState<string>("1");
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
   }, []);
 
   const handleClose = useCallback((): void => {
+    setView(false);
     setAdd(false);
   }, []);
 
   const router = useRouter();
   const onRowClicked = (row: { id: string }) => {
-    router.push(`/settings/products-brands/${row.id}`);
+    setBrandID(row.id);
+    setView(true);
+    console.log(brandID);
   };
   return (
     <ListComponent
@@ -30,6 +36,11 @@ export default function ProductBrandsPage() {
     >
       <>
         <AddBrand open={add} handleClose={handleClose} />
+        <ViewBrandDetails
+          open={view}
+          handleClose={handleClose}
+          brandID={brandID}
+        />
         <DataTable
           data={brandsData.data}
           columns={brandsData.columns}

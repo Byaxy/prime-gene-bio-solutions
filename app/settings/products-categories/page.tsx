@@ -3,23 +3,27 @@ import React, { useCallback, useState } from "react";
 import { categoriesData } from "@/data/categoriesData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
-import { useRouter } from "next/navigation";
 import ListComponent from "@/components/ListComponent";
 import AddCategory from "@/components/settings/categories/AddCategory";
+import ViewCategoryDetails from "@/components/settings/categories/ViewCategoryDetails";
 
 export default function ProductCategoriesPage() {
   const [add, setAdd] = useState<boolean>(false);
+  const [view, setView] = useState<boolean>(false);
+  const [categoryID, setCategoryID] = useState<string>("1");
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
   }, []);
 
   const handleClose = useCallback((): void => {
+    setView(false);
     setAdd(false);
   }, []);
-  const router = useRouter();
   const onRowClicked = (row: { id: string }) => {
-    router.push(`/settings/products-categories/${row.id}`);
+    setCategoryID(row.id);
+    setView(true);
+    console.log(categoryID);
   };
   return (
     <ListComponent
@@ -29,6 +33,11 @@ export default function ProductCategoriesPage() {
     >
       <>
         <AddCategory open={add} handleClose={handleClose} />
+        <ViewCategoryDetails
+          open={view}
+          handleClose={handleClose}
+          categoryID={categoryID}
+        />
         <DataTable
           data={categoriesData.data}
           columns={categoriesData.columns}

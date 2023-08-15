@@ -2,6 +2,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import Image from "next/image";
+
 type HeaderCells = {
   name: string;
   selector?: (row: DataCells) => any;
@@ -27,17 +28,18 @@ type HeaderCells = {
 };
 export type DataCells = {
   id: string;
+  date: string;
   code: string;
   name: string;
   image: string;
   brand: string;
+  type: string;
   category: string;
-  cost: string;
-  price: string;
-  quantity: string;
+  cost: number;
+  price: number;
+  quantity: number | null;
   unit: string;
-  alertQuantity: string;
-  actions: string;
+  alertQuantity: number;
 };
 
 export type DataType = {
@@ -45,7 +47,7 @@ export type DataType = {
   data: DataCells[];
 };
 
-export const allproductsData: DataType = {
+export const allProductsData: DataType = {
   columns: [
     {
       name: "Image",
@@ -86,16 +88,16 @@ export const allproductsData: DataType = {
       selector: (row: { category: string }) => row.category,
     },
     {
-      name: "Cost",
-      selector: (row: { cost: string }) => row.cost,
+      name: "Cost ($)",
+      selector: (row: { cost: number }) => row.cost,
     },
     {
-      name: "Price",
-      selector: (row: { price: string }) => row.price,
+      name: "Price ($)",
+      selector: (row: { price: number }) => row.price,
     },
     {
       name: "Quantity",
-      selector: (row: { quantity: string }) => row.quantity,
+      selector: (row: { quantity: number | null }) => row.quantity,
     },
     {
       name: "Unit",
@@ -103,7 +105,7 @@ export const allproductsData: DataType = {
     },
     {
       name: "Alert Quantity",
-      selector: (row: { alertQuantity: string }) => row.alertQuantity,
+      selector: (row: { alertQuantity: number }) => row.alertQuantity,
     },
     {
       name: "Actions",
@@ -126,31 +128,33 @@ export const allproductsData: DataType = {
   data: [
     {
       id: "1",
+      date: "12/04/2023",
       image: "/product.jpg",
       code: "0085",
       name: "Talley Counter",
       brand: "Allele Diagnostic",
+      type: "",
       category: "General Lab Equipment",
-      cost: "$33.o",
-      price: "$200.00",
-      quantity: "1.00",
+      cost: 33.5,
+      price: 200.0,
+      quantity: 1.0,
       unit: "Pcs/Pk",
-      alertQuantity: "5",
-      actions: "",
+      alertQuantity: 5,
     },
     {
       id: "2",
+      date: "12/04/2023",
       image: "/product.jpg",
       code: "00857",
       name: "Sealent",
       brand: "Allele Diagnostic",
+      type: "",
       category: "General Lab Equipment",
-      cost: "$33.00",
-      price: "$50.00",
-      quantity: "",
+      cost: 33.0,
+      price: 50.5,
+      quantity: null,
       unit: "Pcs/Pk",
-      alertQuantity: "5",
-      actions: "",
+      alertQuantity: 5,
     },
   ],
 };

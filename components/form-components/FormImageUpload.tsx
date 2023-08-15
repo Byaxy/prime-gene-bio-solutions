@@ -1,7 +1,6 @@
 import { Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import { FormInputProps } from "./FormInputProps";
-import { Input } from "@mui/material";
 
 export default function FormImageUpload({
   name,

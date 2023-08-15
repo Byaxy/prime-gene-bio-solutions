@@ -1,23 +1,23 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { FormInputText } from "@/components/form-components/FormInputText";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { ProductType } from "@prisma/client";
+import { Types } from "@/components/Types";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ProductType, "id" | "isActive" | "createdAt" | "updatedAt">;
+type FormInput = Omit<Types, "id" | "isActive" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   description: "",
+  createdAt: new Date(),
 };
 type AddTypeProps = {
   open: boolean;
@@ -28,14 +28,27 @@ export default function AddType({
   open,
   handleClose,
 }: AddTypeProps): ReactNode {
-  const { handleSubmit, reset, control } = useForm<FormInput>({
+  const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
+  const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
-  const onSubmit = (data: FormInput) => {
-    console.log(data);
-    reset();
+  const onSubmit = async (data: FormInput) => {
+    try {
+      // Handle form data with corresponding API call
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+    console.log(isSubmitSuccessful);
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -56,33 +69,53 @@ export default function AddType({
               are required input fields.
             </p>
           </DialogContentText>
-          <label htmlFor="typeName">
-            <span className="text-primaryDark font-semibold">Type Name</span>
-            <span className="text-redColor"> *</span>
-          </label>
-          <FormInputText name="typeName" control={control} label="Type Name" />
-          <label htmlFor="typeDescription">
-            <span className="text-primaryDark font-semibold">
-              Type Description
-            </span>
-            <span className="text-redColor"> *</span>
-          </label>
-          <FormInputText
-            name="typeDescription"
-            control={control}
-            label="Type Description"
-          />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-2 w-full">
+              <label htmlFor="name">
+                <span className="text-primaryDark font-semibold">Name</span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <TextField
+                id="name"
+                type="text"
+                label="Name"
+                {...register("name", {
+                  required: "Name is required",
+                })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+              <label htmlFor="description">
+                <span className="text-primaryDark font-semibold">
+                  Description
+                </span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <TextField
+                id="description"
+                label="Description"
+                multiline
+                rows={4}
+                {...register("description", {
+                  required: "Description is required",
+                })}
+                error={!!errors.description}
+                helperText={errors.description?.message}
+              />
+            </div>
+          </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={() => reset()}>
+          <Button variant="outlined" size="large" onClick={() => reset()}>
             Cancel
           </Button>
           <Button
             type="submit"
             variant="contained"
             onClick={handleSubmit(onSubmit)}
+            size="large"
           >
-            Save
+            {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </DialogActions>
       </Dialog>
