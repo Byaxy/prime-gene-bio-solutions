@@ -36,6 +36,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { data } from "@/data/sidenavData";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -171,228 +173,234 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider theme={theme}>
           <SessionProvider session={session}>
-            <Box className="flex">
-              <CssBaseline />
-              <AppBar
-                className="fixed shadow-md"
-                open={open}
-                sx={{
-                  backgroundColor: "#232a58",
-                  color: "white",
-                }}
-              >
-                <Toolbar>
-                  <IconButton
-                    className="shadow-md"
-                    aria-label="open drawer"
-                    onClick={handleDrawerOpen}
-                    edge="start"
-                    sx={{
-                      marginRight: 5,
-                      color: "#2d3663",
-                      backgroundColor: "white",
-                      ...(open && { display: "none" }),
-                      "&:hover": {
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Box className="flex">
+                <CssBaseline />
+                <AppBar
+                  className="fixed shadow-md"
+                  open={open}
+                  sx={{
+                    backgroundColor: "#232a58",
+                    color: "white",
+                  }}
+                >
+                  <Toolbar>
+                    <IconButton
+                      className="shadow-md"
+                      aria-label="open drawer"
+                      onClick={handleDrawerOpen}
+                      edge="start"
+                      sx={{
+                        marginRight: 5,
+                        color: "#2d3663",
                         backgroundColor: "white",
-                        color: "#47ccc8",
-                      },
-                    }}
-                  >
-                    <MenuIcon titleAccess="Open Side Menu" />
-                  </IconButton>
+                        ...(open && { display: "none" }),
+                        "&:hover": {
+                          backgroundColor: "white",
+                          color: "#47ccc8",
+                        },
+                      }}
+                    >
+                      <MenuIcon titleAccess="Open Side Menu" />
+                    </IconButton>
 
-                  {/** Header */}
-                  <Header />
-                </Toolbar>
-              </AppBar>
-              {/** Sidebar Navigation */}
-              <Drawer variant="permanent" open={open} className="bg-white">
-                {/** Drawer Header */}
-                <DrawerHeader className="w-full flex flex-row justify-between items-center">
-                  {/** logo */}
-                  <Link
-                    href={"/"}
-                    className="no-underline flex items-center justify-center"
-                  >
-                    <Image
-                      src={"/Logo.png"}
-                      alt="Logo"
-                      width={160}
-                      height={40}
-                    />
-                  </Link>
-                  <IconButton
-                    onClick={handleDrawerClose}
-                    className="shadow-md"
-                    sx={{
-                      color: "white",
-                      backgroundColor: "#2d3663",
-                      "&:hover": {
-                        color: "#47ccc8",
-                        backgroundColor: "#232a58",
-                      },
-                    }}
-                  >
-                    {theme.direction === "rtl" ? (
-                      <ChevronRightIcon titleAccess="Open Side Menu" />
-                    ) : (
-                      <ChevronLeftIcon titleAccess="Close Side Menu" />
-                    )}
-                  </IconButton>
-                </DrawerHeader>
-                <Divider />
-                {/** Side bar */}
+                    {/** Header */}
+                    <Header />
+                  </Toolbar>
+                </AppBar>
+                {/** Sidebar Navigation */}
+                <Drawer variant="permanent" open={open} className="bg-white">
+                  {/** Drawer Header */}
+                  <DrawerHeader className="w-full flex flex-row justify-between items-center">
+                    {/** logo */}
+                    <Link
+                      href={"/"}
+                      className="no-underline flex items-center justify-center"
+                    >
+                      <Image
+                        src={"/Logo.png"}
+                        alt="Logo"
+                        width={160}
+                        height={40}
+                      />
+                    </Link>
+                    <IconButton
+                      onClick={handleDrawerClose}
+                      className="shadow-md"
+                      sx={{
+                        color: "white",
+                        backgroundColor: "#2d3663",
+                        "&:hover": {
+                          color: "#47ccc8",
+                          backgroundColor: "#232a58",
+                        },
+                      }}
+                    >
+                      {theme.direction === "rtl" ? (
+                        <ChevronRightIcon titleAccess="Open Side Menu" />
+                      ) : (
+                        <ChevronLeftIcon titleAccess="Close Side Menu" />
+                      )}
+                    </IconButton>
+                  </DrawerHeader>
+                  <Divider />
+                  {/** Side bar */}
 
-                <List>
-                  {data.map((item) => (
-                    <>
-                      {item.subCategories ? (
-                        <>
-                          <ListItem
-                            key={item.id}
-                            disablePadding
-                            className={`${
-                              item.path === pathname
-                                ? "bg-primaryColor text-mainColor"
-                                : "text-primaryColor"
-                            } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor my-1`}
-                          >
-                            <ListItemButton
-                              onClick={(event) =>
-                                handleClick(event, item.id, item.path)
-                              }
+                  <List>
+                    {data.map((item) => (
+                      <>
+                        {item.subCategories ? (
+                          <>
+                            <ListItem
+                              key={item.id}
+                              disablePadding
                               className={`${
-                                open ? "" : "justify-center"
-                              } flex items-center w-full px-2`}
+                                item.path === pathname
+                                  ? "bg-primaryColor text-mainColor"
+                                  : "text-primaryColor"
+                              } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor my-1`}
                             >
-                              <ListItemIcon
-                                title={item.title}
-                                className={`group-hover:text-mainColor`}
-                                sx={{
-                                  justifyContent: "flex-start",
-                                  ...(item.path === pathname
-                                    ? {
-                                        backgroundColor: "#2d3663",
-                                        color: "#47ccc8",
-                                      }
-                                    : { color: "#2d3663" }),
-                                }}
+                              <ListItemButton
+                                onClick={(event) =>
+                                  handleClick(event, item.id, item.path)
+                                }
+                                className={`${
+                                  open ? "" : "justify-center"
+                                } flex items-center w-full px-2`}
                               >
-                                {item.icon}
-                              </ListItemIcon>
-                              <ListItemText
-                                className={`${open ? "opacity-100" : "hidden"}`}
-                              >
-                                <span className="font-medium">
-                                  {item.title}
-                                </span>
-                              </ListItemText>
-                              {show === item.id && toggle ? (
-                                <span
+                                <ListItemIcon
+                                  title={item.title}
+                                  className={`group-hover:text-mainColor`}
+                                  sx={{
+                                    justifyContent: "flex-start",
+                                    ...(item.path === pathname
+                                      ? {
+                                          backgroundColor: "#2d3663",
+                                          color: "#47ccc8",
+                                        }
+                                      : { color: "#2d3663" }),
+                                  }}
+                                >
+                                  {item.icon}
+                                </ListItemIcon>
+                                <ListItemText
                                   className={`${
                                     open ? "opacity-100" : "hidden"
-                                  } flex items-center justify-center`}
+                                  }`}
                                 >
-                                  <KeyboardArrowDownIcon />
-                                </span>
-                              ) : (
-                                <span
-                                  className={`${
-                                    open ? "opacity-100" : "hidden"
-                                  } flex items-center justify-center`}
-                                >
-                                  <KeyboardArrowRightIcon />
-                                </span>
-                              )}
-                            </ListItemButton>
-                          </ListItem>
-                          {show === item.id && toggle ? (
-                            <ul className="list-none flex flex-col">
-                              {item.subCategories.map((item) => (
-                                <li
-                                  key={item.title}
-                                  className={`${
-                                    item.path === pathname
-                                      ? "bg-primaryColor text-mainColor"
-                                      : "text-primaryColor"
-                                  } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor py-3 px-2 my-1`}
-                                >
-                                  <Link
-                                    href={item.path}
+                                  <span className="font-medium">
+                                    {item.title}
+                                  </span>
+                                </ListItemText>
+                                {show === item.id && toggle ? (
+                                  <span
+                                    className={`${
+                                      open ? "opacity-100" : "hidden"
+                                    } flex items-center justify-center`}
+                                  >
+                                    <KeyboardArrowDownIcon />
+                                  </span>
+                                ) : (
+                                  <span
+                                    className={`${
+                                      open ? "opacity-100" : "hidden"
+                                    } flex items-center justify-center`}
+                                  >
+                                    <KeyboardArrowRightIcon />
+                                  </span>
+                                )}
+                              </ListItemButton>
+                            </ListItem>
+                            {show === item.id && toggle ? (
+                              <ul className="list-none flex flex-col">
+                                {item.subCategories.map((item) => (
+                                  <li
+                                    key={item.title}
                                     className={`${
                                       item.path === pathname
-                                        ? "text-mainColor"
+                                        ? "bg-primaryColor text-mainColor"
                                         : "text-primaryColor"
-                                    } flex items-center w-full no-underline group-hover:text-mainColor`}
+                                    } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor py-3 px-2 my-1`}
                                   >
-                                    <span className="font-medium">
-                                      {item.title}
-                                    </span>
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          ) : null}
-                        </>
-                      ) : (
-                        <>
-                          <ListItem
-                            key={item.id}
-                            disablePadding
-                            className={`${
-                              item.path === pathname
-                                ? "bg-primaryColor text-mainColor"
-                                : "text-primaryColor"
-                            } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor my-1`}
-                          >
-                            <ListItemButton
-                              onClick={(event) =>
-                                handleClick(event, item.id, item.path)
-                              }
+                                    <Link
+                                      href={item.path}
+                                      className={`${
+                                        item.path === pathname
+                                          ? "text-mainColor"
+                                          : "text-primaryColor"
+                                      } flex items-center w-full no-underline group-hover:text-mainColor`}
+                                    >
+                                      <span className="font-medium">
+                                        {item.title}
+                                      </span>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : null}
+                          </>
+                        ) : (
+                          <>
+                            <ListItem
+                              key={item.id}
+                              disablePadding
                               className={`${
-                                open ? "" : "justify-center"
-                              } flex items-center w-full px-2`}
+                                item.path === pathname
+                                  ? "bg-primaryColor text-mainColor"
+                                  : "text-primaryColor"
+                              } block cursor-pointer rounded-lg group hover:bg-primaryColor hover:text-mainColor my-1`}
                             >
-                              <ListItemIcon
-                                title={item.title}
-                                className={`group-hover:text-mainColor`}
-                                sx={{
-                                  justifyContent: "flex-start",
-                                  ...(item.path === pathname
-                                    ? {
-                                        backgroundColor: "#2d3663",
-                                        color: "#47ccc8",
-                                      }
-                                    : { color: "#2d3663" }),
-                                }}
+                              <ListItemButton
+                                onClick={(event) =>
+                                  handleClick(event, item.id, item.path)
+                                }
+                                className={`${
+                                  open ? "" : "justify-center"
+                                } flex items-center w-full px-2`}
                               >
-                                {item.icon}
-                              </ListItemIcon>
-                              <ListItemText
-                                className={`${open ? "opacity-100" : "hidden"}`}
-                              >
-                                <span className="font-medium">
-                                  {item.title}
-                                </span>
-                              </ListItemText>
-                            </ListItemButton>
-                          </ListItem>
-                        </>
-                      )}
-                    </>
-                  ))}
-                </List>
-              </Drawer>
+                                <ListItemIcon
+                                  title={item.title}
+                                  className={`group-hover:text-mainColor`}
+                                  sx={{
+                                    justifyContent: "flex-start",
+                                    ...(item.path === pathname
+                                      ? {
+                                          backgroundColor: "#2d3663",
+                                          color: "#47ccc8",
+                                        }
+                                      : { color: "#2d3663" }),
+                                  }}
+                                >
+                                  {item.icon}
+                                </ListItemIcon>
+                                <ListItemText
+                                  className={`${
+                                    open ? "opacity-100" : "hidden"
+                                  }`}
+                                >
+                                  <span className="font-medium">
+                                    {item.title}
+                                  </span>
+                                </ListItemText>
+                              </ListItemButton>
+                            </ListItem>
+                          </>
+                        )}
+                      </>
+                    ))}
+                  </List>
+                </Drawer>
 
-              {/** Main Content */}
-              <Box
-                className="min-h-screen w-full p-5 bg-grayColor"
-                component="main"
-              >
-                <DrawerHeader />
-                {children}
+                {/** Main Content */}
+                <Box
+                  className="min-h-screen w-full p-5 bg-grayColor"
+                  component="main"
+                >
+                  <DrawerHeader />
+                  {children}
+                </Box>
               </Box>
-            </Box>
+            </LocalizationProvider>
           </SessionProvider>
         </ThemeProvider>
       </body>

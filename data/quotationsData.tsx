@@ -17,7 +17,7 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  id: number;
+  id: string;
   date: string;
   quotationNumber: string;
   customer: string;
@@ -32,14 +32,6 @@ export type DataType = {
 
 export const quotationsData: DataType = {
   columns: [
-    {
-      name: "No.",
-      selector: (row: { id: number }) => row.id,
-      width: "55px",
-      style: {
-        fontWeight: "600",
-      },
-    },
     {
       name: "Date",
       selector: (row: { date: string }) => row.date,
@@ -94,7 +86,7 @@ export const quotationsData: DataType = {
   ],
   data: [
     {
-      id: 1,
+      id: "1",
       date: "15/06/2023",
       quotationNumber: "PFI2023/06/001",
       customer: "PARTNERS IN HEALTH",
@@ -102,7 +94,7 @@ export const quotationsData: DataType = {
       status: "Completed",
     },
     {
-      id: 2,
+      id: "2",
       date: "15/06/2023",
       quotationNumber: "PFI2023/06/001",
       customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
@@ -110,7 +102,7 @@ export const quotationsData: DataType = {
       status: "Completed",
     },
     {
-      id: 3,
+      id: "3",
       date: "15/06/2023",
       quotationNumber: "PFI2023/06/001",
       customer: "GIMS HOSPITAL",
@@ -118,7 +110,7 @@ export const quotationsData: DataType = {
       status: "Pending",
     },
     {
-      id: 4,
+      id: "4",
       date: "15/06/2023",
       quotationNumber: "PFI2023/06/001",
       customer: "Hope For Women",
@@ -126,7 +118,7 @@ export const quotationsData: DataType = {
       status: "Cancelled",
     },
     {
-      id: 5,
+      id: "5",
       date: "15/06/2023",
       quotationNumber: "PFI2023/06/001",
       customer: "GIMS HOSPITAL",

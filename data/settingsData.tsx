@@ -26,4 +26,9 @@ export const settingsData: SettingsType[] = [
     description: "View all products brands and register new brands",
     path: "/settings/products-brands",
   },
+  {
+    title: "Customer Groups",
+    description: "View and manage all your customer groups",
+    path: "/settings/customer-groups",
+  },
 ];

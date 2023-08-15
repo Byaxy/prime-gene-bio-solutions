@@ -25,7 +25,7 @@ export default function ListComponent({
           sx={{
             color: "#232a58",
             fontWeight: "bold",
-            fontSize: "24px",
+            fontSize: "26px",
           }}
         >
           {title}

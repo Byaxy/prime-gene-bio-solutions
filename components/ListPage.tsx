@@ -2,6 +2,7 @@
 import React, { ReactElement } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 
 export default function ListPage({
@@ -19,7 +20,7 @@ export default function ListPage({
 
   return (
     <Box className="flex flex-col gap-5 w-full">
-      <Box className="flex flex-row items-center justify-between w-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start sm:justify-between w-full gap-5">
         <Typography
           variant="h3"
           sx={{
@@ -30,17 +31,29 @@ export default function ListPage({
         >
           {title}
         </Typography>
-        <Button
-          onClick={() => router.push(`${buttonPath}`)}
-          variant="contained"
-          className="flex flex-row items-center justify-center"
-        >
-          <AddIcon />{" "}
-          <span className="text-white font-medium capitalize sm:text-lg">
-            {buttonText}
-          </span>
-        </Button>
-      </Box>
+        <div className="flex flex-col w-full sm:w-fit sm:flex-row items-start sm:items-center justify-start sm:justify-center gap-5">
+          <Button
+            onClick={router.back}
+            variant="outlined"
+            className="flex flex-row items-center justify-center gap-1"
+          >
+            <ArrowBackIcon />
+            <span className="text-primaryDark font-medium capitalize sm:text-lg">
+              Back
+            </span>
+          </Button>
+          <Button
+            onClick={() => router.push(buttonPath)}
+            variant="contained"
+            className="flex flex-row items-center justify-center gap-1"
+          >
+            <AddIcon />
+            <span className="text-white font-medium capitalize sm:text-lg">
+              {buttonText}
+            </span>
+          </Button>
+        </div>
+      </div>
       <Box className="bg-white w-full rounded-lg shadow-md p-5">
         <TextField
           label="Search"

@@ -17,7 +17,7 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phoneNumber: string;
@@ -32,14 +32,6 @@ export type DataType = {
 
 export const customersData: DataType = {
   columns: [
-    {
-      name: "No.",
-      selector: (row: { id: number }) => row.id,
-      width: "55px",
-      style: {
-        fontWeight: "600",
-      },
-    },
     {
       name: "Name",
       selector: (row: { name: string }) => row.name,
@@ -67,7 +59,7 @@ export const customersData: DataType = {
   ],
   data: [
     {
-      id: 1,
+      id: "1",
       name: "UROCARE LIBERIA",
       email: "urocare@gmail.com",
       phoneNumber: "+231778371515",
@@ -75,7 +67,7 @@ export const customersData: DataType = {
       city: "Monrovia",
     },
     {
-      id: 2,
+      id: "2",
       name: "REDEMPTION PHARMACY",
       email: "redemptionpharmacy@gmail.com",
       phoneNumber: "0775206012",
@@ -83,7 +75,7 @@ export const customersData: DataType = {
       city: "GARNESVILLE",
     },
     {
-      id: 3,
+      id: "3",
       name: "LPRC MEDICAL CLINIC",
       email: "LPRC@gmail.com",
       phoneNumber: "0886475130",
@@ -91,7 +83,7 @@ export const customersData: DataType = {
       city: "Monrovia",
     },
     {
-      id: 4,
+      id: "4",
       name: "PEACE CORPS LIBERIA",
       email: "wdoejuana@peacecorps.gov",
       phoneNumber: "+231779001229",
@@ -99,7 +91,7 @@ export const customersData: DataType = {
       city: "Monrovia",
     },
     {
-      id: 5,
+      id: "5",
       name: "U.S. Embassy Monrovia",
       email: "MonroviaHU@state.gov",
       phoneNumber: "+231-777232973",
@@ -107,7 +99,7 @@ export const customersData: DataType = {
       city: "Monrovia, Montserrado County",
     },
     {
-      id: 6,
+      id: "6",
       name: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
       email: "clinilabmonrovia@gmail.com",
       phoneNumber: "+231555888850",
@@ -115,7 +107,7 @@ export const customersData: DataType = {
       city: "Monrovia",
     },
     {
-      id: 7,
+      id: "7",
       name: "Biomedical Link",
       email: "biomedicallink@yahoo.com",
       phoneNumber: "+231777984829",
@@ -123,7 +115,7 @@ export const customersData: DataType = {
       city: "Monrovia",
     },
     {
-      id: 8,
+      id: "8",
       name: "CLARA TOWN CLINIC",
       email: "Claratownclinic@gmail.com",
       phoneNumber: "+231778371515",

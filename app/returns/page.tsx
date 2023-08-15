@@ -1,20 +1,30 @@
 "use client";
-import { Box, Typography } from "@mui/material";
 import React from "react";
+import { returnsData } from "@/data/returnsData";
+import DataTable from "react-data-table-component";
+import { customTableStyles } from "@/styles/TableStyles";
+import { useRouter } from "next/navigation";
+import ListPage from "@/components/ListPage";
 
 export default function ReturnsPage() {
+  const router = useRouter();
+  const onRowClicked = (row: { id: number }) => {
+    router.push(`/sales/${row.id}`);
+  };
   return (
-    <Box>
-      <Typography
-        variant="h3"
-        sx={{
-          color: "#232a58",
-          fontWeight: "bold",
-          fontSize: "26px",
-        }}
-      >
-        Returns Page
-      </Typography>
-    </Box>
+    <ListPage
+      title="Returns"
+      buttonText="Add Return"
+      buttonPath="/returns/add-return"
+    >
+      <DataTable
+        data={returnsData.data}
+        columns={returnsData.columns}
+        customStyles={customTableStyles}
+        onRowClicked={onRowClicked}
+        className="scrollbar-hide"
+        pagination
+      />
+    </ListPage>
   );
 }
