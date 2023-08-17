@@ -13,7 +13,7 @@ export default function PeoplePage() {
           fontSize: "26px",
         }}
       >
-        People Page
+        Human Resource
       </Typography>
     </Box>
   );

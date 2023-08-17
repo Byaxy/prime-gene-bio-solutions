@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 export default function RecentSales() {
   const router = useRouter();
-  const onRowClicked = (row: { id: number }) => {
+  const onRowClicked = (row: { id: string }) => {
     router.push(`/sales/${row.id}`);
   };
   return (

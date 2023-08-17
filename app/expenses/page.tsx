@@ -3,27 +3,42 @@ import { allExpensesData } from "@/data/allExpensesData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
-import ListPage from "@/components/ListPage";
+import ListComponent from "@/components/ListComponent";
+import { useCallback, useState } from "react";
+import AddExpense from "@/components/expenses/AddExpense";
 
 export default function ExpensesPage() {
+  const [add, setAdd] = useState<boolean>(false);
+
+  const onAddClicked = useCallback((): void => {
+    setAdd(true);
+  }, []);
+
+  const handleClose = useCallback((): void => {
+    setAdd(false);
+  }, []);
+
   const router = useRouter();
   const onRowClicked = (row: { id: number }) => {
     router.push(`/expenses/${row.id}`);
   };
   return (
-    <ListPage
+    <ListComponent
       title="Expenses"
       buttonText="Add Expense"
-      buttonPath="/expenses/add-expense"
+      buttonAction={onAddClicked}
     >
-      <DataTable
-        data={allExpensesData.data}
-        columns={allExpensesData.columns}
-        customStyles={customTableStyles}
-        onRowClicked={onRowClicked}
-        className="scrollbar-hide"
-        pagination
-      />
-    </ListPage>
+      <>
+        <AddExpense open={add} handleClose={handleClose} />
+        <DataTable
+          data={allExpensesData.data}
+          columns={allExpensesData.columns}
+          customStyles={customTableStyles}
+          onRowClicked={onRowClicked}
+          className="scrollbar-hide"
+          pagination
+        />
+      </>
+    </ListComponent>
   );
 }

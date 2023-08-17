@@ -7,7 +7,7 @@ import { deliveriesData } from "@/data/deliveriesData";
 
 export default function RecentDeliveries() {
   const router = useRouter();
-  const onRowClicked = (row: { id: number }) => {
+  const onRowClicked = (row: { id: string }) => {
     router.push(`/sales/deliveries/${row.id}`);
   };
   return (

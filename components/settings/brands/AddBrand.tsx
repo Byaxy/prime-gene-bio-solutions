@@ -1,25 +1,26 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { FormInputText } from "@/components/form-components/FormInputText";
 import CancelIcon from "@mui/icons-material/Cancel";
-import FormImageUpload from "@/components/form-components/FormImageUpload";
-import { ProductBrand } from "@prisma/client";
+import { Brand } from "@/components/Types";
+import Image from "next/image";
+import axios from "axios";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ProductBrand, "id" | "isActive" | "createdAt" | "updatedAt">;
+type FormInput = Omit<Brand, "id" | "isActive" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   image: "",
+  createdAt: new Date(),
 };
 
 type AddBrandProps = {
@@ -31,24 +32,63 @@ export default function AddBrand({
   open,
   handleClose,
 }: AddBrandProps): ReactNode {
-  const { handleSubmit, reset, control } = useForm<FormInput>({
+  const { register, handleSubmit, reset, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
+  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const onSubmit = async (data: FormInput) => {       
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+  const onSubmit = async (data: FormInput) => {
+    if (data.image.length > 0) {
+      const imageFile = data.image[0];
+
+      const formData = new FormData();
+      formData.append("file", imageFile);
+
+      formData.append("upload_preset", "prime-gene-bio-solutions");
+
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dykyxconb/image/upload",
+          formData
+        );
+        setImageUrl(response.data.secure_url);
+        console.log(imageUrl);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      setImageUrl(null);
+      console.log(imageUrl);
     }
-  
-    const response = await fetch("/api/product-brand/add", options)
 
-    const result = await response.json()
-    reset();
+    // Handle form data and cloudinary image url with corresponding API call
+    console.log({ ...data, image: imageUrl });
   };
+
+  // Set selected Image for preview
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewImage(null);
+    }
+  };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      setPreviewImage(null);
+    }
+    console.log(isSubmitSuccessful);
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -69,43 +109,77 @@ export default function AddBrand({
               are required input fields.
             </p>
           </DialogContentText>
-          <label htmlFor="name">
-            <span className="text-primaryDark font-semibold">Brand Name</span>
-            <span className="text-redColor"> *</span>
-          </label>
-          <FormInputText
-            name="name"
-            control={control}
-            label="Brand Name"
-          />
-          <label htmlFor="code">
-            <span className="text-primaryDark font-semibold">Brand Code</span>
-            <span className="text-redColor"> *</span>
-          </label>
-          <FormInputText
-            name="code"
-            control={control}
-            label="Brand Code"
-          />
-          <label htmlFor="brandImage">
-            <span className="text-primaryDark font-semibold">Brand Image</span>
-          </label>
-          <FormImageUpload
-            name="brandImage"
-            control={control}
-            label="Brand Image"
-          />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-2 w-full">
+              <label htmlFor="name">
+                <span className="text-primaryDark font-semibold">Name</span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <TextField
+                id="name"
+                type="text"
+                label="Name"
+                {...register("name", {
+                  required: "Name is required",
+                })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+              <label htmlFor="code">
+                <span className="text-primaryDark font-semibold">Code</span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <TextField
+                id="code"
+                type="text"
+                label="Code"
+                {...register("code", {
+                  required: "Code is required",
+                })}
+                error={!!errors.code}
+                helperText={errors.code?.message}
+              />
+              <label htmlFor="image">
+                <span className="text-primaryDark font-semibold">Image</span>
+              </label>
+              <div className="flex flex-row gap-2 items-center">
+                <div>
+                  {previewImage && (
+                    <Image
+                      src={previewImage}
+                      alt="Preview"
+                      width={100}
+                      height={100}
+                    />
+                  )}
+                </div>
+                <TextField
+                  id="image"
+                  type="file"
+                  variant="outlined"
+                  {...register("image")}
+                  onChange={handleImageChange}
+                  inputProps={{ accept: "image/*", multiple: false }}
+                />
+              </div>
+            </div>
+          </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={() => reset()}>
+          <Button
+            size="large"
+            variant="outlined"
+            onClick={() => (reset(), setPreviewImage(null))}
+          >
             Cancel
           </Button>
           <Button
             type="submit"
             variant="contained"
+            size="large"
             onClick={handleSubmit(onSubmit)}
           >
-            Save
+            {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </DialogActions>
       </Dialog>

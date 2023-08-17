@@ -7,7 +7,7 @@ import { quotationsData } from "@/data/quotationsData";
 
 export default function RecentQuotations() {
   const router = useRouter();
-  const onRowClicked = (row: { id: number }) => {
+  const onRowClicked = (row: { id: string }) => {
     router.push(`/quotations/${row.id}`);
   };
   return (

@@ -17,7 +17,7 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  id: number;
+  id: string;
   date: string;
   invoiceNumber: string;
   customer: string;
@@ -34,14 +34,6 @@ export type DataType = {
 
 export const salesData: DataType = {
   columns: [
-    {
-      name: "No.",
-      selector: (row: { id: number }) => row.id,
-      width: "55px",
-      style: {
-        fontWeight: "600",
-      },
-    },
     {
       name: "Date",
       selector: (row: { date: string }) => row.date,
@@ -123,7 +115,7 @@ export const salesData: DataType = {
   ],
   data: [
     {
-      id: 1,
+      id: "1",
       date: "15/06/2023",
       invoiceNumber: "Inv.2023/06/001",
       customer: "PARTNERS IN HEALTH",
@@ -133,7 +125,7 @@ export const salesData: DataType = {
       saleStatus: "Completed",
     },
     {
-      id: 2,
+      id: "2",
       date: "15/06/2023",
       invoiceNumber: "Inv.2023/06/001",
       customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
@@ -143,7 +135,7 @@ export const salesData: DataType = {
       saleStatus: "Completed",
     },
     {
-      id: 3,
+      id: "3",
       date: "15/06/2023",
       invoiceNumber: "Inv.2023/06/001",
       customer: "GIMS HOSPITAL",
@@ -153,7 +145,7 @@ export const salesData: DataType = {
       saleStatus: "Pending",
     },
     {
-      id: 4,
+      id: "4",
       date: "15/06/2023",
       invoiceNumber: "Inv.2023/06/001",
       customer: "Hope For Women",
@@ -163,7 +155,7 @@ export const salesData: DataType = {
       saleStatus: "Cancelled",
     },
     {
-      id: 5,
+      id: "5",
       date: "15/06/2023",
       invoiceNumber: "Inv.2023/06/001",
       customer: "GIMS HOSPITAL",

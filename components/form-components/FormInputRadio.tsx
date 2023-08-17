@@ -7,45 +7,52 @@ import {
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import { FormInputProps } from "./FormInputProps";
-const options = [
+import ErrorWrapper from "./ErrorWrapper";
+
+const genderOptions = [
   {
-    label: "Radio Option 1",
-    value: "1",
+    label: "MALE",
+    value: "MALE",
   },
   {
-    label: "Radio Option 2",
-    value: "2",
+    label: "FEMALE",
+    value: "FEMALE",
+  },
+  {
+    label: "OTHER",
+    value: "OTHER",
   },
 ];
-export const FormInputRadio: React.FC<FormInputProps> = ({
-  name,
-  control,
-  label,
-}) => {
+
+export const FormInputRadio: React.FC<FormInputProps> = ({ name, control }) => {
   const generateRadioOptions = () => {
-    return options.map((singleOption) => (
-      <FormControlLabel
-        key={singleOption.label}
-        value={singleOption.value}
-        label={singleOption.label}
-        control={<Radio />}
-      />
-    ));
+    return genderOptions.map((singleOption) => {
+      return (
+        <FormControlLabel
+          key={singleOption.label}
+          value={singleOption.value}
+          label={singleOption.label}
+          control={<Radio />}
+          required
+        />
+      );
+    });
   };
   return (
     <FormControl component="fieldset">
-      <FormLabel component="legend">{label}</FormLabel>
       <Controller
         name={name}
         control={control}
-        render={({
-          field: { onChange, value },
-          fieldState: { error },
-          formState,
-        }) => (
-          <RadioGroup value={value} onChange={onChange}>
-            {generateRadioOptions()}
-          </RadioGroup>
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <ErrorWrapper errorMessage={error?.message}>
+            <RadioGroup
+              value={value}
+              onChange={onChange}
+              className="flex flex-row gap-4"
+            >
+              {generateRadioOptions()}
+            </RadioGroup>
+          </ErrorWrapper>
         )}
       />
     </FormControl>

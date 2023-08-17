@@ -6,20 +6,26 @@ import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
 import AddType from "@/components/settings/types/AddType";
 import ListComponent from "@/components/ListComponent";
+import ViewTypeDetails from "@/components/settings/types/ViewTypeDetails";
 
 export default function ProductTypesPage() {
   const [add, setAdd] = useState<boolean>(false);
+  const [view, setView] = useState<boolean>(false);
+  const [typeID, setTypeID] = useState<string>("1");
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
   }, []);
 
   const handleClose = useCallback((): void => {
+    setView(false);
     setAdd(false);
   }, []);
   const router = useRouter();
   const onRowClicked = (row: { id: string }) => {
-    router.push(`/settings/products-types/${row.id}`);
+    setTypeID(row.id);
+    setView(true);
+    console.log(typeID);
   };
   return (
     <ListComponent
@@ -29,6 +35,11 @@ export default function ProductTypesPage() {
     >
       <>
         <AddType open={add} handleClose={handleClose} />
+        <ViewTypeDetails
+          open={view}
+          handleClose={handleClose}
+          typeID={typeID}
+        />
         <DataTable
           data={typesData.data}
           columns={typesData.columns}

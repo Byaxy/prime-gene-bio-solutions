@@ -1,12 +1,16 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { allproductsData } from "@/data/allProductsData";
+import { allProductsData } from "@/data/allProductsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
+import ViewProductDetails from "@/components/products/ViewProductDetails";
 import ListComponent from "@/components/ListComponent";
+import AddProduct from "@/components/products/AddProduct";
 
 export default function ProductsPage() {
+  const [view, setView] = useState<boolean>(false);
+  const [productID, setProductID] = useState<string>("1");
   const [add, setAdd] = useState<boolean>(false);
 
   const onAddClicked = useCallback((): void => {
@@ -15,11 +19,14 @@ export default function ProductsPage() {
 
   const handleClose = useCallback((): void => {
     setAdd(false);
+    setView(false);
   }, []);
 
   const router = useRouter();
   const onRowClicked = (row: { id: string }) => {
-    router.push(`/products/${row.id}`);
+    setProductID(row.id);
+    setView(true);
+    console.log(productID);
   };
   return (
     <ListComponent
@@ -28,10 +35,15 @@ export default function ProductsPage() {
       buttonAction={onAddClicked}
     >
       <>
-        {/** TO DO: Add AddProduct component */}
+        <AddProduct open={add} handleClose={handleClose} />
+        <ViewProductDetails
+          open={view}
+          handleClose={handleClose}
+          productID={productID}
+        />
         <DataTable
-          data={allproductsData.data}
-          columns={allproductsData.columns}
+          data={allProductsData.data}
+          columns={allProductsData.columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"

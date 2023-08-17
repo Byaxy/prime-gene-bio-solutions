@@ -1,23 +1,23 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { FormInputText } from "@/components/form-components/FormInputText";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { UnitOfMeasure } from "@prisma/client";
+import { Unit } from "@/components/Types";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<UnitOfMeasure, "id" | "isActive" | "createdAt" | "updatedAt">;
+type FormInput = Omit<Unit, "id" | "isActive" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
+  createdAt: new Date(),
 };
 
 type AddUnitProps = {
@@ -29,24 +29,27 @@ export default function AddUnit({
   open,
   handleClose,
 }: AddUnitProps): ReactNode {
-  const { handleSubmit, reset, control } = useForm<FormInput>({
+  const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
+  const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const onSubmit = async (data: FormInput) => {
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+    try {
+      // Handle form data with corresponding API call
+      console.log(data);
+    } catch (error) {
+      console.error(error);
     }
-  
-    const response = await fetch("/api/unit-of-measure/add", options);
-
-    const result = await response.json();
-    reset();
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+    console.log(isSubmitSuccessful);
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -67,27 +70,50 @@ export default function AddUnit({
               are required input fields.
             </p>
           </DialogContentText>
-          <label htmlFor="name">
-            <span className="text-primaryDark font-semibold">Unit Name</span>
-            <span className="text-redColor"> *</span>
-          </label>
-          <FormInputText name="name" control={control} label="Unit Name" />
-          <label htmlFor="code">
-            <span className="text-primaryDark font-semibold">Unit Code</span>
-            <span className="text-redColor"> *</span>
-          </label>
-          <FormInputText name="code" control={control} label="Unit Code" />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-2 w-full">
+              <label htmlFor="name">
+                <span className="text-primaryDark font-semibold">Name</span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <TextField
+                id="name"
+                type="text"
+                label="Name"
+                {...register("name", {
+                  required: "Name is required",
+                })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+              <label htmlFor="code">
+                <span className="text-primaryDark font-semibold">Code</span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <TextField
+                id="code"
+                type="text"
+                label="Code"
+                {...register("code", {
+                  required: "Code is required",
+                })}
+                error={!!errors.code}
+                helperText={errors.code?.message}
+              />
+            </div>
+          </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={() => reset()}>
+          <Button variant="outlined" size="large" onClick={() => reset()}>
             Cancel
           </Button>
           <Button
             type="submit"
             variant="contained"
             onClick={handleSubmit(onSubmit)}
+            size="large"
           >
-            Save
+            {isSubmitting ? "Saving..." : "Save"}
           </Button>
         </DialogActions>
       </Dialog>

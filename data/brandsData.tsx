@@ -2,6 +2,7 @@ import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Image from "next/image";
+import { Brand } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
@@ -26,14 +27,7 @@ type HeaderCells = {
     };
   }[];
 };
-export type DataCells = {
-  id: string;
-  date: string;
-  image: string;
-  code: string;
-  name: string;
-};
-
+type DataCells = Omit<Brand, "updatedAt" | "isActive">;
 export type DataType = {
   columns: HeaderCells[];
   data: DataCells[];
@@ -43,8 +37,7 @@ export const brandsData: DataType = {
   columns: [
     {
       name: "Date",
-      selector: (row: { date: string }) => row.date,
-      width: "180px",
+      selector: (row: { createdAt: Date }) => row.createdAt.toISOString(),
     },
     {
       name: "Image",
@@ -97,35 +90,35 @@ export const brandsData: DataType = {
   data: [
     {
       id: "1",
-      date: "15/06/2023",
+      createdAt: new Date(),
       image: "/biorex.jpg",
       code: "BK",
       name: "BIOREX UK",
     },
     {
       id: "2",
-      date: "16/05/2023",
+      createdAt: new Date(),
       image: "/citotest.png",
       code: "CITOTEST",
       name: "Citotest Scientific Co Ltd",
     },
     {
       id: "3",
-      date: "14/05/2023",
+      createdAt: new Date(),
       image: "/dlab.png",
       code: "DLAB",
       name: "DLAB",
     },
     {
       id: "4",
-      date: "10/02/2023",
+      createdAt: new Date(),
       image: "/tulip.png",
       code: "Tulip 011",
       name: "Tulip Diagnostics",
     },
     {
       id: "5",
-      date: "12/04/2023",
+      createdAt: new Date(),
       image: "/hemocue.png",
       code: "HEMOCUE",
       name: "HEMOCUE AB",
