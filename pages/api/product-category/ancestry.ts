@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import { statusMessages } from "@/utils";
 import prismaClient from "@/utils/prisma-client";
-import { ProductCategory } from "@prisma/client";
 
 /**
  * Gets the ancestry tree of all product categories
@@ -23,7 +22,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     {
                         createdAt: "desc"
                     }
-                ]
+                ],
+                select: {
+                    name: true,
+                    id: true,
+                    parentCategoryId: true
+                }
             });
 
             const categories = [];
@@ -41,7 +45,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 }
 
-function getPath(categories: ProductCategory[], cache: {[key: string]: string}, start: number) {
+function getPath(
+    categories: { id: string, name: string, parentCategoryId: string | null}[], 
+    cache: {[key: string]: string}, 
+    start: number
+) {
     let path: string[] = [categories[start].name];
     let curr = start;
 
