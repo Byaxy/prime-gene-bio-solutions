@@ -4,6 +4,17 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
+import formidable from "formidable";
+import { v2 as cloudinary } from "cloudinary";
+import { unlink } from 'fs/promises';
+
+// Disable bodyParser as multipart/form-data is expect instead of json
+// See https://nextjs.org/docs/pages/building-your-application/routing/api-routes#custom-config
+export const config = {
+    api: {
+        bodyParser: false
+    }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getServerSession(req, res, authOptions);
@@ -14,17 +25,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch(req.method) {
         case "POST":
             try {
+                const form = formidable({});
+                let [fields, files] = await form.parse(req);
+                const body = JSON.parse(fields.product[0]);
+                const product = {
+                    ...body,
+                    cost: Math.max(body.cost, 0),
+                    price: Math.max(body.price, 0),
+                    quantity: Math.max(body.quantity, 0),
+                    alertQuantity: Math.max(body.alertQuantity, 0),
+                    images: [],
+                    isActive: true
+                };
+                if (files["product-main-img"]) {
+                    // First image will always be the main product image
+                    const img = await cloudinary.uploader.upload(files["product-main-img"][0].filepath);
+                    product.images.push(img.secure_url);
+                }
+                const cloudinaryResponse = await Promise.all(
+                    Object.keys(files).map(file => {
+                        if (file !== "product-main-img") return cloudinary.uploader.upload(files[file][0].filepath);
+                    }).filter(o => o !== undefined)
+                );
+
+                product.images = [
+                    product.images[0],
+                    ...cloudinaryResponse.map(result => result?.secure_url)
+                ];
+
+                console.log(product);
+                
                 const response = await prismaClient.product.create({
-                    data: {
-                        ...req.body,
-                        cost: Math.max(req.body.cost, 0),
-                        price: Math.max(req.body.price, 0),
-                        quantity: Math.max(req.body.quantity, 0),
-                        alertQuantity: Math.max(req.body.alertQuantity, 0),
-                        isActive: true
-                    }
+                    data: { ...product }
                 });
-    
+                // Delete the images from file system
+                await Promise.all(
+                    Object.keys(files).map(key => unlink(files[key][0].filepath))
+                );
                 res.statusMessage = statusMessages[201];
                 return res.status(201).json(response);
             } catch(e) {

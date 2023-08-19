@@ -17,7 +17,7 @@ const defaultValues: FormInput = {
   code: "",
   name: "",
   image: "",
-  gallery: [""],
+  gallery: [],
   brand: "",
   type: "",
   unit: "",
@@ -65,7 +65,16 @@ export default function AddProduct({ open, handleClose }: AddProductProps) {
 
   const onSubmit = async (data: FormInput) => {
     try {
-      console.log(data);
+      const formData = new FormData();
+      const { image, gallery, ...rest } = data;
+      formData.append("product", JSON.stringify(rest));
+      if (image.length) formData.append("product-main-img", image[0]);
+      for (let i = 0; i < gallery.length; i++) formData.append("product-gallery-" + i, gallery[i]);
+      const response = await fetch("/api/product/add", {
+        method: "POST",
+        body: formData
+      });
+      handleClose();
     } catch (error) {
       console.error(error);
     }
@@ -408,6 +417,7 @@ export default function AddProduct({ open, handleClose }: AddProductProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>
