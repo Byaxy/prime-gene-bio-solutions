@@ -35,6 +35,7 @@ model Product {
   cost Int
   price Int
   quantity Int
+  description String?
   alertQuantity Int @map("alert_quantity")
   details String?
   isActive Boolean? @default(true)

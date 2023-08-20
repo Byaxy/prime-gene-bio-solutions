@@ -29,12 +29,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 let [fields, files] = await form.parse(req);
                 const body = JSON.parse(fields.product[0]);
                 const product = {
-                    ...body,
+                    name: body.name,
+                    code: body.name,
                     cost: Math.max(body.cost, 0),
                     price: Math.max(body.price, 0),
                     quantity: Math.max(body.quantity, 0),
                     alertQuantity: Math.max(body.alertQuantity, 0),
-                    images: [],
+                    images: new Array<string>(),
+                    productCategoryId: body.category,
+                    unitOfMeasureId: body.unit,
+                    productTypeId: body.type,
+                    productBrandId: body.brand,
+                    description: body.description || null,
                     isActive: true
                 };
                 if (files["product-main-img"]) {
@@ -50,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                 product.images = [
                     product.images[0],
-                    ...cloudinaryResponse.map(result => result?.secure_url)
+                    ...cloudinaryResponse.map(result => result?.secure_url as string)
                 ];
 
                 console.log(product);
