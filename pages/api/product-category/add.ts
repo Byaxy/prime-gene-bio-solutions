@@ -1,9 +1,18 @@
-import { statusMessages } from "@/utils";
+import { statusMessages, uploadImagesToCloudinary } from "@/utils";
 import prismaClient from "@/utils/prisma-client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
+import formidable from "formidable";
+
+// Disable bodyParser as multipart/form-data is expect instead of json
+// See https://nextjs.org/docs/pages/building-your-application/routing/api-routes#custom-config
+export const config = {
+    api: {
+        bodyParser: false
+    }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getServerSession(req, res, authOptions);
@@ -14,10 +23,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch(req.method) {
         case "POST":
             try {
-                const result = await prismaClient.productCategory.create({
-                    data: { ...req.body }
+                const form = formidable({});
+                let [fields, files] = await form.parse(req);
+                const { createdAt, ...body } = JSON.parse(fields.json[0]);
+
+                const category: any = {
+                    name: body.name,
+                    code: body.code,
+                    description: body.description,
+                    parentCategoryId: body.parentCategory
+                };
+
+                if (files["image"]) {
+                    category.image = await uploadImagesToCloudinary(files["image"][0].filepath) as string;
+                }
+
+                console.log(category);
+                const result = await prismaClient.productBrand.create({
+                    data: category
                 });
-    
                 res.statusMessage = statusMessages[201];
                 return res.status(201).json(result);
             } catch(e) {
