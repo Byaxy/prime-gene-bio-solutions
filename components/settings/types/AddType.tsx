@@ -52,14 +52,6 @@ export default function AddType({
     }
   };
 
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-    }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
-
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
