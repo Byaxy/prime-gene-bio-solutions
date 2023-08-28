@@ -1,9 +1,18 @@
-import { statusMessages } from "@/utils";
+import { statusMessages, uploadImagesToCloudinary } from "@/utils";
 import prismaClient from "@/utils/prisma-client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
+import formidable from "formidable";
+
+// Disable bodyParser as multipart/form-data is expect instead of json
+// See https://nextjs.org/docs/pages/building-your-application/routing/api-routes#custom-config
+export const config = {
+    api: {
+        bodyParser: false
+    }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getServerSession(req, res, authOptions);
@@ -14,12 +23,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch(req.method) {
         case "POST":
             try {
+                const form = formidable({});
+                let [fields, files] = await form.parse(req);
+                const { createdAt, ...body } = JSON.parse(fields.json[0]);
+                const brand = { ...body };
+
+                if (files["image"]) {
+                    brand.image = await uploadImagesToCloudinary(files["image"][0].filepath) as string;
+                }
+
+                console.log(brand);
                 const response = await prismaClient.productBrand.create({
-                    data: { ...req.body }
+                    data: brand
                 });
                 res.statusMessage = statusMessages[201];
                 return res.status(201).json(response);
             } catch(e) {
+                console.log(e);
                 if(e instanceof Prisma.PrismaClientValidationError) {
                     // Missing required fields are missing. See https://www.prisma.io/docs/reference/api-reference/error-reference#prismaclientvalidationerror
                     return res.writeHead(400, statusMessages[400], { "Content-Type": "text/plain" }).end("Some required fields are missing. Please check the data sent and try again");
