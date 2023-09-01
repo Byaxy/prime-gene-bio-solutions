@@ -1,18 +1,5 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 
-type FileInputProps = {
-  onChange: (file: File) => void;
-};
-
-const FileInput: React.FC<FileInputProps> = ({ onChange }) => {
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      onChange(file);
-    }
-  };
-
-  return <input type="file" onChange={handleFileChange} />;
-};
-
-export default FileInput;
+export default function ViewExpenseDetails() {
+  return <div>ViewExpenseDetails</div>;
+}

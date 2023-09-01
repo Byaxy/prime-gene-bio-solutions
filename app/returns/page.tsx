@@ -1,30 +1,45 @@
 "use client";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { returnsData } from "@/data/returnsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
 import ListPage from "@/components/ListPage";
+import ListComponent from "@/components/ListComponent";
+import AddReturn from "@/components/returns/AddReturn";
 
 export default function ReturnsPage() {
+  const [add, setAdd] = useState<boolean>(false);
+
+  const onAddClicked = useCallback((): void => {
+    setAdd(true);
+  }, []);
+
+  const handleClose = useCallback((): void => {
+    setAdd(false);
+  }, []);
+
   const router = useRouter();
   const onRowClicked = (row: { id: number }) => {
     router.push(`/sales/${row.id}`);
   };
   return (
-    <ListPage
+    <ListComponent
       title="Returns"
       buttonText="Add Return"
-      buttonPath="/returns/add-return"
+      buttonAction={onAddClicked}
     >
-      <DataTable
-        data={returnsData.data}
-        columns={returnsData.columns}
-        customStyles={customTableStyles}
-        onRowClicked={onRowClicked}
-        className="scrollbar-hide"
-        pagination
-      />
-    </ListPage>
+      <>
+        <AddReturn open={add} handleClose={handleClose} />
+        <DataTable
+          data={returnsData.data}
+          columns={returnsData.columns}
+          customStyles={customTableStyles}
+          onRowClicked={onRowClicked}
+          className="scrollbar-hide"
+          pagination
+        />
+      </>
+    </ListComponent>
   );
 }

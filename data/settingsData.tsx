@@ -31,4 +31,10 @@ export const settingsData: SettingsType[] = [
     description: "View and manage all your customer groups",
     path: "/settings/customer-groups",
   },
+  {
+    title: "Expense Categories",
+    description:
+      "View, register new, and manage the different expenditure categories",
+    path: "/settings/expense-categories",
+  },
 ];
