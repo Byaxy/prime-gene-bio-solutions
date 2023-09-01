@@ -22,8 +22,8 @@ export const data = [
     icon: <PeopleRoundedIcon />,
     subCategories: [
       {
-        title: "Stock Adjustment",
-        path: "/products/stock-adjustment",
+        title: "Products Stock",
+        path: "/products/products-stock",
       },
       {
         title: "Stock Ledger",

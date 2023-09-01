@@ -42,6 +42,15 @@ export type ProductCategory ={
      updatedAt: Date;
      isActive: boolean;
 }
+export type ExpenseCategory ={
+     id: string;
+     name: string;
+     code: string;
+     description: string;
+     createdAt: Date;
+     updatedAt: Date;
+     isActive: boolean;
+}
 export enum Gender {
      MALE = "MALE",
      FEMALE = "FEMALE",
@@ -125,6 +134,20 @@ export type Product = {
      description: string;
      alertQuantity: number;
      quantity: number;
+     createdAt: Date;
+     updatedAt: Date;
+     isActive: boolean;
+}
+export type ProductStock = {
+     id: string;
+     name: string;
+     lotNumber: string;
+     manufactureDate: Date;
+     expiryDate: Date;
+     quantity: number;
+     reference: string;
+     description: string;
+     attachment: string;
      createdAt: Date;
      updatedAt: Date;
      isActive: boolean;
