@@ -62,31 +62,19 @@ export default function AddCategory({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const onSubmit = async (data: FormInput) => {
-    if (data.image.length > 0) {
-      const imageFile = data.image[0];
+    const { image, ...rest } = data;
+    const formData = new FormData();
 
-      const formData = new FormData();
-      formData.append("file", imageFile);
+    formData.append("json", JSON.stringify(rest));
+    if (image) formData.append("image", image[0]);
+    
+    const response = await fetch("/api/product-category/add", {
+      method: "POST",
+      body: formData
+    })
 
-      formData.append("upload_preset", "prime-gene-bio-solutions");
-
-      try {
-        const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dykyxconb/image/upload",
-          formData
-        );
-        setImageUrl(response.data.secure_url);
-        console.log(imageUrl);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      setImageUrl(null);
-      console.log(imageUrl);
-    }
-
-    // Handle form data and cloudinary image url with corresponding API call
-    console.log({ ...data, image: imageUrl });
+    reset();
+    setPreviewImage(null);
   };
 
   // Set selected Image for preview
@@ -102,15 +90,6 @@ export default function AddCategory({
       setPreviewImage(null);
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      setPreviewImage(null);
-    }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>

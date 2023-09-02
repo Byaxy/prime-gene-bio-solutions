@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import prismaClient from "./prisma-client";
 import { ProductCategory } from "@prisma/client";
+import { v2 as cloudinary } from "cloudinary";
 
 export function generateRandomString(length: number = 8): string {
     let chars: string = "0123456789abcdefghijklmnopqrstuvwxyz@#&ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -46,4 +47,14 @@ export async function getProductCategoryBreadcrumb(categoryId: String): Promise<
     }
 
     return breadcrumbs;
+}
+
+export async function uploadImagesToCloudinary(filepath: string | string[]) : Promise<string | string[]> {
+    // Upload single image
+    if (typeof filepath === "string") return (await cloudinary.uploader.upload(filepath)).secure_url;
+    // Upload multiple images
+    const cloudinaryResponse = await Promise.all(
+        filepath.map(file => cloudinary.uploader.upload(file))
+    );
+    return cloudinaryResponse.map(result => result.secure_url);
 }

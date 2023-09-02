@@ -37,18 +37,20 @@ export default function AddType({
     try {
       // Handle form data with corresponding API call
       console.log(data);
+
+      const response = await fetch("/api/product-type/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      reset();
     } catch (error) {
       console.error(error);
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-    }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>

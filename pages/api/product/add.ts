@@ -1,11 +1,10 @@
-import { statusMessages } from "@/utils";
+import { statusMessages, uploadImagesToCloudinary } from "@/utils";
 import prismaClient from "@/utils/prisma-client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import formidable from "formidable";
-import { v2 as cloudinary } from "cloudinary";
 import { unlink } from 'fs/promises';
 
 // Disable bodyParser as multipart/form-data is expect instead of json
@@ -45,19 +44,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 };
                 if (files["product-main-img"]) {
                     // First image will always be the main product image
-                    const img = await cloudinary.uploader.upload(files["product-main-img"][0].filepath);
-                    product.images.push(img.secure_url);
+                    const img = await uploadImagesToCloudinary(files["product-main-img"][0].filepath) as string;
+                    product.images.push(img);
                 }
-                const cloudinaryResponse = await Promise.all(
-                    Object.keys(files).map(file => {
-                        if (file !== "product-main-img") return cloudinary.uploader.upload(files[file][0].filepath);
-                    }).filter(o => o !== undefined)
-                );
 
-                product.images = [
-                    product.images[0],
-                    ...cloudinaryResponse.map(result => result?.secure_url as string)
-                ];
+                const filepaths = Object.keys(files).map(key => {
+                    if (key !== "product-main-img") return files[key][0].filepath;
+                }).filter(o => o !== undefined) as string[];
+
+                const cloudinaryResponse = await uploadImagesToCloudinary(filepaths) as string[];
+
+                product.images = [ product.images[0], ...cloudinaryResponse ];
 
                 console.log(product);
                 
