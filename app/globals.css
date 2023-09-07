@@ -6,6 +6,17 @@
   display: none;
 }
 
+/* For Webkit-based browsers (Chrome, Safari and Opera) */
+.MuiDrawer-paper::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.MuiDrawer-paper {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 /* For IE, Edge and Firefox */
 .scrollbar-hide {
   -ms-overflow-style: none; /* IE and Edge */

@@ -12,7 +12,11 @@ export default function SalesPage() {
     router.push(`/sales/${row.id}`);
   };
   return (
-    <ListPage title="Sales" buttonText="Add Sale" buttonPath="/sales/add-sale">
+    <ListPage
+      title="All Sales"
+      buttonText="Add Sale"
+      buttonPath="/sales/add-sale"
+    >
       <DataTable
         data={allSalesData.data}
         columns={allSalesData.columns}

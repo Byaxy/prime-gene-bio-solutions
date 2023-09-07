@@ -23,7 +23,7 @@ export default function DeliveriesPage() {
   };
   return (
     <ListComponent
-      title="Deliveries"
+      title="All Deliveries"
       buttonText="Add Delivery"
       buttonAction={onAddClicked}
     >

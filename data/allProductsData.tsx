@@ -2,10 +2,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import Image from "next/image";
+import type { Product } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: DataCells) => any;
+  selector?: (row: Product) => any;
   width?: string;
   cell?: any;
   style?: {
@@ -18,7 +19,7 @@ type HeaderCells = {
     fontSize?: string;
   };
   conditionalCellStyles?: {
-    when: (row: DataCells) => boolean;
+    when: (row: Product) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -26,25 +27,10 @@ type HeaderCells = {
     };
   }[];
 };
-export type DataCells = {
-  id: string;
-  date: string;
-  code: string;
-  name: string;
-  image: string;
-  brand: string;
-  type: string;
-  category: string;
-  cost: number;
-  price: number;
-  quantity: number | null;
-  unit: string;
-  alertQuantity: number;
-};
 
 export type DataType = {
   columns: HeaderCells[];
-  data: DataCells[];
+  data: Product[];
 };
 
 export const allProductsData: DataType = {
@@ -128,33 +114,41 @@ export const allProductsData: DataType = {
   data: [
     {
       id: "1",
-      date: "12/04/2023",
+      createdAt: new Date(),
       image: "/product.jpg",
       code: "0085",
       name: "Talley Counter",
       brand: "Allele Diagnostic",
-      type: "",
+      type: "Sample Type",
       category: "General Lab Equipment",
       cost: 33.5,
       price: 200.0,
       quantity: 1.0,
       unit: "Pcs/Pk",
       alertQuantity: 5,
+      description: "",
+      gallery: [],
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "2",
-      date: "12/04/2023",
+      createdAt: new Date(),
       image: "/product.jpg",
       code: "00857",
       name: "Sealent",
       brand: "Allele Diagnostic",
-      type: "",
+      type: "Sample type",
       category: "General Lab Equipment",
       cost: 33.0,
       price: 50.5,
-      quantity: null,
+      quantity: 0,
       unit: "Pcs/Pk",
       alertQuantity: 5,
+      description: "",
+      gallery: [],
+      updatedAt: new Date(),
+      isActive: true,
     },
   ],
 };

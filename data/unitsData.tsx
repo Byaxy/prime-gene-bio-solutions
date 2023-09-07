@@ -1,10 +1,11 @@
 import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import type { Unit } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: DataCells) => any;
+  selector?: (row: Unit) => any;
   cell?: any;
   width?: string;
   style?: {
@@ -17,7 +18,7 @@ type HeaderCells = {
     alignItems?: string;
   };
   conditionalCellStyles?: {
-    when: (row: DataCells) => boolean;
+    when: (row: Unit) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -34,22 +35,22 @@ export type DataCells = {
 
 export type DataType = {
   columns: HeaderCells[];
-  data: DataCells[];
+  data: Unit[];
 };
 
 export const unitsData: DataType = {
   columns: [
     {
       name: "Date",
-      selector: (row: { date: string }) => row.date,
+      selector: (row: { createdAt: Date }) => row.createdAt.toDateString(),
       width: "180px",
     },
     {
-      name: "Unit Code",
+      name: "Code",
       selector: (row: { code: string }) => row.code,
     },
     {
-      name: "Unit Name",
+      name: "Name",
       selector: (row: { name: string }) => row.name,
     },
     {
@@ -76,27 +77,35 @@ export const unitsData: DataType = {
   data: [
     {
       id: "1",
-      date: "15/06/2023",
+      createdAt: new Date(),
       code: "Vol/Pk",
       name: "Volume/Pack",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "2",
-      date: "16/05/2023",
+      createdAt: new Date(),
       code: "Pcs/Pk",
       name: "Pieces/Pack",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "3",
-      date: "14/05/2023",
+      createdAt: new Date(),
       code: "Pks",
       name: "Packs",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "4",
-      date: "10/02/2023",
+      createdAt: new Date(),
       code: "Rolls",
       name: "Rolls",
+      updatedAt: new Date(),
+      isActive: true,
     },
   ],
 };

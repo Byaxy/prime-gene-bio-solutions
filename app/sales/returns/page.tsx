@@ -1,13 +1,14 @@
 "use client";
-import { allExpensesData } from "@/data/allExpensesData";
+
+import React, { useCallback, useState } from "react";
+import { returnsData } from "@/data/returnsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
 import ListComponent from "@/components/ListComponent";
-import { useCallback, useState } from "react";
-import AddExpense from "@/components/expenses/AddExpense";
+import AddReturn from "@/components/returns/AddReturn";
 
-export default function ExpensesPage() {
+export default function SalesReturnsPage() {
   const [add, setAdd] = useState<boolean>(false);
 
   const onAddClicked = useCallback((): void => {
@@ -20,19 +21,19 @@ export default function ExpensesPage() {
 
   const router = useRouter();
   const onRowClicked = (row: { id: number }) => {
-    router.push(`/expenses/${row.id}`);
+    router.push(`/sales/${row.id}`);
   };
   return (
     <ListComponent
-      title="All Expenses"
-      buttonText="Add Expense"
+      title="Sales Returns"
+      buttonText="Add Return"
       buttonAction={onAddClicked}
     >
       <>
-        <AddExpense open={add} handleClose={handleClose} />
+        <AddReturn open={add} handleClose={handleClose} />
         <DataTable
-          data={allExpensesData.data}
-          columns={allExpensesData.columns}
+          data={returnsData.data}
+          columns={returnsData.columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"

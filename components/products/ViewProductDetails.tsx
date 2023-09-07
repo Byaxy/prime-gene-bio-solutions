@@ -7,6 +7,7 @@ import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Image from "next/image";
 import { allProductsData } from "@/data/allProductsData";
+import type { Product } from "@/components/Types";
 
 type ProductType = {
   date: string;
@@ -34,7 +35,7 @@ export default function ViewProductDetails({
   handleClose,
   productID,
 }: ViewProductDetailsProps) {
-  const [product, setProduct] = useState<ProductType | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     let productDetails = allProductsData.data.filter(
@@ -72,7 +73,9 @@ export default function ViewProductDetails({
                   <TableCell className="font-semibold w-[150px] text-lg">
                     Date of Registration
                   </TableCell>
-                  <TableCell className="text-[17px]">{product.date}</TableCell>
+                  <TableCell className="text-[17px]">
+                    {product.createdAt.toDateString()}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg">Name</TableCell>
@@ -135,7 +138,7 @@ export default function ViewProductDetails({
           </div>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={handleClose}>
+          <Button variant="contained" size="large" onClick={handleClose}>
             Close
           </Button>
         </DialogActions>

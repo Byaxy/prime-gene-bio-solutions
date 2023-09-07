@@ -31,18 +31,21 @@ export type Unit = {
      updatedAt: Date;
      isActive: boolean;
 }
-export type ProductCategory ={
+export type ProductCategory = {
      id: string;
      code: string;
      name: string;
      description: string;
      image: string;
-     parentCategory: string;
+     subCategories?: ProductSubCategory[]
      createdAt: Date;
      updatedAt: Date;
      isActive: boolean;
 }
-export type ExpenseCategory ={
+export type ProductSubCategory = ProductCategory & {
+     parentCategory: string;
+}
+export type ExpenseCategory = {
      id: string;
      name: string;
      code: string;

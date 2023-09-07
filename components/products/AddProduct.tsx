@@ -69,10 +69,11 @@ export default function AddProduct({ open, handleClose }: AddProductProps) {
       const { image, gallery, ...rest } = data;
       formData.append("product", JSON.stringify(rest));
       if (image.length) formData.append("product-main-img", image[0]);
-      for (let i = 0; i < gallery.length; i++) formData.append("product-gallery-" + i, gallery[i]);
+      for (let i = 0; i < gallery.length; i++)
+        formData.append("product-gallery-" + i, gallery[i]);
       const response = await fetch("/api/product/add", {
         method: "POST",
-        body: formData
+        body: formData,
       });
       handleClose();
     } catch (error) {

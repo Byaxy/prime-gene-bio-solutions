@@ -1,11 +1,11 @@
 import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { ProductCategory, ProductSubCategory } from "@/components/Types";
+import type { ProductSubCategory } from "@/components/Types";
 
 export type HeaderCells = {
   name: string;
-  selector?: (row: ProductCategory) => any;
+  selector?: (row: ProductSubCategory) => any;
   cell?: any;
   width?: string;
   style?: {
@@ -18,7 +18,7 @@ export type HeaderCells = {
     alignItems?: string;
   };
   conditionalCellStyles?: {
-    when: (row: ProductCategory) => boolean;
+    when: (row: ProductSubCategory) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -29,10 +29,10 @@ export type HeaderCells = {
 
 export type DataType = {
   columns: HeaderCells[];
-  data: ProductCategory[];
+  data: ProductSubCategory[];
 };
 
-export const categoriesData: DataType = {
+export const subcategoriesData: DataType = {
   columns: [
     {
       name: "Date",
@@ -47,6 +47,10 @@ export const categoriesData: DataType = {
     {
       name: "Name",
       selector: (row: { name: string }) => row.name,
+    },
+    {
+      name: "Parent Category",
+      selector: (row: { parentCategory: string }) => row.parentCategory,
     },
     {
       name: "Description",
@@ -89,9 +93,10 @@ export const categoriesData: DataType = {
       id: "01",
       createdAt: new Date(),
       code: "01",
-      name: "Clinical Laboratory Solutions",
-      description: "Clinical laboratory solutions products",
+      name: "Clinical Chemistry",
+      description: "Clinical Chemistry products",
       image: "",
+      parentCategory: "Clinical Laboratory Solutions",
       isActive: true,
       updatedAt: new Date(),
       subCategories: [
@@ -117,6 +122,30 @@ export const categoriesData: DataType = {
           updatedAt: new Date(),
           isActive: true,
         },
+      ],
+    },
+    {
+      id: "02",
+      createdAt: new Date(),
+      code: "02",
+      name: "Haematology",
+      description: "Medical solutions products",
+      image: "",
+      parentCategory: "Clinical Laboratory Solutions",
+      isActive: true,
+      updatedAt: new Date(),
+    },
+    {
+      id: "03",
+      createdAt: new Date(),
+      code: "03",
+      name: "Molecular Biology",
+      description: "Imaging solutions products",
+      image: "",
+      parentCategory: "Clinical Laboratory Solutions",
+      isActive: true,
+      updatedAt: new Date(),
+      subCategories: [
         {
           id: "013",
           createdAt: new Date(),
@@ -131,128 +160,15 @@ export const categoriesData: DataType = {
       ],
     },
     {
-      id: "02",
-      createdAt: new Date(),
-      code: "02",
-      name: "Medical Solutions",
-      description: "Medical solutions products",
-      image: "",
-      isActive: true,
-      updatedAt: new Date(),
-      subCategories: [
-        {
-          id: "021",
-          createdAt: new Date(),
-          code: "01",
-          name: "Critical care",
-          description: "Clinical chemistry solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-        {
-          id: "022",
-          createdAt: new Date(),
-          code: "02",
-          name: "Primary care",
-          description: "Medical solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-        {
-          id: "023",
-          createdAt: new Date(),
-          code: "03",
-          name: "Surgical care",
-          description: "Imaging solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-        {
-          id: "024",
-          createdAt: new Date(),
-          code: "04",
-          name: "Specialist care",
-          description: "Imaging solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-      ],
-    },
-    {
-      id: "03",
-      createdAt: new Date(),
-      code: "03",
-      name: "Imaging Solutions",
-      description: "Imaging solutions products",
-      image: "",
-      isActive: true,
-      updatedAt: new Date(),
-      subCategories: [
-        {
-          id: "031",
-          createdAt: new Date(),
-          code: "01",
-          name: "Radiology",
-          description: "Clinical chemistry solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-        {
-          id: "032",
-          createdAt: new Date(),
-          code: "02",
-          name: "Ultrasonography",
-          description: "Medical solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-      ],
-    },
-    {
       id: "04",
       createdAt: new Date(),
       code: "04",
-      name: "Dental Solutions",
-      description: "Dental solutions products",
+      name: "Critical care",
+      description: "Clinical chemistry solutions products",
       image: "",
+      parentCategory: "Medical Solutions",
       isActive: true,
       updatedAt: new Date(),
-      subCategories: [
-        {
-          id: "041",
-          createdAt: new Date(),
-          code: "01",
-          name: "Dental Laboratory",
-          description: "Clinical chemistry solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-        {
-          id: "042",
-          createdAt: new Date(),
-          code: "02",
-          name: "Dental Accessories",
-          description: "Medical solutions products",
-          parentCategory: "",
-          image: "",
-          updatedAt: new Date(),
-          isActive: true,
-        },
-      ],
     },
   ],
 };

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import type { Types } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: DataCells) => any;
+  selector?: (row: Types) => any;
   cell?: any;
   width?: string;
   style?: {
@@ -17,7 +18,7 @@ type HeaderCells = {
     alignItems?: string;
   };
   conditionalCellStyles?: {
-    when: (row: DataCells) => boolean;
+    when: (row: Types) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -25,31 +26,25 @@ type HeaderCells = {
     };
   }[];
 };
-export type DataCells = {
-  id: string;
-  date: string;
-  description: string;
-  name: string;
-};
 
 export type DataType = {
   columns: HeaderCells[];
-  data: DataCells[];
+  data: Types[];
 };
 
 export const typesData: DataType = {
   columns: [
     {
       name: "Date",
-      selector: (row: { date: string }) => row.date,
+      selector: (row: { createdAt: Date }) => row.createdAt.toDateString(),
       width: "180px",
     },
     {
-      name: "Type Name",
+      name: "Name",
       selector: (row: { name: string }) => row.name,
     },
     {
-      name: "Type Description",
+      name: "Description",
       selector: (row: { description: string }) => row.description,
     },
 
@@ -77,33 +72,43 @@ export const typesData: DataType = {
   data: [
     {
       id: "1",
-      date: "15/06/2023",
+      createdAt: new Date(),
       description: "Analyzers",
       name: "Analyzers",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "2",
-      date: "16/05/2023",
+      createdAt: new Date(),
       description: "Equipment",
       name: "Equipment",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "3",
-      date: "14/05/2023",
+      createdAt: new Date(),
       description: "Instruments",
       name: "Instruments",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "4",
-      date: "10/02/2023",
+      createdAt: new Date(),
       description: "Reagents",
       name: "Reagents",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "5",
-      date: "12/04/2023",
+      createdAt: new Date(),
       description: "Kits",
       name: "Kits",
+      updatedAt: new Date(),
+      isActive: true,
     },
   ],
 };

@@ -8,7 +8,15 @@ import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 
-export const data = [
+export type DataType = {
+  id: number;
+  title: string;
+  path: string;
+  icon?: JSX.Element;
+  subCategories?: DataType[];
+};
+
+export const data: DataType[] = [
   {
     id: 0,
     title: "Dashboard",
@@ -18,32 +26,66 @@ export const data = [
   {
     id: 1,
     title: "Products",
-    path: "/products",
+    path: "",
     icon: <PeopleRoundedIcon />,
     subCategories: [
       {
-        title: "Products Stock",
-        path: "/products/products-stock",
+        id: 10,
+        title: "All Products",
+        path: "/products",
       },
       {
-        title: "Stock Ledger",
-        path: "/products/stock-ledger",
+        id: 11,
+        title: "Categories",
+        path: "/products/categories",
+      },
+      {
+        id: 12,
+        title: "Sub Categories",
+        path: "/products/subcategories",
+      },
+      {
+        id: 13,
+        title: "Brands",
+        path: "/products/brands",
+      },
+      {
+        id: 14,
+        title: "Types",
+        path: "/products/types",
+      },
+      {
+        id: 15,
+        title: "Units",
+        path: "/products/units",
       },
     ],
   },
   {
     id: 2,
     title: "Sales",
-    path: "/sales",
+    path: "",
     icon: <PointOfSaleIcon />,
     subCategories: [
       {
+        id: 20,
+        title: "All Sales",
+        path: "/sales",
+      },
+      {
+        id: 21,
         title: "Deliveries",
         path: "/sales/deliveries",
       },
       {
+        id: 22,
         title: "Way Bill",
         path: "/sales/way-bill",
+      },
+      {
+        id: 23,
+        title: "Sales Returns",
+        path: "/sales/returns",
       },
     ],
   },
@@ -56,55 +98,101 @@ export const data = [
   {
     id: 4,
     title: "Purchases",
-    path: "/purchases",
+    path: "",
     icon: <RequestQuoteRoundedIcon />,
+    subCategories: [
+      {
+        id: 40,
+        title: "All Purchases",
+        path: "/purchases",
+      },
+      {
+        id: 41,
+        title: "Purchases Returns",
+        path: "/purchases/returns",
+      },
+    ],
   },
   {
     id: 5,
     title: "Expenses",
-    path: "/expenses",
+    path: "",
     icon: <RequestQuoteRoundedIcon />,
+    subCategories: [
+      {
+        id: 50,
+        title: "All Expenses",
+        path: "/expenses",
+      },
+      {
+        id: 51,
+        title: "Expense Categories",
+        path: "/expenses/categories",
+      },
+    ],
   },
   {
     id: 6,
-    title: "Returns",
-    path: "/returns",
-    icon: <ShuffleIcon />,
+    title: "Users",
+    path: "/users",
+    icon: <PeopleRoundedIcon />,
   },
   {
     id: 7,
-    title: "People",
-    path: "/people",
+    title: "Customers",
+    path: "",
     icon: <PeopleRoundedIcon />,
     subCategories: [
       {
-        title: "Users",
-        path: "/people/users",
+        id: 70,
+        title: "All Customers",
+        path: "/customers",
       },
       {
-        title: "Customers",
-        path: "/people/customers",
-      },
-      {
-        title: "Suppliers",
-        path: "/people/suppliers",
+        id: 71,
+        title: "Customer Groups",
+        path: "/customers/groups",
       },
     ],
   },
   {
     id: 8,
+    title: "Suppliers",
+    path: "/suppliers",
+    icon: <PeopleRoundedIcon />,
+  },
+  {
+    id: 9,
+    title: "Iventory",
+    path: "",
+    icon: <SummarizeRoundedIcon />,
+    subCategories: [
+      {
+        id: 90,
+        title: "Products Stock",
+        path: "/inventory",
+      },
+      {
+        id: 91,
+        title: "Inventory Logs",
+        path: "/inventory/inventory-logs",
+      },
+    ],
+  },
+  {
+    id: 9,
     title: "Documents",
     path: "/documents",
     icon: <SummarizeRoundedIcon />,
   },
   {
-    id: 9,
+    id: 10,
     title: "Reports",
     path: "/reports",
     icon: <BarChartIcon />,
   },
   {
-    id: 10,
+    id: 11,
     title: "Settings",
     path: "/settings",
     icon: <SettingsRoundedIcon />,

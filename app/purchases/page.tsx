@@ -12,7 +12,7 @@ export default function PurchasesPage() {
   };
   return (
     <ListPage
-      title="Purchases"
+      title="All Purchases"
       buttonText="Add Purchase"
       buttonPath="/purchases/add-purchase"
     >

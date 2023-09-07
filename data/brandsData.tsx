@@ -2,11 +2,11 @@ import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Image from "next/image";
-import { Brand } from "@/components/Types";
+import type { Brand } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: DataCells) => any;
+  selector?: (row: Brand) => any;
   cell?: any;
   width?: string;
   style?: {
@@ -17,9 +17,10 @@ type HeaderCells = {
     justifyContent?: string;
     gap?: string;
     alignItems?: string;
+    padding?: string;
   };
   conditionalCellStyles?: {
-    when: (row: DataCells) => boolean;
+    when: (row: Brand) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -27,43 +28,43 @@ type HeaderCells = {
     };
   }[];
 };
-type DataCells = Omit<Brand, "updatedAt" | "isActive">;
 export type DataType = {
   columns: HeaderCells[];
-  data: DataCells[];
+  data: Brand[];
 };
 
 export const brandsData: DataType = {
   columns: [
     {
       name: "Date",
-      selector: (row: { createdAt: Date }) => row.createdAt.toISOString(),
+      selector: (row: { createdAt: Date }) => row.createdAt.toDateString(),
     },
     {
       name: "Image",
       selector: (row: { image: string }) => row.image,
-      width: "100px",
+      width: "120px",
       cell: (row: { image: string }) => (
         <Image
           className="rounded-full"
           src={row.image}
           alt="Product Image"
-          height={40}
-          width={40}
+          height={60}
+          width={60}
         />
       ),
       style: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        padding: "8px",
       },
     },
     {
-      name: "Brand Code",
+      name: "Code",
       selector: (row: { code: string }) => row.code,
     },
     {
-      name: "Brand Name",
+      name: "Name",
       selector: (row: { name: string }) => row.name,
     },
     {
@@ -94,6 +95,8 @@ export const brandsData: DataType = {
       image: "/biorex.jpg",
       code: "BK",
       name: "BIOREX UK",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "2",
@@ -101,6 +104,8 @@ export const brandsData: DataType = {
       image: "/citotest.png",
       code: "CITOTEST",
       name: "Citotest Scientific Co Ltd",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "3",
@@ -108,6 +113,8 @@ export const brandsData: DataType = {
       image: "/dlab.png",
       code: "DLAB",
       name: "DLAB",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "4",
@@ -115,6 +122,8 @@ export const brandsData: DataType = {
       image: "/tulip.png",
       code: "Tulip 011",
       name: "Tulip Diagnostics",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
       id: "5",
@@ -122,6 +131,8 @@ export const brandsData: DataType = {
       image: "/hemocue.png",
       code: "HEMOCUE",
       name: "HEMOCUE AB",
+      updatedAt: new Date(),
+      isActive: true,
     },
   ],
 };
