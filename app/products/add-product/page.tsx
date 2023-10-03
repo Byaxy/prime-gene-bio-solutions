@@ -56,9 +56,7 @@ export default function AddProductPage() {
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
   const [galleryImages, setGalleryImages] = useState<string[] | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    "/placeholder.jpg"
-  );
+  const [previewImage, setPreviewImage] = useState<string>("/placeholder.jpg");
 
   const onSubmit = async (data: FormInput) => {
     try {
@@ -87,7 +85,7 @@ export default function AddProductPage() {
       };
       reader.readAsDataURL(file);
     } else {
-      setPreviewImage(null);
+      setPreviewImage("/placeholder.jpg");
     }
   };
 
@@ -116,7 +114,7 @@ export default function AddProductPage() {
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setPreviewImage(null);
+      setPreviewImage("/placeholder.jpg");
       setGalleryImages([]);
     }
     console.log(isSubmitSuccessful);
@@ -146,7 +144,7 @@ export default function AddProductPage() {
           </span>
         </Button>
       </div>
-      <div className="h-[2px] bg-mainColor w-full mt-5 mb-10 sm:mb-16 opacity-50" />
+      <div className="h-[2px] bg-mainColor w-full mt-5 mb-10 sm:mb-16 opacity-20" />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-col md:flex-row gap-5 mb-2">
@@ -413,7 +411,7 @@ export default function AddProductPage() {
             variant="outlined"
             size="large"
             onClick={() => (
-              reset(), setPreviewImage("/product.jpg"), setGalleryImages([])
+              reset(), setPreviewImage("/placeholder.jpg"), setGalleryImages([])
             )}
           >
             Clear

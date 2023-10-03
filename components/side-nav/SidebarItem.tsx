@@ -3,6 +3,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SidebarMenu from "./SidebarMenu";
 import type { DataType } from "@/data/sidenavData";
+import { usePathname } from "next/navigation";
 
 type SidebarItemProps = {
   data: DataType;
@@ -17,12 +18,14 @@ export default function SidebarItem({
   open,
   handleClick,
 }: SidebarItemProps) {
+  const pathname = usePathname();
+
   return (
     <li className="w-full flex flex-col items-center cursor-pointer gap-2 bg-white">
       <button
         onClick={handleClick}
         className={`${
-          isOpen
+          pathname === data.path || isOpen
             ? "text-mainColor bg-primaryColor"
             : "text-primaryColor bg-white"
         } w-full flex flex-row gap-2 items-center justify-start hover:text-mainColor hover:bg-primaryColor border-0 rounded-md p-2 cursor-pointer`}

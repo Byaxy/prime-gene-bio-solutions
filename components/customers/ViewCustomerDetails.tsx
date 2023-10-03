@@ -6,14 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { customersData } from "@/data/customersData";
-
-type CustomerType = {
-  name: string;
-  email: string;
-  phoneNumber: string;
-  address: string;
-  city: string;
-};
+import type { Customer } from "../Types";
 
 type ViewCustomerDetailsProps = {
   open: boolean;
@@ -26,7 +19,7 @@ export default function ViewCustomerDetails({
   handleClose,
   customerID,
 }: ViewCustomerDetailsProps) {
-  const [customer, setCustomer] = useState<CustomerType | null>(null);
+  const [customer, setCustomer] = useState<Customer | null>(null);
 
   useEffect(() => {
     let customerDetails = customersData.data.filter(
@@ -57,6 +50,20 @@ export default function ViewCustomerDetails({
           <Table size="medium">
             <TableBody>
               <TableRow>
+                <TableCell className="font-semibold text-lg">
+                  Date of Registration
+                </TableCell>
+                <TableCell className="text-[17px]">
+                  {customer.createdAt.toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg">Status</TableCell>
+                <TableCell className="text-[17px]">
+                  {customer.isActive ? "Active" : "Inactive"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
                 <TableCell className="font-semibold text-lg">Name</TableCell>
                 <TableCell className="text-[17px]">{customer.name}</TableCell>
               </TableRow>
@@ -66,9 +73,7 @@ export default function ViewCustomerDetails({
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg">Phone</TableCell>
-                <TableCell className="text-[17px]">
-                  {customer.phoneNumber}
-                </TableCell>
+                <TableCell className="text-[17px]">{customer.phone}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg">Address</TableCell>

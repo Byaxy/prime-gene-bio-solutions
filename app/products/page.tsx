@@ -17,7 +17,6 @@ export default function ProductsPage() {
   const onRowClicked = (row: { id: string }) => {
     setProductID(row.id);
     setView(true);
-    console.log(productID);
   };
   return (
     <ListPage

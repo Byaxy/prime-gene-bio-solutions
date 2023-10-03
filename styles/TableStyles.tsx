@@ -19,7 +19,7 @@ export const customTableStyles = {
     style: {
       fontWeight: "600",
       fontSize: "16px",
-      backgroundColor: "#232a58",
+      backgroundColor: "#002060",
       color: "white",
       border: "1px solid white",
       paddingLeft: "12px",

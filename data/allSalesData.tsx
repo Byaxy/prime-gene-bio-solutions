@@ -1,10 +1,11 @@
 import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import type { Sale } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: DataCells) => any;
+  selector?: (row: Sale) => any;
   width?: string;
   cell?: any;
   style?: {
@@ -16,7 +17,7 @@ type HeaderCells = {
     fontSize?: string;
   };
   conditionalCellStyles?: {
-    when: (row: DataCells) => boolean;
+    when: (row: Sale) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -25,27 +26,26 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  id: number;
-  date: string;
+  id: string;
+  date: Date;
   invoiceNumber: string;
   customer: string;
-  total: string;
-  paid: string;
-  balance: string;
+  total: number;
+  paid: number;
   paymentStatus: string;
   saleStatus: string;
 };
 
 export type DataType = {
   columns: HeaderCells[];
-  data: DataCells[];
+  data: Sale[];
 };
 
 export const allSalesData: DataType = {
   columns: [
     {
       name: "Date",
-      selector: (row: { date: string }) => row.date,
+      selector: (row: { createdAt: Date }) => row.createdAt.toDateString(),
       width: "110px",
     },
     {
@@ -86,18 +86,13 @@ export const allSalesData: DataType = {
       ],
     },
     {
-      name: "Total",
-      selector: (row: { total: string }) => row.total,
-      width: "90px",
-    },
-    {
       name: "Paid",
-      selector: (row: { paid: string }) => row.paid,
+      selector: (row: { paid: number }) => row.paid,
       width: "90px",
     },
     {
-      name: "Balance",
-      selector: (row: { balance: string }) => row.balance,
+      name: "Total",
+      selector: (row: { total: number }) => row.total,
       width: "90px",
     },
     {
@@ -143,26 +138,97 @@ export const allSalesData: DataType = {
   ],
   data: [
     {
-      id: 1,
-      date: "15/06/2023",
+      id: "1",
       invoiceNumber: "Inv.2023/06/001",
-      customer: "PARTNERS IN HEALTH",
-      total: "$12000",
-      paid: "$12000",
-      balance: "",
+      customer: "UROCARE LIBERIA",
+      total: 12000,
+      paid: 12000,
       paymentStatus: "Paid",
       saleStatus: "Completed",
+      createdAt: new Date(),
+      tax: 0,
+      purchaseOrderNumber: "PO2023/06/001",
+      subTotal: 12000,
+      products: [
+        {
+          name: "Talley Counter",
+          description: "Talley Counter description",
+          quantity: 1,
+          price: 200,
+          subTotal: 200,
+        },
+        {
+          name: "Sealent",
+          description: "Sealent tube description",
+          quantity: 2,
+          price: 50.5,
+          subTotal: 110,
+        },
+        {
+          name: "Talley Counter",
+          description: "Talley Counter description",
+          quantity: 1,
+          price: 200,
+          subTotal: 200,
+        },
+        {
+          name: "Sealent",
+          description: "Sealent tube description",
+          quantity: 2,
+          price: 50.5,
+          subTotal: 110,
+        },
+        {
+          name: "Talley Counter",
+          description: "Talley Counter description",
+          quantity: 1,
+          price: 200,
+          subTotal: 200,
+        },
+      ],
+      notes: "",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
-      id: 2,
-      date: "15/06/2023",
+      id: "2",
       invoiceNumber: "Inv.2023/06/001",
       customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
-      total: "$12000",
-      paid: "$2000",
-      balance: "",
+      total: 12000,
+      paid: 2000,
       paymentStatus: "Pending",
       saleStatus: "Completed",
+      createdAt: new Date(),
+      tax: 0,
+      purchaseOrderNumber: "PO2023/06/001",
+      subTotal: 12000,
+      products: [
+        {
+          name: "Sealent",
+          description: "Sealent tube description",
+          quantity: 2,
+          price: 50.5,
+          subTotal: 110,
+        },
+        {
+          name: "Talley Counter",
+          description: "Talley Counter description",
+          quantity: 1,
+          price: 200,
+          subTotal: 200,
+        },
+        {
+          name: "Talley Counter",
+          description: "Talley Counter description",
+          quantity: 1,
+          price: 200,
+          subTotal: 200,
+        },
+      ],
+
+      notes: "",
+      updatedAt: new Date(),
+      isActive: true,
     },
   ],
 };

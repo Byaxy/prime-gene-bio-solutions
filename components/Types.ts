@@ -155,3 +155,27 @@ export type ProductStock = {
      updatedAt: Date;
      isActive: boolean;
 }
+export type InvoiceProduct = {
+     name: string,
+     description: string,
+     quantity: number,
+     price: number,
+     subTotal: number,
+}
+export type Sale = {
+     id: string;
+     invoiceNumber: string;
+     purchaseOrderNumber: string;
+     customer: string;
+     tax: number;
+     subTotal: number;
+     total: number;
+     paid: number;
+     paymentStatus: string;
+     saleStatus: string;
+     products: InvoiceProduct[];
+     notes: string;
+     createdAt: Date;
+     updatedAt: Date;
+     isActive: boolean;
+}

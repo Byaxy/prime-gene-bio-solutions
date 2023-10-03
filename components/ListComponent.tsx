@@ -34,17 +34,17 @@ export default function ListComponent({
           <Button
             onClick={router.back}
             variant="outlined"
-            className="flex flex-row items-center justify-center gap-1"
+            className="flex flex-row items-center text-primaryColor outline-primaryColor justify-center gap-1"
           >
             <ArrowBackIcon />
-            <span className="text-primaryDark font-medium capitalize sm:text-lg">
+            <span className="text-primaryColor font-medium capitalize sm:text-lg">
               Back
             </span>
           </Button>
           <Button
             onClick={buttonAction}
             variant="contained"
-            className="flex flex-row items-center justify-center gap-1"
+            className="flex flex-row items-center bg-primaryColor text-white hover:bg-primaryColor/95 justify-center gap-1"
           >
             <AddIcon />
             <span className="text-white font-medium capitalize sm:text-lg">

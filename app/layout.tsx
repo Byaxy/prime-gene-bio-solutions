@@ -159,7 +159,7 @@ export default function RootLayout({
                   className="fixed shadow-md"
                   open={open}
                   sx={{
-                    backgroundColor: "#232a58",
+                    backgroundColor: "#002060",
                     color: "white",
                   }}
                 >
@@ -171,12 +171,12 @@ export default function RootLayout({
                       edge="start"
                       sx={{
                         marginRight: 5,
-                        color: "#2d3663",
+                        color: "#002060",
                         backgroundColor: "white",
                         ...(open && { display: "none" }),
                         "&:hover": {
                           backgroundColor: "white",
-                          color: "#47ccc8",
+                          color: "#00fdff",
                         },
                       }}
                     >
@@ -212,10 +212,10 @@ export default function RootLayout({
                       className="shadow-md"
                       sx={{
                         color: "white",
-                        backgroundColor: "#2d3663",
+                        backgroundColor: "#002060",
                         "&:hover": {
-                          color: "#47ccc8",
-                          backgroundColor: "#232a58",
+                          color: "#00fdff",
+                          backgroundColor: "#002060",
                         },
                       }}
                     >
