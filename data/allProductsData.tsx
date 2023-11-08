@@ -3,6 +3,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import Image from "next/image";
 import type { Product } from "@/components/Types";
+import type { Stock } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
@@ -83,7 +84,9 @@ export const allProductsData: DataType = {
     },
     {
       name: "Quantity",
-      selector: (row: { quantity: number | null }) => row.quantity,
+      cell: (row: { stock: Stock[] }) => (
+        <div>{row.stock.reduce((qty, obj) => qty + obj.quantity, 0)}</div>
+      ),
     },
     {
       name: "Unit",
@@ -121,9 +124,24 @@ export const allProductsData: DataType = {
       brand: "Allele Diagnostic",
       type: "Sample Type",
       category: "General Lab Equipment",
+      stock: [
+        {
+          id: "01",
+          lotNumber: "001",
+          manufactureDate: new Date("2021-01-01"),
+          expiryDate: new Date("2024-01-01"),
+          quantity: 12.0,
+        },
+        {
+          id: "02",
+          lotNumber: "002",
+          manufactureDate: new Date("2021-02-01"),
+          expiryDate: new Date("2024-02-01"),
+          quantity: 10.0,
+        },
+      ],
       cost: 33.5,
       price: 200.0,
-      quantity: 1.0,
       unit: "Pcs/Pk",
       alertQuantity: 5,
       description: "",
@@ -140,9 +158,17 @@ export const allProductsData: DataType = {
       brand: "Allele Diagnostic",
       type: "Sample type",
       category: "General Lab Equipment",
+      stock: [
+        {
+          id: "01",
+          lotNumber: "001",
+          manufactureDate: new Date("2021-01-01"),
+          expiryDate: new Date("2024-01-01"),
+          quantity: 10.0,
+        },
+      ],
       cost: 33.0,
       price: 50.5,
-      quantity: 0,
       unit: "Pcs/Pk",
       alertQuantity: 5,
       description: "",

@@ -21,7 +21,6 @@ export const customTableStyles = {
       fontSize: "16px",
       backgroundColor: "#002060",
       color: "white",
-      border: "1px solid white",
       paddingLeft: "12px",
       paddingRight: "12px",
     },

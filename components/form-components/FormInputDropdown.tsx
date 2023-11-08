@@ -2,6 +2,7 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Controller } from "react-hook-form";
 
 interface FormInputProps {
+  id: string;
   name: string;
   control: any;
   label: string;
@@ -9,6 +10,7 @@ interface FormInputProps {
   options: object[];
 }
 export const FormInputDropdown: React.FC<FormInputProps> = ({
+  id,
   name,
   control,
   label,
@@ -35,6 +37,7 @@ export const FormInputDropdown: React.FC<FormInputProps> = ({
             size="medium"
             variant="outlined"
             label={label}
+            id={id}
           >
             {generateSingleOptions()}
           </Select>

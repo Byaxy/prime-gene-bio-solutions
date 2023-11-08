@@ -1,5 +1,104 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import type { Expense } from "../Types";
+import { allExpensesData } from "@/data/allExpensesData";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
 
-export default function ViewExpenseDetails() {
-  return <div>ViewExpenseDetails</div>;
+type ViewExpenseDetailsProps = {
+  open: boolean;
+  handleClose: () => void;
+  expenseID: string;
+};
+
+export default function ViewExpenseDetails({
+  open,
+  handleClose,
+  expenseID,
+}: ViewExpenseDetailsProps) {
+  const [expense, setExpense] = useState<Expense | null>(null);
+
+  useEffect(() => {
+    let expenseDetails = allExpensesData.data.filter(
+      (expense) => expense.id === expenseID
+    );
+    if (expenseDetails) {
+      setExpense(expenseDetails[0]);
+    }
+  }, [expenseID]);
+
+  if (!expense) {
+    return null;
+  }
+  return (
+    <div>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle className="flex justify-between items-center">
+          <span className="text-2xl text-primaryDark font-bold">
+            Expense Details
+          </span>
+          <CancelIcon
+            fontSize="large"
+            className="text-primaryDark cursor-pointer"
+            onClick={handleClose}
+          />
+        </DialogTitle>
+        <DialogContent>
+          <Table size="medium">
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-semibold text-lg">Date</TableCell>
+                <TableCell className="text-[17px]">
+                  {expense.date.toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg">
+                  Receipt Number
+                </TableCell>
+                <TableCell className="text-[17px]">
+                  {expense.reference}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg">Title</TableCell>
+                <TableCell className="text-[17px]">{expense.title}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg">Amount</TableCell>
+                <TableCell className="text-[17px]">{expense.amount}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg">
+                  Description
+                </TableCell>
+                <TableCell className="text-[17px]">
+                  {expense.description}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleClose}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 }

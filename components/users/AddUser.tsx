@@ -197,6 +197,7 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
                   <span className="text-redColor"> *</span>
                 </label>
                 <FormInputDropdown
+                  id="role"
                   name="role"
                   control={control}
                   label="Role"

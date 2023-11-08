@@ -1,10 +1,11 @@
 import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import type { Expense } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: DataCells) => any;
+  selector?: (row: Expense) => any;
   cell?: any;
   width?: string;
   style?: {
@@ -16,7 +17,7 @@ type HeaderCells = {
     gap?: string;
   };
   conditionalCellStyles?: {
-    when: (row: DataCells) => boolean;
+    when: (row: Expense) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -24,38 +25,27 @@ type HeaderCells = {
     };
   }[];
 };
-export type DataCells = {
-  id: number;
-  date: string;
-  recieptNumber: string;
-  expenseTitle: string;
-  description: string;
-  amount: string;
-  paymentMethod: string;
-  createdBy: string;
-  file: string;
-};
 
 export type DataType = {
   columns: HeaderCells[];
-  data: DataCells[];
+  data: Expense[];
 };
 
 export const allExpensesData: DataType = {
   columns: [
     {
       name: "Date",
-      selector: (row: { date: string }) => row.date,
-      width: "110px",
+      selector: (row: { date: Date }) => row.date.toDateString(),
+      width: "160px",
     },
     {
       name: "Reciept No.",
-      selector: (row: { recieptNumber: string }) => row.recieptNumber,
+      selector: (row: { reference: string }) => row.reference,
       width: "160px",
     },
     {
       name: "Expense Title",
-      selector: (row: { expenseTitle: string }) => row.expenseTitle,
+      selector: (row: { title: string }) => row.title,
     },
     {
       name: "Description",
@@ -63,12 +53,8 @@ export const allExpensesData: DataType = {
     },
     {
       name: "Amount",
-      selector: (row: { amount: string }) => row.amount,
+      selector: (row: { amount: number }) => row.amount,
       width: "90px",
-    },
-    {
-      name: "Created By",
-      selector: (row: { createdBy: string }) => row.createdBy,
     },
     {
       name: "Actions",
@@ -90,59 +76,69 @@ export const allExpensesData: DataType = {
   ],
   data: [
     {
-      id: 1,
-      date: "15/06/2023",
-      recieptNumber: "PO2023/06/001",
-      expenseTitle: "MICROPROFIT",
-      description: "",
-      amount: "$12000",
-      createdBy: "Jone Doe",
-      paymentMethod: "",
-      file: "",
+      id: "1",
+      date: new Date(),
+      reference: "PO2023/06/001",
+      title: "MICROPROFIT",
+      description: "refund",
+      amount: 12000,
+      createdAt: new Date(),
+      category: "Health",
+      image: "",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
-      id: 2,
-      date: "15/06/2023",
-      recieptNumber: "PO2023/06/001",
-      expenseTitle: "MICROPROFIT",
-      description: "",
-      amount: "$12000",
-      createdBy: "Jone Doe",
-      paymentMethod: "",
-      file: "",
+      id: "2",
+      date: new Date("2023-06-15"),
+      reference: "PO2023/06/002",
+      title: "MICROPROFIT",
+      description: "refund",
+      amount: 13000,
+      createdAt: new Date(),
+      category: "Health",
+      image: "",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
-      id: 3,
-      date: "15/06/2023",
-      recieptNumber: "PO2023/06/001",
-      expenseTitle: "Biorex Diagnostics Ltd",
-      description: "",
-      amount: "$11400",
-      createdBy: "Jone Doe",
-      paymentMethod: "",
-      file: "",
+      id: "3",
+      date: new Date("2023-06-15"),
+      reference: "PO2023/06/002",
+      title: "HEMOCUE AB",
+      description: "refund",
+      amount: 11400,
+      createdAt: new Date(),
+      category: "Health",
+      image: "",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
-      id: 4,
-      date: "15/06/2023",
-      recieptNumber: "PO2023/06/001",
-      expenseTitle: "HEMOCUE AB",
+      id: "4",
+      date: new Date("2023-06-15"),
+      reference: "PO2023/06/002",
+      title: "Biorex Diagnostics Ltd",
       description: "",
-      amount: "$12450",
-      createdBy: "Jone Doe",
-      paymentMethod: "",
-      file: "",
+      amount: 12450,
+      createdAt: new Date(),
+      category: "Health",
+      image: "",
+      updatedAt: new Date(),
+      isActive: true,
     },
     {
-      id: 5,
-      date: "15/06/2023",
-      recieptNumber: "PO2023/06/001",
-      expenseTitle: "HEMOCUE AB",
-      description: "",
-      amount: "$56000",
-      createdBy: "Jone Doe",
-      paymentMethod: "",
-      file: "",
+      id: "5",
+      date: new Date("2023-06-15"),
+      reference: "PO2023/06/005",
+      title: "HEMOCUE AB",
+      description: "refund",
+      amount: 56000,
+      createdAt: new Date(),
+      category: "Health",
+      image: "",
+      updatedAt: new Date(),
+      isActive: true,
     },
   ],
 };

@@ -203,9 +203,10 @@ export default function AddSubCategory({
         </DialogContent>
         <DialogActions>
           <Button
-            variant="outlined"
+            variant="contained"
             size="large"
             onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
+            className="font-bold bg-redColor/95 hover:bg-redColor"
           >
             Cancel
           </Button>
@@ -214,6 +215,7 @@ export default function AddSubCategory({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="font-bold"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

@@ -9,7 +9,7 @@ import { FormInputDropdown } from "@/components/form-components/FormInputDropdow
 import type { Product } from "@/components/Types";
 import { useForm } from "react-hook-form";
 
-type FormInput = Omit<Product, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<Product, "id" | "updatedAt" | "isActive" | "stock">;
 
 const defaultValues: FormInput = {
   code: "",
@@ -24,7 +24,6 @@ const defaultValues: FormInput = {
   price: 0,
   description: "",
   alertQuantity: 5,
-  quantity: 0,
   createdAt: new Date(),
 };
 
@@ -55,7 +54,9 @@ export default function AddProductPage() {
       defaultValues: defaultValues,
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [galleryImages, setGalleryImages] = useState<string[] | null>(null);
+  const [galleryImages, setGalleryImages] = useState<string[]>([
+    "/placeholder.jpg",
+  ]);
   const [previewImage, setPreviewImage] = useState<string>("/placeholder.jpg");
 
   const onSubmit = async (data: FormInput) => {
@@ -115,7 +116,7 @@ export default function AddProductPage() {
     if (isSubmitSuccessful) {
       reset();
       setPreviewImage("/placeholder.jpg");
-      setGalleryImages([]);
+      setGalleryImages(["/placeholder.jpg"]);
     }
     console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
@@ -217,6 +218,7 @@ export default function AddProductPage() {
                     </span>
                   </label>
                   <FormInputDropdown
+                    id="type"
                     name="type"
                     control={control}
                     label="Product Type"
@@ -230,6 +232,7 @@ export default function AddProductPage() {
                     </span>
                   </label>
                   <FormInputDropdown
+                    id="category"
                     name="category"
                     control={control}
                     label="Product Category"
@@ -299,6 +302,7 @@ export default function AddProductPage() {
                     </span>
                   </label>
                   <FormInputDropdown
+                    id="brand"
                     name="brand"
                     control={control}
                     label="Product Type"
@@ -312,6 +316,7 @@ export default function AddProductPage() {
                     </span>
                   </label>
                   <FormInputDropdown
+                    id="unit"
                     name="unit"
                     control={control}
                     label="Product Category"
@@ -388,36 +393,23 @@ export default function AddProductPage() {
                 }
               />
             </div>
-            <div className="flex flex-col gap-2 flex-1">
-              <label htmlFor="quantity">
-                <span className="text-primaryDark font-semibold text-xl">
-                  Product Quantity
-                </span>
-              </label>
-              <TextField
-                id="quantity"
-                type="number"
-                label="Product Quantity"
-                variant="outlined"
-                {...register("quantity")}
-                disabled
-              />
-            </div>
           </div>
         </div>
-        <div className="flex flex-row gap-5 sm:gap-10 items-center justify-center mt-10 sm:mt-16">
+        <div className="flex flex-row gap-4 items-center justify-end mt-10 sm:mt-16">
           <Button
-            className="sm:px-14 sm:py-2 sm:text-xl"
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white outline-redColor"
             variant="outlined"
             size="large"
             onClick={() => (
-              reset(), setPreviewImage("/placeholder.jpg"), setGalleryImages([])
+              reset(),
+              setPreviewImage("/placeholder.jpg"),
+              setGalleryImages(["/placeholder.jpg"])
             )}
           >
-            Clear
+            Cancel
           </Button>
           <Button
-            className="sm:px-14 sm:py-2 sm:text-xl"
+            className="font-bold"
             type="submit"
             variant="contained"
             onClick={handleSubmit(onSubmit)}

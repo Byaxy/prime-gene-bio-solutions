@@ -41,9 +41,9 @@ export default function AddType({
       const response = await fetch("/api/product-type/add", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       reset();
@@ -108,7 +108,12 @@ export default function AddType({
           </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" size="large" onClick={() => reset()}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => reset()}
+            className="font-bold bg-redColor/95 hover:bg-redColor"
+          >
             Cancel
           </Button>
           <Button
@@ -116,6 +121,7 @@ export default function AddType({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="font-bold"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

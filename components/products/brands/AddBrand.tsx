@@ -36,7 +36,7 @@ export default function AddBrand({
     defaultValues: defaultValues,
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string>("/placeholder.jpg");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const onSubmit = async (data: FormInput) => {
@@ -46,10 +46,8 @@ export default function AddBrand({
     if (image) formData.append("image", image[0]);
     await fetch("/api/product-brand/add", {
       method: "POST",
-      body: formData
+      body: formData,
     });
-    reset();
-    setPreviewImage(null);
   };
 
   // Set selected Image for preview
@@ -62,9 +60,18 @@ export default function AddBrand({
       };
       reader.readAsDataURL(file);
     } else {
-      setPreviewImage(null);
+      setPreviewImage("/placeholder.jpg");
     }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      setPreviewImage("/placeholder.jpg");
+    }
+    console.log(isSubmitSuccessful);
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -144,8 +151,9 @@ export default function AddBrand({
         <DialogActions>
           <Button
             size="large"
-            variant="outlined"
-            onClick={() => (reset(), setPreviewImage(null))}
+            variant="contained"
+            onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
+            className="font-bold bg-redColor/95 hover:bg-redColor"
           >
             Cancel
           </Button>
@@ -154,6 +162,7 @@ export default function AddBrand({
             variant="contained"
             size="large"
             onClick={handleSubmit(onSubmit)}
+            className="font-bold"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

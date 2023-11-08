@@ -118,7 +118,12 @@ export default function AddExpenseCategory({
           </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" size="large" onClick={() => reset()}>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => reset()}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+          >
             Cancel
           </Button>
           <Button
@@ -126,6 +131,7 @@ export default function AddExpenseCategory({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="font-bold"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

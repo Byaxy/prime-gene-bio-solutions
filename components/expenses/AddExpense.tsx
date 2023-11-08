@@ -206,6 +206,7 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                   </span>
                 </label>
                 <FormInputDropdown
+                  id="category"
                   name="category"
                   control={control}
                   label="Expense Category"
@@ -253,7 +254,12 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" size="large" onClick={() => reset()}>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => reset()}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+          >
             Cancel
           </Button>
           <Button
@@ -261,6 +267,7 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="font-bold"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

@@ -106,7 +106,12 @@ export default function AddUnit({
           </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" size="large" onClick={() => reset()}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => reset()}
+            className="font-bold bg-redColor/95 hover:bg-redColor"
+          >
             Cancel
           </Button>
           <Button
@@ -114,6 +119,7 @@ export default function AddUnit({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="font-bold"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

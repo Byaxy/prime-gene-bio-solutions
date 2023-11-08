@@ -36,11 +36,15 @@ export type DataType = {
 export const expenseCategoriesData: DataType = {
   columns: [
     {
-      name: "Type Name",
+      name: "Name",
       selector: (row: { name: string }) => row.name,
     },
     {
-      name: "Type Description",
+      name: "Code",
+      selector: (row: { code: string }) => row.code,
+    },
+    {
+      name: "Description",
       selector: (row: { description: string }) => row.description,
     },
 
