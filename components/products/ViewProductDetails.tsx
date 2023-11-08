@@ -122,7 +122,10 @@ export default function ViewProductDetails({
                     Quantity
                   </TableCell>
                   <TableCell className="text-[17px]">
-                    {product.quantity}
+                    {product.stock.reduce(
+                      (total, stock) => total + stock.quantity,
+                      0
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -138,7 +141,12 @@ export default function ViewProductDetails({
           </div>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" size="large" onClick={handleClose}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleClose}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+          >
             Close
           </Button>
         </DialogActions>

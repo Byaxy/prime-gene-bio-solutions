@@ -169,6 +169,7 @@ export default function AddSubCategory({
                   <span className="text-redColor"> *</span>
                 </label>
                 <FormInputDropdown
+                  id="parentCategory"
                   name="parentCategory"
                   control={control}
                   label="Parent Category"
@@ -206,7 +207,7 @@ export default function AddSubCategory({
             variant="contained"
             size="large"
             onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
-            className="font-bold bg-redColor/95 hover:bg-redColor"
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel
           </Button>
@@ -216,6 +217,7 @@ export default function AddSubCategory({
             onClick={handleSubmit(onSubmit)}
             size="large"
             className="font-bold"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

@@ -26,7 +26,6 @@ export default function UsersPage() {
   const onRowClicked = (row: { id: string }) => {
     setUserID(row.id);
     setView(true);
-    console.log(userID);
   };
   return (
     <ListComponent

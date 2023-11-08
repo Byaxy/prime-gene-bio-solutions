@@ -18,8 +18,8 @@ export default function WayBillPage() {
     setAdd(false);
   }, []);
   const router = useRouter();
-  const onRowClicked = (row: { id: number }) => {
-    router.push(`/sales/deliveries/${row.id}`);
+  const onRowClicked = (row: { id: string }) => {
+    router.push(`/sales/way-bill/edit-way-bill/${row.id}`);
   };
   return (
     <ListComponent

@@ -105,6 +105,7 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                   <span className="text-redColor"> *</span>
                 </label>
                 <FormInputDropdown
+                  id="customerGroup"
                   name="customerGroup"
                   control={control}
                   label="Customer Group"

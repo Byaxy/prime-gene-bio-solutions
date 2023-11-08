@@ -21,6 +21,7 @@ import Image from "next/image";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
+import { allProductsData } from "@/data/allProductsData";
 
 type FormInput = Omit<ProductStock, "isActive">;
 type ProductType = Omit<
@@ -69,38 +70,7 @@ const typeOptions = [
     value: "Subtract",
   },
 ];
-const products: ProductType[] = [
-  {
-    id: "1",
-    name: "Genrui GE500 Electrolyte System",
-    quantity: 10,
-    code: "GE500",
-  },
-  {
-    id: "2",
-    name: "IONIX Electrolyte System",
-    quantity: 20,
-    code: "GE600",
-  },
-  {
-    id: "3",
-    name: "ISE ION Electrolyte System",
-    quantity: 30,
-    code: "ISE",
-  },
-  {
-    id: "4",
-    name: "Erba Lyte Electrolyte System",
-    quantity: 40,
-    code: "Erba1",
-  },
-  {
-    id: "5",
-    name: "MNCHIP CM-5 Electrolyte System",
-    quantity: 50,
-    code: "MNCHIP1",
-  },
-];
+const products = allProductsData.data;
 
 export default function AdjustProductStock({
   open,
@@ -353,6 +323,7 @@ export default function AdjustProductStock({
                         <span className="text-redColor"> *</span>
                       </label>
                       <FormInputDropdown
+                        id="type"
                         name="type"
                         control={control}
                         label="Type"
@@ -438,6 +409,7 @@ export default function AdjustProductStock({
             variant="outlined"
             size="large"
             onClick={() => (reset(), setPreviewImage(null))}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel
           </Button>
@@ -446,6 +418,8 @@ export default function AdjustProductStock({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="font-bold"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

@@ -190,7 +190,7 @@ export default function AddCategory({
             variant="contained"
             size="large"
             onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
-            className="font-bold bg-redColor/95 hover:bg-redColor"
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel
           </Button>
@@ -200,6 +200,7 @@ export default function AddCategory({
             onClick={handleSubmit(onSubmit)}
             size="large"
             className="font-bold"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

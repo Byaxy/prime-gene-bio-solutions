@@ -25,8 +25,8 @@ type HeaderCells = {
   }[];
 };
 export type DataCells = {
-  id: number;
-  date: string;
+  id: string;
+  date: Date;
   deliveryReferenceNumber: string;
   saleInvoiceNumber: string;
   itemDescription: string;
@@ -44,18 +44,13 @@ export const allDeliveriesData: DataType = {
   columns: [
     {
       name: "Date",
-      selector: (row: { date: string }) => row.date,
+      selector: (row: { date: Date }) => row.date.toDateString(),
       width: "110px",
     },
     {
       name: "Delivery Ref No.",
       selector: (row: { deliveryReferenceNumber: string }) =>
         row.deliveryReferenceNumber,
-      width: "160px",
-    },
-    {
-      name: "Sale Invoice No.",
-      selector: (row: { saleInvoiceNumber: string }) => row.saleInvoiceNumber,
       width: "160px",
     },
     {
@@ -120,8 +115,8 @@ export const allDeliveriesData: DataType = {
   ],
   data: [
     {
-      id: 1,
-      date: "15/06/2023",
+      id: "1",
+      date: new Date(),
       saleInvoiceNumber: "Inv.2023/06/001",
       deliveryReferenceNumber: "DO2023/06/0345",
       itemDescription: "P04-03-101139-00 - GENRUI KT03A Lyse Solution",
@@ -130,8 +125,8 @@ export const allDeliveriesData: DataType = {
       status: "Recieved",
     },
     {
-      id: 2,
-      date: "15/06/2023",
+      id: "2",
+      date: new Date(),
       saleInvoiceNumber: "Inv.2023/06/001",
       deliveryReferenceNumber: "DO2023/06/0344",
       itemDescription: "P04-03-101139-00 - GENRUI KT03A Lyse Solution",

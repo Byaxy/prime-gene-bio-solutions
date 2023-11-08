@@ -207,6 +207,7 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
                   </span>
                 </label>
                 <FormInputDropdown
+                  id="category"
                   name="category"
                   control={control}
                   label="Return Category"
@@ -254,7 +255,12 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
           </form>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" size="large" onClick={() => reset()}>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => reset()}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+          >
             Cancel
           </Button>
           <Button
@@ -262,6 +268,8 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            disabled={isSubmitting}
+            className="font-bold"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

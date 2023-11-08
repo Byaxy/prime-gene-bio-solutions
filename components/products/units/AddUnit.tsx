@@ -110,7 +110,7 @@ export default function AddUnit({
             variant="contained"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor"
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel
           </Button>
@@ -120,6 +120,7 @@ export default function AddUnit({
             onClick={handleSubmit(onSubmit)}
             size="large"
             className="font-bold"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

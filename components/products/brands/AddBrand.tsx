@@ -153,7 +153,7 @@ export default function AddBrand({
             size="large"
             variant="contained"
             onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
-            className="font-bold bg-redColor/95 hover:bg-redColor"
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel
           </Button>
@@ -163,6 +163,7 @@ export default function AddBrand({
             size="large"
             onClick={handleSubmit(onSubmit)}
             className="font-bold"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

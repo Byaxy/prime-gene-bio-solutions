@@ -87,7 +87,12 @@ export default function ViewCategoryDetails({
           </Table>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" size="large" onClick={handleClose}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleClose}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+          >
             Close
           </Button>
         </DialogActions>

@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import ListComponent from "@/components/ListComponent";
 import AddDelivery from "@/components/sales/deliveries/AddDelivery";
+import ViewDeliveryDetails from "@/components/sales/deliveries/ViewDeliveryDetails";
 
 export default function DeliveriesPage() {
   const [add, setAdd] = useState<boolean>(false);
+  const [view, setView] = useState<boolean>(false);
+  const [deliveryID, setDeliveryID] = useState<string>("1");
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
@@ -16,10 +19,12 @@ export default function DeliveriesPage() {
 
   const handleClose = useCallback((): void => {
     setAdd(false);
+    setView(false);
   }, []);
   const router = useRouter();
-  const onRowClicked = (row: { id: number }) => {
-    router.push(`/sales/deliveries/${row.id}`);
+  const onRowClicked = (row: { id: string }) => {
+    setDeliveryID(row.id);
+    setView(true);
   };
   return (
     <ListComponent
@@ -29,6 +34,11 @@ export default function DeliveriesPage() {
     >
       <>
         <AddDelivery open={add} handleClose={handleClose} />
+        <ViewDeliveryDetails
+          open={view}
+          handleClose={handleClose}
+          deliveryID={deliveryID}
+        />
         <DataTable
           data={allDeliveriesData.data}
           columns={allDeliveriesData.columns}
