@@ -111,7 +111,7 @@ export default function AddSalePage() {
       defaultValues: defaultValues,
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "products"
   })
@@ -134,6 +134,8 @@ export default function AddSalePage() {
     setSearchTerm("");
     setShowProductsList(false);
   };
+
+  const handleDeleteProduct = (index: number) => () => remove(index);
 
 
   const onSubmit = async (data: FormInput) => {
@@ -311,7 +313,7 @@ export default function AddSalePage() {
                         </TableCell>
                         <TableCell className="text-lg">
                           <Button
-                            onClick={() => console.log(field.id)}
+                            onClick={handleDeleteProduct(index)}
                             className="bg-redColor/95 text-white hover:!bg-redColor"
                           >
                             Delete
