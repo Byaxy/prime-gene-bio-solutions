@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import type { Sale, Stock } from "@/components/Types";
 import type { Product } from "@/components/Types";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -26,6 +26,7 @@ import { allProductsData } from "@/data/allProductsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { SelectChangeEvent } from "@mui/material";
+import { styled } from '@mui/material/styles';
 
 type FormInput = Omit<Sale, "id" | "updatedAt" | "isActive">;
 type Options = {
@@ -83,6 +84,20 @@ const defaultValues: FormInput = {
   createdAt: new Date(),
 };
 
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+  "&:hover": {
+    cursor: "pointer",
+    backgroundColor: "#e5e7eb",
+  }
+}));
+
 export default function AddSalePage() {
   const [saleDate, setSaleDate] = useState<Dayjs | null>(dayjs());
   const [searchTerm, setSearchTerm] = useState("");
@@ -90,14 +105,16 @@ export default function AddSalePage() {
   const [products, setProducts] = useState<Product[]>([
     ...allProductsData.data,
   ]);
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-  const [lotNumber, setLotNumber] = useState("");
   const router = useRouter();
   const { register, handleSubmit, reset, formState, control } =
     useForm<FormInput>({
       defaultValues: defaultValues,
-    });
+  });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { fields, append } = useFieldArray({
+    control,
+    name: "products"
+  })
 
   useEffect(() => {
     if (searchTerm) {
@@ -113,36 +130,15 @@ export default function AddSalePage() {
   }, [products, searchTerm]);
 
   const handleAddProduct = (product: Product) => {
-    setSelectedProducts((prevProducts) => [...prevProducts, product]);
+    append({ ...product });
     setSearchTerm("");
     setShowProductsList(false);
   };
 
-  const handleDeleteProduct = (product: Product) => {
-    let filteredProducts = selectedProducts.filter(
-      (selectedProduct) => selectedProduct.id !== product.id
-    );
-    setSelectedProducts(filteredProducts);
-  };
-
-  const handleProductQuantityChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    product: Product
-  ) => {
-    const quantity = parseInt(e.target.value);
-    const updatedQuantity = Math.min(quantity, product.stock[0].quantity); // Update
-    const updatedProducts = selectedProducts.map((p) => {
-      if (p.id === product.id) {
-        return { ...p, productQuantity: updatedQuantity };
-      }
-      return p;
-    });
-    setSelectedProducts(updatedProducts);
-  };
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data, products: selectedProducts };
+      const newData = { ...data };
       console.log(newData);
     } catch (error) {
       console.error(error);
@@ -153,70 +149,11 @@ export default function AddSalePage() {
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setSelectedProducts([]);
     }
     console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
 
-  const columns = [
-    {
-      name: "Name",
-      cell: (row: { name: string; code: string }) => (
-        <div>
-          <span>{row.code}</span> - <span>{row.name}</span>
-        </div>
-      ),
-    },
-    {
-      name: "Lot No.",
-      cell: (row: { stock: Stock[] }) => (
-        <div>
-          <Select
-            size="small"
-            label="Lot No."
-            value={lotNumber}
-            onChange={(event: SelectChangeEvent) =>
-              setLotNumber(event.target.value)
-            }
-          >
-            {row.stock.map((item) => (
-              <MenuItem key={item.lotNumber} value={item.lotNumber}>
-                {item.lotNumber}
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
-      ),
-    },
-    {
-      name: "Available Quantity",
-    },
-    {
-      name: "Unit Price",
-      selector: (row: { price: number }) => row.price,
-    },
-    {
-      name: "Quantity",
-      cell: () => (
-        <TextField type="number" size="small" className="max-w-[80px]" />
-      ),
-    },
-    {
-      name: "Sub Total",
-      cell: (row: { price: number }) => <span></span>,
-    },
-    {
-      name: "Actions",
-      cell: (row: { id: string }) => (
-        <Button
-          onClick={() => console.log(row.id)}
-          className="bg-redColor/95 text-white hover:!bg-redColor"
-        >
-          Delete
-        </Button>
-      ),
-    },
-  ];
+  const columns = ["Name", "Lot No.", "Available Quantity", "Unit Price", "Quantity", "Sub Total", "Actions"];
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
@@ -322,27 +259,68 @@ export default function AddSalePage() {
               </div>
             )}
           </div>
-          {selectedProducts.length > 0 ? (
-            <DataTable
-              columns={columns}
-              data={selectedProducts}
-              customStyles={customTableStyles}
-            />
-          ) : (
-            <Table>
-              <TableHead>
-                <TableRow className="bg-primaryColor">
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.name}
-                      className="text-white font-semibold text-lg"
-                    >
-                      {column.name}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
+
+          <Table>
+            <TableHead>
+              <TableRow className="bg-primaryColor">
+                {columns.map((column) => (
+                  <TableCell
+                    key={column}
+                    className="text-white font-semibold text-lg"
+                  >
+                    {column}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {
+                fields.length > 0 ?
+                <>
+                  {
+                    fields.map((field, index) => (
+                      <StyledTableRow key={field.id}>
+                        <TableCell className="text-lg">
+                          <span>{field.code}</span> - <span>{field.name}</span>
+                        </TableCell>
+                        <TableCell className="text-lg">
+                          <Select 
+                          size="small" 
+                          label="Lot No." 
+                          {...register(`products.${index}.lotNo`, { required: true })}
+                          error={errors.products && !!errors.products[index]?.lotNo}
+                          >
+                            {field.stock.map((item) => (
+                              <MenuItem key={item.lotNumber} value={item.lotNumber}>
+                                {item.lotNumber}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </TableCell>
+                        <TableCell className="text-lg">
+                          <p>0</p>
+                        </TableCell>
+                        <TableCell className="text-lg">
+                          <p>{field.price}</p>
+                        </TableCell>
+                        <TableCell className="text-lg">
+                          <TextField type="number" size="small" className="max-w-[80px]" />
+                        </TableCell>
+                        <TableCell className="text-lg">
+                          <p>sub-total</p>
+                        </TableCell>
+                        <TableCell className="text-lg">
+                          <Button
+                            onClick={() => console.log(field.id)}
+                            className="bg-redColor/95 text-white hover:!bg-redColor"
+                          >
+                            Delete
+                          </Button>
+                        </TableCell>
+                      </StyledTableRow>
+                    ))
+                  }                
+                </> :
                 <TableRow>
                   <TableCell
                     colSpan={8}
@@ -350,10 +328,10 @@ export default function AddSalePage() {
                   >
                     No Items To Display
                   </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          )}
+              </TableRow>
+              }
+            </TableBody>
+          </Table>
 
           <div className="w-full flex justify-end break-inside-avoid">
             <div className="w-[300px]">

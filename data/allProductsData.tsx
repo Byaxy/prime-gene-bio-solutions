@@ -124,6 +124,7 @@ export const allProductsData: DataType = {
       brand: "Allele Diagnostic",
       type: "Sample Type",
       category: "General Lab Equipment",
+      lotNo: "",
       stock: [
         {
           id: "01",
@@ -158,6 +159,7 @@ export const allProductsData: DataType = {
       brand: "Allele Diagnostic",
       type: "Sample type",
       category: "General Lab Equipment",
+      lotNo: "",
       stock: [
         {
           id: "01",
