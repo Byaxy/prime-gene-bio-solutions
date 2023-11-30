@@ -171,7 +171,7 @@ export type InvoiceProduct = {
      price: number,
      subTotal: number,
 }
-export type Sale = {
+export type Sale<T> = {
      id: string;
      invoiceNumber: string;
      purchaseOrderNumber: string;
@@ -182,7 +182,7 @@ export type Sale = {
      paid: number;
      paymentStatus: string;
      saleStatus: string;
-     products: Product[];
+     products: T[];
      notes: string;
      createdAt: Date;
      updatedAt: Date;

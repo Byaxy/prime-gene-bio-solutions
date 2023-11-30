@@ -25,7 +25,7 @@ import { customersData } from "@/data/customersData";
 import { allProductsData } from "@/data/allProductsData";
 import { styled } from '@mui/material/styles';
 
-type FormInput = Omit<Sale, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<Sale<Product>, "id" | "updatedAt" | "isActive">;
 type Options = {
   label: string;
   value: string;
