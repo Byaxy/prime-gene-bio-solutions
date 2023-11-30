@@ -125,6 +125,7 @@ export const allProductsData: DataType = {
       type: "Sample Type",
       category: "General Lab Equipment",
       lotNo: "",
+      productQuantity: 1,
       stock: [
         {
           id: "01",
@@ -160,6 +161,7 @@ export const allProductsData: DataType = {
       type: "Sample type",
       category: "General Lab Equipment",
       lotNo: "",
+      productQuantity: 1,
       stock: [
         {
           id: "01",

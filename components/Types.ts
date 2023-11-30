@@ -132,7 +132,8 @@ export type Product = {
      type: string;
      unit: string;
      category: string;
-     lotNo: string,
+     lotNo: string;
+     productQuantity: number;
      stock: Stock[];
      cost: number;
      price: number;

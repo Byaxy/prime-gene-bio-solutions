@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -23,9 +23,6 @@ import dayjs, { Dayjs } from "dayjs";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import { customersData } from "@/data/customersData";
 import { allProductsData } from "@/data/allProductsData";
-import DataTable from "react-data-table-component";
-import { customTableStyles } from "@/styles/TableStyles";
-import { SelectChangeEvent } from "@mui/material";
 import { styled } from '@mui/material/styles';
 
 type FormInput = Omit<Sale, "id" | "updatedAt" | "isActive">;
@@ -73,7 +70,7 @@ const defaultValues: FormInput = {
   invoiceNumber: "",
   purchaseOrderNumber: "",
   customer: "",
-  tax: 0,
+  tax: 16,
   subTotal: 0,
   total: 0,
   paid: 0,
@@ -106,7 +103,7 @@ export default function AddSalePage() {
     ...allProductsData.data,
   ]);
   const router = useRouter();
-  const { register, handleSubmit, reset, formState, control } =
+  const { register, handleSubmit, reset, formState, control, watch, getValues, setValue } =
     useForm<FormInput>({
       defaultValues: defaultValues,
   });
@@ -115,6 +112,14 @@ export default function AddSalePage() {
     control,
     name: "products"
   })
+  const watchFieldArray = watch("products");
+  const controlledFields = fields.map((field, index) => {
+    return {
+      ...field,
+      // Watch quantity field for changes so as to update the sub-total
+      productQuantity: watchFieldArray[index].productQuantity
+    };
+  });  
 
   useEffect(() => {
     if (searchTerm) {
@@ -131,12 +136,23 @@ export default function AddSalePage() {
 
   const handleAddProduct = (product: Product) => {
     append({ ...product });
+    const subTotal = getValues("subTotal") + product.price;
+    setValue("subTotal", subTotal);
+    setValue("total", getTotal(subTotal, getValues("tax")));
     setSearchTerm("");
     setShowProductsList(false);
   };
 
   const handleDeleteProduct = (index: number) => () => remove(index);
 
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   const subTotal = getValues("products").reduce((accum, curr) => accum + (curr.price * curr.productQuantity), 0);
+   setValue("subTotal", subTotal);
+   // Add tax to subTotal. Current assumption is tax is
+   setValue("total", getTotal(subTotal, getValues("tax")));
+  }
+
+  const getTotal = (subTotal: number, tax: number): number => subTotal * tax / 100 + subTotal;
 
   const onSubmit = async (data: FormInput) => {
     try {
@@ -277,10 +293,10 @@ export default function AddSalePage() {
             </TableHead>
             <TableBody>
               {
-                fields.length > 0 ?
+                controlledFields.length > 0 ?
                 <>
                   {
-                    fields.map((field, index) => (
+                    controlledFields.map((field, index) => (
                       <StyledTableRow key={field.id}>
                         <TableCell className="text-lg">
                           <span>{field.code}</span> - <span>{field.name}</span>
@@ -289,6 +305,7 @@ export default function AddSalePage() {
                           <Select 
                           size="small" 
                           label="Lot No." 
+                          defaultValue={""}
                           {...register(`products.${index}.lotNo`, { required: true })}
                           error={errors.products && !!errors.products[index]?.lotNo}
                           >
@@ -306,10 +323,17 @@ export default function AddSalePage() {
                           <p>{field.price}</p>
                         </TableCell>
                         <TableCell className="text-lg">
-                          <TextField type="number" size="small" className="max-w-[80px]" />
+                          <TextField 
+                          type="number" 
+                          size="small" 
+                          className="max-w-[80px]"
+                          defaultValue={1}
+                          {...register(`products.${index}.productQuantity`, { required: true, min: 1, onChange: handleQuantityChange })}
+                          error={errors.products && !!errors.products[index]?.productQuantity}
+                          />
                         </TableCell>
                         <TableCell className="text-lg">
-                          <p>sub-total</p>
+                          <p>{field.price * Math.max(1, field.productQuantity)}</p>
                         </TableCell>
                         <TableCell className="text-lg">
                           <Button
@@ -344,7 +368,7 @@ export default function AddSalePage() {
                       Total
                     </TableCell>
                     <TableCell className="text-primaryDark font-bold text-lg">
-                      $0
+                      {getValues("subTotal")}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -352,7 +376,7 @@ export default function AddSalePage() {
                       Tax
                     </TableCell>
                     <TableCell className="text-primaryDark font-bold text-lg">
-                      0%
+                      {getValues("tax")}%
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -360,7 +384,7 @@ export default function AddSalePage() {
                       Grand Total
                     </TableCell>
                     <TableCell className="text-primaryDark font-bold text-lg">
-                      $0
+                      ${getValues("total")}
                     </TableCell>
                   </TableRow>
                 </TableBody>
