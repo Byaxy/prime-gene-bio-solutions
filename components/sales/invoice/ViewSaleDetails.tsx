@@ -9,7 +9,7 @@ import ProductsTable from "./ProductsTable";
 import Total from "./Total";
 import Bank from "./Bank";
 import { useReactToPrint } from "react-to-print";
-import { Sale } from "@/components/Types";
+import { InvoiceProduct, Sale } from "@/components/Types";
 import { allSalesData } from "@/data/allSalesData";
 
 type ViewSaleDetailsProps = {
@@ -23,7 +23,7 @@ export default function ViewSaleDetails({
   handleClose,
   saleID,
 }: ViewSaleDetailsProps) {
-  const [saleDetails, setSaleDetails] = useState<Sale | null>(null);
+  const [saleDetails, setSaleDetails] = useState<Sale<InvoiceProduct> | null>(null);
 
   const componentRef = useRef(null);
   const handlePrint = useReactToPrint({
@@ -60,7 +60,7 @@ export default function ViewSaleDetails({
               purchaseOrderNo={saleDetails?.purchaseOrderNumber}
               paymentStatus={saleDetails?.paymentStatus}
               dueDate={new Date()}
-            />
+            /> 
             <div className="w-full mt-3 flex flex-row items-start justify-between">
               <Seller />
               <Buyer customer={saleDetails?.customer} />

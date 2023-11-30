@@ -2,10 +2,11 @@ import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Sale } from "@/components/Types";
+import { Product, InvoiceProduct } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: Sale) => any;
+  selector?: (row: Sale<InvoiceProduct>) => any;
   width?: string;
   cell?: any;
   style?: {
@@ -17,7 +18,7 @@ type HeaderCells = {
     fontSize?: string;
   };
   conditionalCellStyles?: {
-    when: (row: Sale) => boolean;
+    when: (row: Sale<InvoiceProduct>) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -38,7 +39,7 @@ export type DataCells = {
 
 export type DataType = {
   columns: HeaderCells[];
-  data: Sale[];
+  data: Sale<InvoiceProduct>[];
 };
 
 export const allSalesData: DataType = {
