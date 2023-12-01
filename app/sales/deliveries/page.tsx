@@ -21,7 +21,6 @@ export default function DeliveriesPage() {
     setAdd(false);
     setView(false);
   }, []);
-  const router = useRouter();
   const onRowClicked = (row: { id: string }) => {
     setDeliveryID(row.id);
     setView(true);

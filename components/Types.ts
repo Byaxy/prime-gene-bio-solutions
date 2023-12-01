@@ -163,6 +163,8 @@ export type ProductStock = {
      isActive: boolean;
 }
 export type InvoiceProduct = {
+     id: string,
+     lotNumber: string,
      name: string,
      description: string,
      quantity: number,
@@ -182,6 +184,40 @@ export type Sale = {
      saleStatus: string;
      products: InvoiceProduct[];
      notes: string;
+     createdAt: Date;
+     updatedAt: Date;
+     isActive: boolean;
+}
+export type DeliveryProduct = {
+     id: string,
+     lotNumber: string,
+     name: string,
+     quantityRequested: number,
+     quantitySupplied: number,
+}
+export type Delivery = {
+     id: string;
+     date: Date;
+     saleInvoiceNumber: string;
+     deliveryReferenceNumber: string;
+     description: string;
+     customer: string;
+     address: string;
+     products: DeliveryProduct[];
+     status: string;
+     createdAt: Date;
+     updatedAt: Date;
+     isActive: boolean;
+}
+export type WayBill = {
+     id: string;
+     date: Date;
+     deliveryReferenceNumber: string;
+     customer: string;
+     address: string;
+     products: DeliveryProduct[];
+     amount: number;
+     description: string;
      createdAt: Date;
      updatedAt: Date;
      isActive: boolean;

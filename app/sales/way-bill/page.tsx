@@ -2,13 +2,16 @@
 import { allDeliveriesData } from "@/data/allDeliveriesData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
-import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import ListComponent from "@/components/ListComponent";
 import AddWayBill from "@/components/sales/waybill/AddWayBill";
+import ViewWayBillDetails from "@/components/sales/waybill/ViewWayBillDetails";
+import { allWayBillsData } from "@/data/allWayBillsData";
 
 export default function WayBillPage() {
   const [add, setAdd] = useState<boolean>(false);
+  const [wayBillID, setWayBillID] = useState<string>("1");
+  const [view, setView] = useState<boolean>(false);
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
@@ -16,11 +19,14 @@ export default function WayBillPage() {
 
   const handleClose = useCallback((): void => {
     setAdd(false);
+    setView(false);
   }, []);
-  const router = useRouter();
+
   const onRowClicked = (row: { id: string }) => {
-    router.push(`/sales/way-bill/edit-way-bill/${row.id}`);
+    setWayBillID(row.id);
+    setView(true);
   };
+
   return (
     <ListComponent
       title="Way Bills"
@@ -29,9 +35,14 @@ export default function WayBillPage() {
     >
       <>
         <AddWayBill open={add} handleClose={handleClose} />
+        <ViewWayBillDetails
+          open={view}
+          handleClose={handleClose}
+          wayBillID={wayBillID}
+        />
         <DataTable // TO DO change table data to way bill data
-          data={allDeliveriesData.data}
-          columns={allDeliveriesData.columns}
+          data={allWayBillsData.data}
+          columns={allWayBillsData.columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"
