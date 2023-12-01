@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { allDeliveriesData } from "@/data/allDeliveriesData";
+import { allWayBillsData } from "@/data/allWayBillsData";
 import {
   Button,
   Dialog,
@@ -12,39 +12,39 @@ import {
   TableRow,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import type { Delivery } from "@/components/Types";
+import type { WayBill } from "@/components/Types";
 
-type ViewDeliveryDetailsProps = {
+type ViewWayBillDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  deliveryID: string;
+  wayBillID: string;
 };
-
-export default function ViewDeliveryDetails({
+export default function ViewWayBillDetails({
   open,
   handleClose,
-  deliveryID,
-}: ViewDeliveryDetailsProps) {
-  const [delivery, setDeliveryID] = useState<Delivery | null>(null);
+  wayBillID,
+}: ViewWayBillDetailsProps) {
+  const [wayBill, setWayBill] = useState<WayBill | null>(null);
 
   useEffect(() => {
-    let deliveryDetails = allDeliveriesData.data.find(
-      (delivery) => delivery.id === deliveryID
+    let wayBillDetails = allWayBillsData.data.find(
+      (wayBill) => wayBill.id === wayBillID
     );
-    if (deliveryDetails) {
-      setDeliveryID(deliveryDetails);
+    if (wayBillDetails) {
+      setWayBill(wayBillDetails);
     }
-  }, [deliveryID]);
+  }, [wayBillID]);
 
-  if (!delivery) {
+  if (!wayBill) {
     return null;
   }
+
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle className="flex justify-between items-center">
           <span className="text-2xl text-primaryDark font-bold">
-            Delivery Details
+            Way Bill Details
           </span>
           <CancelIcon
             fontSize="large"
@@ -53,46 +53,46 @@ export default function ViewDeliveryDetails({
           />
         </DialogTitle>
         <DialogContent>
-          {delivery ? (
+          {wayBill ? (
             <Table>
               <TableBody>
                 <TableRow>
                   <TableCell className="font-semibold">Delivery ID</TableCell>
-                  <TableCell>{delivery.id}</TableCell>
+                  <TableCell>{wayBill.id}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Date</TableCell>
-                  <TableCell>{delivery.date.toDateString()}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold">
-                    Sale Invoice Number
-                  </TableCell>
-                  <TableCell>{delivery.saleInvoiceNumber}</TableCell>
+                  <TableCell>{wayBill.date.toDateString()}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">
                     Delivery Reference Number
                   </TableCell>
-                  <TableCell>{delivery.deliveryReferenceNumber}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold">
-                    Item Description
-                  </TableCell>
-                  <TableCell>{delivery.description}</TableCell>
+                  <TableCell>{wayBill.deliveryReferenceNumber}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Customer</TableCell>
-                  <TableCell>{delivery.customer}</TableCell>
+                  <TableCell>{wayBill.customer}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Address</TableCell>
-                  <TableCell>{delivery.address}</TableCell>
+                  <TableCell>{wayBill.address}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold">Status</TableCell>
-                  <TableCell>{delivery.status}</TableCell>
+                  <TableCell className="font-semibold">
+                    Products Delivered
+                  </TableCell>
+                  <TableCell>
+                    <ul className="pl-5 m-0">
+                      {wayBill?.products.map((product) => (
+                        <li key={product.id}>{product.name}</li>
+                      ))}
+                    </ul>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">Notes</TableCell>
+                  <TableCell>{wayBill.description}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>

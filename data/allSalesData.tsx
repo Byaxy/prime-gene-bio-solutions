@@ -152,6 +152,8 @@ export const allSalesData: DataType = {
       subTotal: 12000,
       products: [
         {
+          id: "1",
+          lotNumber: "Lot.2023/06/001",
           name: "Talley Counter",
           description: "Talley Counter description",
           quantity: 1,
@@ -159,32 +161,13 @@ export const allSalesData: DataType = {
           subTotal: 200,
         },
         {
+          id: "2",
+          lotNumber: "Lot.2023/06/002",
           name: "Sealent",
           description: "Sealent tube description",
           quantity: 2,
           price: 50.5,
           subTotal: 110,
-        },
-        {
-          name: "Talley Counter",
-          description: "Talley Counter description",
-          quantity: 1,
-          price: 200,
-          subTotal: 200,
-        },
-        {
-          name: "Sealent",
-          description: "Sealent tube description",
-          quantity: 2,
-          price: 50.5,
-          subTotal: 110,
-        },
-        {
-          name: "Talley Counter",
-          description: "Talley Counter description",
-          quantity: 1,
-          price: 200,
-          subTotal: 200,
         },
       ],
       notes: "",
@@ -193,7 +176,7 @@ export const allSalesData: DataType = {
     },
     {
       id: "2",
-      invoiceNumber: "Inv.2023/06/001",
+      invoiceNumber: "Inv.2023/06/002",
       customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
       total: 12000,
       paid: 2000,
@@ -205,6 +188,8 @@ export const allSalesData: DataType = {
       subTotal: 12000,
       products: [
         {
+          id: "67",
+          lotNumber: "Lot.2023/06/007",
           name: "Sealent",
           description: "Sealent tube description",
           quantity: 2,
@@ -212,6 +197,8 @@ export const allSalesData: DataType = {
           subTotal: 110,
         },
         {
+          id: "989",
+          lotNumber: "Lot.2023/06/009",
           name: "Talley Counter",
           description: "Talley Counter description",
           quantity: 1,
@@ -219,6 +206,8 @@ export const allSalesData: DataType = {
           subTotal: 200,
         },
         {
+          id: "46",
+          lotNumber: "Lot.2023/06/005",
           name: "Talley Counter",
           description: "Talley Counter description",
           quantity: 1,

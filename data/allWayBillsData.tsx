@@ -1,11 +1,11 @@
 import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { Delivery } from "@/components/Types";
+import type { WayBill } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: Delivery) => any;
+  selector?: (row: WayBill) => any;
   width?: string;
   cell?: any;
   style?: {
@@ -17,7 +17,7 @@ type HeaderCells = {
     fontSize?: string;
   };
   conditionalCellStyles?: {
-    when: (row: Delivery) => boolean;
+    when: (row: WayBill) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -28,64 +28,33 @@ type HeaderCells = {
 
 export type DataType = {
   columns: HeaderCells[];
-  data: Delivery[];
+  data: WayBill[];
 };
 
-export const allDeliveriesData: DataType = {
+export const allWayBillsData: DataType = {
   columns: [
     {
       name: "Date",
       selector: (row: { date: Date }) => row.date.toDateString(),
-      width: "110px",
     },
     {
       name: "Delivery Ref No.",
       selector: (row: { deliveryReferenceNumber: string }) =>
         row.deliveryReferenceNumber,
-      width: "160px",
     },
     {
-      name: "Item Description",
-      selector: (row: { description: string }) => row.description,
+      name: "Amount",
+      selector: (row: { amount: number }) => row.amount,
     },
     {
       name: "Customer",
       selector: (row: { customer: string }) => row.customer,
-      width: "220px",
     },
     {
       name: "Address",
       selector: (row: { address: string }) => row.address,
-      width: "120px",
     },
-    {
-      name: "Status",
-      selector: (row: { status: string }) => row.status,
-      width: "120px",
-      conditionalCellStyles: [
-        {
-          when: (row: { status: string }) => row.status === "Pending",
-          style: {
-            color: "#FD8539",
-            fontWeight: "700",
-          },
-        },
-        {
-          when: (row: { status: string }) => row.status === "Recieved",
-          style: {
-            color: "#2ED480",
-            fontWeight: "700",
-          },
-        },
-        {
-          when: (row: { status: string }) => row.status === "Rejected",
-          style: {
-            color: "#dc4545",
-            fontWeight: "700",
-          },
-        },
-      ],
-    },
+
     {
       name: "Actions",
       cell: (row: { id: string }) => [
@@ -108,12 +77,11 @@ export const allDeliveriesData: DataType = {
     {
       id: "1",
       date: new Date(),
-      saleInvoiceNumber: "Inv.2023/06/001",
       deliveryReferenceNumber: "DO2023/06/0345",
-      description: "P04-03-101139-00 - GENRUI KT03A Lyse Solution",
+      description: "Products delivered sucessfully",
       customer: "PARTNERS IN HEALTH",
       address: "Congo Town",
-      status: "Recieved",
+      amount: 1000,
       products: [
         {
           id: "1",
@@ -144,12 +112,11 @@ export const allDeliveriesData: DataType = {
     {
       id: "2",
       date: new Date(),
-      saleInvoiceNumber: "Inv.2023/06/001",
       deliveryReferenceNumber: "DO2023/06/0344",
-      description: "P04-03-101139-00 - GENRUI KT03A Lyse Solution",
+      description: "Products delivered to the customer successfully",
       customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
-      address: "Congo Town",
-      status: "Recieved",
+      address: "Monrovia, Liberia",
+      amount: 1200,
       products: [
         {
           id: "1",

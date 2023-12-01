@@ -1,30 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import axios from "axios";
-import Image from "next/image";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { Expense } from "@/components/Types";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
+import type { Delivery } from "@/components/Types";
+import { allSalesData } from "@/data/allSalesData";
+import DataTable from "react-data-table-component";
+import type { DeliveryProduct } from "@/components/Types";
+import { customTableStyles } from "@/styles/TableStyles";
 
 // TO DO - update typee to Delivery type
-type FormInput = Omit<Expense, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<Delivery, "id" | "updatedAt" | "isActive">;
 
 const defaultValues: FormInput = {
   date: new Date(),
-  title: "",
-  reference: "",
-  category: "",
+  saleInvoiceNumber: "",
+  deliveryReferenceNumber: "",
   description: "",
-  amount: 0,
-  image: "",
+  customer: "",
+  address: "",
+  products: [],
+  status: "",
   createdAt: new Date(),
 };
 
@@ -35,20 +44,45 @@ type AddDeliveryProps = {
 
 const options = [
   {
-    label: "Purchase",
-    value: "Purchase",
+    label: "Parking",
+    value: "Parking",
   },
   {
-    label: "Office Maintenance",
-    value: "Office Maintenance",
+    label: "Delivering",
+    value: "Delivering",
   },
   {
-    label: "Transportation",
-    value: "Transportation",
+    label: "Delivered",
+    value: "Delivered",
+  },
+];
+
+const columns = [
+  {
+    name: "Lot Number",
+    selector: (row: { lotNumber: string }) => row.lotNumber,
   },
   {
-    label: "Salary",
-    value: "Salary",
+    name: "Product Name",
+    selector: (row: { name: string }) => row.name,
+  },
+  {
+    name: "Qty Requested",
+    selector: (row: { quantityRequested: number }) => row.quantityRequested,
+  },
+  {
+    name: "Qty Supplied",
+    cell: (row: { quantityRequested: number }) => (
+      // register the quantitySupplied for each product.
+      <TextField
+        variant="outlined"
+        size="small"
+        type="number"
+        className="w-[80px]"
+        defaultValue={row.quantityRequested}
+        inputProps={{ max: row.quantityRequested, min: 0 }}
+      />
+    ),
   },
 ];
 
@@ -58,63 +92,60 @@ export default function AddDelivery({ open, handleClose }: AddDeliveryProps) {
       defaultValues: defaultValues,
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<Dayjs | null>(dayjs());
+  const [invoiceNumber, setInvoiceNumber] = useState<string>("");
+  const [customer, setCustomer] = useState<string>("");
+  const [products, setProducts] = useState<DeliveryProduct[]>([]);
 
   const onSubmit = async (data: FormInput) => {
-    if (data.image.length > 0) {
-      const imageFile = data.image[0];
-
-      const formData = new FormData();
-      formData.append("file", imageFile);
-
-      formData.append("upload_preset", "prime-gene-bio-solutions");
-
-      try {
-        const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dykyxconb/image/upload",
-          formData
-        );
-        setImageUrl(response.data.secure_url);
-        console.log(imageUrl);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      setImageUrl(null);
-      console.log(imageUrl);
-    }
-
-    // Handle form data and cloudinary image url with corresponding API call
-    console.log({ ...data, image: imageUrl, date: deliveryDate });
+    // Handle form data with corresponding API call
+    const formData = {
+      ...data,
+      date: deliveryDate,
+      saleInvoiceNumber: invoiceNumber,
+      customer,
+      products,
+    };
+    console.log(formData);
   };
 
-  // Set selected Image for preview
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage(null);
-    }
-  };
+  const handleCancel = useCallback(() => {
+    reset();
+    setInvoiceNumber("");
+    setCustomer("");
+    setProducts([]);
+    setDeliveryDate(dayjs());
+  }, [reset]);
 
+  useEffect(() => {
+    const sale = allSalesData.data.find(
+      (sale) => sale.invoiceNumber === invoiceNumber
+    );
+    if (sale) {
+      setCustomer(sale.customer);
+
+      let products: DeliveryProduct[] = [];
+      sale.products.forEach((product) => {
+        products.push({
+          id: product.id,
+          lotNumber: product.lotNumber,
+          name: product.name,
+          quantityRequested: product.quantity,
+          quantitySupplied: 0,
+        });
+      });
+      setProducts(products);
+    }
+  }, [invoiceNumber]);
   // Reset form to defaults on Successfull submission of data
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
-      setPreviewImage(null);
+      handleCancel();
     }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
+  }, [handleCancel, isSubmitSuccessful, reset]);
   return (
     <div>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle className="flex justify-between items-center">
           <span className="text-2xl text-primaryDark font-bold">
             Add Delivery
@@ -135,122 +166,153 @@ export default function AddDelivery({ open, handleClose }: AddDeliveryProps) {
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="deliveryDate">
-                <span className="text-primaryDark font-semibold">Date</span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <DatePicker
-                defaultValue={dayjs()}
-                value={deliveryDate}
-                onChange={(newDate) => setDeliveryDate(newDate)}
-                format="LL"
-                label="MM-DD-YYYY"
-                disableFuture={true}
-                minDate={dayjs("01-01-2000")}
-              />
+              <div className="flex w-full gap-5">
+                <div className="flex flex-col flex-1 gap-2">
+                  <label htmlFor="deliveryDate">
+                    <span className="text-primaryDark font-semibold">Date</span>
+                    <span className="text-redColor"> *</span>
+                  </label>
+                  <DatePicker
+                    defaultValue={dayjs()}
+                    value={deliveryDate}
+                    onChange={(newDate) => setDeliveryDate(newDate)}
+                    format="LL"
+                    label="MM-DD-YYYY"
+                    minDate={dayjs("01-01-2000")}
+                  />
+                </div>
+                <div className="flex flex-col flex-1 gap-2">
+                  <label htmlFor="category">
+                    <span className="text-primaryDark font-semibold">
+                      Status
+                    </span>
+                    <span className="text-redColor"> *</span>
+                  </label>
+                  <FormInputDropdown
+                    id="status"
+                    name="status"
+                    control={control}
+                    label="Delivery Status"
+                    options={options}
+                  />
+                </div>
+              </div>
+              <div className="flex w-full gap-5">
+                <div className="flex flex-col flex-1 gap-2">
+                  <label htmlFor="reference">
+                    <span className="text-primaryDark font-semibold">
+                      Delivery Reference Number
+                    </span>
+                    <span className="text-redColor"> *</span>
+                  </label>
+                  <TextField
+                    id="deliveryReferenceNumber"
+                    type="text"
+                    label="Reference Number"
+                    {...register("deliveryReferenceNumber", {
+                      required: "Delivery Reference Number is required",
+                    })}
+                    error={!!errors.deliveryReferenceNumber}
+                    helperText={errors.deliveryReferenceNumber?.message}
+                  />
+                </div>
+                <div className="flex flex-col flex-1 gap-2">
+                  <label htmlFor="reference">
+                    <span className="text-primaryDark font-semibold">
+                      Sale Invoice Number
+                    </span>
+                    <span className="text-redColor"> *</span>
+                  </label>
+                  <div className="w-full">
+                    <Select
+                      label="Invoice Number"
+                      id="invoiceNumber"
+                      value={invoiceNumber}
+                      {...register("saleInvoiceNumber", {
+                        required: "Invoice Number is required",
+                      })}
+                      error={!!errors.saleInvoiceNumber}
+                      onChange={(event: SelectChangeEvent) =>
+                        setInvoiceNumber(event.target.value)
+                      }
+                      sx={{ width: "100%" }}
+                    >
+                      {allSalesData.data.map((item) => (
+                        <MenuItem key={item.id} value={item.invoiceNumber}>
+                          {item.invoiceNumber}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <div className="flex w-full gap-5">
+                <div className="flex flex-col flex-1 gap-2">
+                  <label htmlFor="customer">
+                    <span className="text-primaryDark font-semibold">
+                      Customer
+                    </span>
+                    <span className="text-redColor"> *</span>
+                  </label>
+                  <TextField
+                    id="customer"
+                    type="text"
+                    label="Customer"
+                    variant="outlined"
+                    value={customer}
+                    disabled
+                  />
+                </div>
 
-              <label htmlFor="title">
-                <span className="text-primaryDark font-semibold">
-                  Delivery Title
-                </span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="title"
-                type="text"
-                label="Delivery Title"
-                {...register("title", {
-                  required: "Name is required",
-                })}
-                error={!!errors.title}
-                helperText={errors.title?.message}
-              />
-              <label htmlFor="reference">
-                <span className="text-primaryDark font-semibold">
-                  Reference Number
-                </span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="reference"
-                type="text"
-                label="Reference Number"
-                {...register("reference", {
-                  required: "Reference Number is required",
-                })}
-                error={!!errors.reference}
-                helperText={errors.reference?.message}
-              />
-              <label htmlFor="amount">
-                <span className="text-primaryDark font-semibold">Amount</span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="amount"
-                type="number"
-                label="Amount"
-                variant="outlined"
-                {...register("amount", {
-                  required: true,
-                  valueAsNumber: true,
-                  validate: (value) => value > 0,
-                })}
-                error={!!errors.amount}
-                helperText={
-                  errors.amount ? "Amount is required and cannot be Zero" : ""
-                }
-              />
-              <div className="flex flex-col w-full gap-2">
-                <label htmlFor="category">
+                <div className="flex flex-col flex-1 gap-2">
+                  <label htmlFor="amount">
+                    <span className="text-primaryDark font-semibold">
+                      Address
+                    </span>
+                    <span className="text-redColor"> *</span>
+                  </label>
+                  <TextField
+                    id="address"
+                    type="text"
+                    label="Address"
+                    variant="outlined"
+                    {...register("address", {
+                      required: "Address is required",
+                    })}
+                    error={!!errors.address}
+                    helperText={errors.address?.message}
+                  />
+                </div>
+              </div>
+              <div className="w-full flex flex-col py-5 gap-2">
+                <label htmlFor="products">
                   <span className="text-primaryDark font-semibold">
-                    Category
+                    Products
                   </span>
                 </label>
-                <FormInputDropdown
-                  id="category"
-                  name="category"
-                  control={control}
-                  label="Delivery Category"
-                  options={options}
+                <DataTable
+                  columns={columns}
+                  data={products}
+                  customStyles={customTableStyles}
+                  noDataComponent={
+                    <div className="w-full text-center text-primaryDark font-semibold">
+                      No Products To Display
+                    </div>
+                  }
                 />
               </div>
-              <label htmlFor="image">
-                <span className="text-primaryDark font-semibold">
-                  Attachment
-                </span>
-              </label>
-              <div className="flex flex-row gap-2 items-center">
-                <div>
-                  {previewImage && (
-                    <Image
-                      src={previewImage}
-                      alt="Preview"
-                      width={100}
-                      height={100}
-                    />
-                  )}
-                </div>
+              <div className="flex flex-col gap-2 w-full">
+                <label htmlFor="description">
+                  <span className="text-primaryDark font-semibold">Notes</span>
+                </label>
                 <TextField
-                  id="image"
-                  type="file"
-                  variant="outlined"
-                  {...register("image")}
-                  onChange={handleImageChange}
-                  inputProps={{ accept: "image/*", multiple: false }}
+                  id="description"
+                  label="Description"
+                  multiline
+                  rows={6}
+                  {...register("description")}
                 />
               </div>
-              <label htmlFor="description">
-                <span className="text-primaryDark font-semibold">
-                  Description
-                </span>
-              </label>
-              <TextField
-                id="description"
-                label="Description"
-                multiline
-                rows={4}
-                {...register("description")}
-              />
             </div>
           </form>
         </DialogContent>
@@ -258,7 +320,7 @@ export default function AddDelivery({ open, handleClose }: AddDeliveryProps) {
           <Button
             variant="outlined"
             size="large"
-            onClick={() => reset()}
+            onClick={handleCancel}
             className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel
