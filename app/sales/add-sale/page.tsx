@@ -23,7 +23,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import { customersData } from "@/data/customersData";
 import { allProductsData } from "@/data/allProductsData";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 
 type FormInput = Omit<Sale<Product>, "id" | "updatedAt" | "isActive">;
 type Options = {
@@ -82,17 +82,17 @@ const defaultValues: FormInput = {
 };
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
+  "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
   // hide last border
-  '&:last-child td, &:last-child th': {
+  "&:last-child td, &:last-child th": {
     border: 0,
   },
   "&:hover": {
     cursor: "pointer",
     backgroundColor: "#e5e7eb",
-  }
+  },
 }));
 
 export default function AddSalePage() {
@@ -103,23 +103,31 @@ export default function AddSalePage() {
     ...allProductsData.data,
   ]);
   const router = useRouter();
-  const { register, handleSubmit, reset, formState, control, watch, getValues, setValue } =
-    useForm<FormInput>({
-      defaultValues: defaultValues,
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState,
+    control,
+    watch,
+    getValues,
+    setValue,
+  } = useForm<FormInput>({
+    defaultValues: defaultValues,
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "products"
-  })
+    name: "products",
+  });
   const watchFieldArray = watch("products");
   const controlledFields = fields.map((field, index) => {
     return {
       ...field,
       // Watch quantity field for changes so as to update the sub-total
-      productQuantity: watchFieldArray[index].productQuantity
+      productQuantity: watchFieldArray[index].productQuantity,
     };
-  });  
+  });
 
   useEffect(() => {
     if (searchTerm) {
@@ -146,13 +154,17 @@ export default function AddSalePage() {
   const handleDeleteProduct = (index: number) => () => remove(index);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   const subTotal = getValues("products").reduce((accum, curr) => accum + (curr.price * curr.productQuantity), 0);
-   setValue("subTotal", subTotal);
-   // Add tax to subTotal. Current assumption is tax is
-   setValue("total", getTotal(subTotal, getValues("tax")));
-  }
+    const subTotal = getValues("products").reduce(
+      (accum, curr) => accum + curr.price * curr.productQuantity,
+      0
+    );
+    setValue("subTotal", subTotal);
+    // Add tax to subTotal. Current assumption is tax is
+    setValue("total", getTotal(subTotal, getValues("tax")));
+  };
 
-  const getTotal = (subTotal: number, tax: number): number => subTotal * tax / 100 + subTotal;
+  const getTotal = (subTotal: number, tax: number): number =>
+    (subTotal * tax) / 100 + subTotal;
 
   const onSubmit = async (data: FormInput) => {
     try {
@@ -171,7 +183,15 @@ export default function AddSalePage() {
     console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
 
-  const columns = ["Name", "Lot No.", "Available Quantity", "Unit Price", "Quantity", "Sub Total", "Actions"];
+  const columns = [
+    "Name",
+    "Lot No.",
+    "Available Quantity",
+    "Unit Price",
+    "Quantity",
+    "Sub Total",
+    "Actions",
+  ];
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
@@ -292,61 +312,77 @@ export default function AddSalePage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {
-                controlledFields.length > 0 ?
+              {controlledFields.length > 0 ? (
                 <>
-                  {
-                    controlledFields.map((field, index) => (
-                      <StyledTableRow key={field.id}>
-                        <TableCell className="text-lg">
-                          <span>{field.code}</span> - <span>{field.name}</span>
-                        </TableCell>
-                        <TableCell className="text-lg">
-                          <Select 
-                          size="small" 
-                          label="Lot No." 
+                  {controlledFields.map((field, index) => (
+                    <StyledTableRow key={field.id}>
+                      <TableCell className="text-lg">
+                        <span>{field.code}</span> - <span>{field.name}</span>
+                      </TableCell>
+                      <TableCell className="text-lg">
+                        <Select
+                          size="small"
+                          label="Lot No."
                           defaultValue={""}
-                          {...register(`products.${index}.lotNo`, { required: true })}
-                          error={errors.products && !!errors.products[index]?.lotNo}
-                          >
-                            {field.stock.map((item) => (
-                              <MenuItem key={item.lotNumber} value={item.lotNumber}>
-                                {item.lotNumber}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </TableCell>
-                        <TableCell className="text-lg">
-                          <p>0</p>
-                        </TableCell>
-                        <TableCell className="text-lg">
-                          <p>{field.price}</p>
-                        </TableCell>
-                        <TableCell className="text-lg">
-                          <TextField 
-                          type="number" 
-                          size="small" 
+                          {...register(`products.${index}.lotNo`, {
+                            required: true,
+                          })}
+                          error={
+                            errors.products && !!errors.products[index]?.lotNo
+                          }
+                        >
+                          {field.stock.map((item) => (
+                            <MenuItem
+                              key={item.lotNumber}
+                              value={item.lotNumber}
+                            >
+                              {item.lotNumber}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </TableCell>
+                      <TableCell className="text-lg">
+                        <p>0</p>
+                      </TableCell>
+                      <TableCell className="text-lg">
+                        <p>{field.price}</p>
+                      </TableCell>
+                      <TableCell className="text-lg">
+                        <TextField
+                          type="number"
+                          size="small"
                           className="max-w-[80px]"
+                          inputProps={{ min: 1 }}
                           defaultValue={1}
-                          {...register(`products.${index}.productQuantity`, { required: true, min: 1, onChange: handleQuantityChange })}
-                          error={errors.products && !!errors.products[index]?.productQuantity}
-                          />
-                        </TableCell>
-                        <TableCell className="text-lg">
-                          <p>{field.price * Math.max(1, field.productQuantity)}</p>
-                        </TableCell>
-                        <TableCell className="text-lg">
-                          <Button
-                            onClick={handleDeleteProduct(index)}
-                            className="bg-redColor/95 text-white hover:!bg-redColor"
-                          >
-                            Delete
-                          </Button>
-                        </TableCell>
-                      </StyledTableRow>
-                    ))
-                  }                
-                </> :
+                          {...register(`products.${index}.productQuantity`, {
+                            required: true,
+                            min: 1,
+                            valueAsNumber: true,
+                            onChange: handleQuantityChange,
+                          })}
+                          error={
+                            errors.products &&
+                            !!errors.products[index]?.productQuantity
+                          }
+                        />
+                      </TableCell>
+                      <TableCell className="text-lg">
+                        <p>
+                          {field.price * Math.max(1, field.productQuantity)}
+                        </p>
+                      </TableCell>
+                      <TableCell className="text-lg">
+                        <Button
+                          onClick={handleDeleteProduct(index)}
+                          className="bg-redColor/95 text-white hover:!bg-redColor"
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </StyledTableRow>
+                  ))}
+                </>
+              ) : (
                 <TableRow>
                   <TableCell
                     colSpan={8}
@@ -354,8 +390,8 @@ export default function AddSalePage() {
                   >
                     No Items To Display
                   </TableCell>
-              </TableRow>
-              }
+                </TableRow>
+              )}
             </TableBody>
           </Table>
 
@@ -368,7 +404,7 @@ export default function AddSalePage() {
                       Total
                     </TableCell>
                     <TableCell className="text-primaryDark font-bold text-lg">
-                      {getValues("subTotal")}
+                      ${getValues("subTotal")}
                     </TableCell>
                   </TableRow>
                   <TableRow>
