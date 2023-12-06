@@ -126,6 +126,7 @@ export default function AddSalePage() {
       ...field,
       // Watch quantity field for changes so as to update the sub-total
       productQuantity: watchFieldArray[index].productQuantity,
+      lotNo: watchFieldArray[index].lotNo
     };
   });
 
@@ -342,7 +343,7 @@ export default function AddSalePage() {
                         </Select>
                       </TableCell>
                       <TableCell className="text-lg">
-                        <p>0</p>
+                        <p>{(field.lotNo && field.stock.filter(el => el.lotNumber == field.lotNo)[0].quantity) || "-"}</p>
                       </TableCell>
                       <TableCell className="text-lg">
                         <p>{field.price}</p>
