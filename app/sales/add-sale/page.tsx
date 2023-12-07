@@ -153,7 +153,16 @@ export default function AddSalePage() {
     setShowProductsList(false);
   };
 
-  const handleDeleteProduct = (index: number) => () => remove(index);
+  const handleDeleteProduct = (index: number) => () => {
+    // Delete product from react-hook-form and consequently the table
+    const subject = getValues(`products.${index}`);
+    remove(index);
+    // Update subtotals
+    const diff = subject.productQuantity * subject.price;
+    const subTotal = getValues("subTotal") - diff;
+    setValue("subTotal", subTotal);
+    setValue("total", getTotal(subTotal, getValues("tax")));
+  }
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const subTotal = getValues("products").reduce(
@@ -176,8 +185,10 @@ export default function AddSalePage() {
     setValue(e.target.name, updatedValues);
   }
 
-  const getTotal = (subTotal: number, tax: number): number =>
-    (subTotal * tax) / 100 + subTotal;
+
+  const getTax = (subTotal: number, tax: number): number => (subTotal * tax) / 100;
+
+  const getTotal = (subTotal: number, tax: number): number => getTax(subTotal, tax) + subTotal;
 
   const onSubmit = async (data: FormInput) => {
     try {
