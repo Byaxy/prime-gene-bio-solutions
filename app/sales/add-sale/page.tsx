@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -12,10 +12,11 @@ import {
   Typography,
   Select,
   MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, Controller } from "react-hook-form";
 import type { Sale, Stock } from "@/components/Types";
 import type { Product } from "@/components/Types";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -115,7 +116,7 @@ export default function AddSalePage() {
   } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitSuccessful, isSubmitting, isSubmitted } = formState;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "products",
@@ -125,8 +126,8 @@ export default function AddSalePage() {
     return {
       ...field,
       // Watch quantity field for changes so as to update the sub-total
-      productQuantity: watchFieldArray[index].productQuantity,
-      lotNo: watchFieldArray[index].lotNo
+      stock: watchFieldArray[index].stock,
+      productQuantity: watchFieldArray[index].productQuantity
     };
   });
 
@@ -163,6 +164,17 @@ export default function AddSalePage() {
     // Add tax to subTotal. Current assumption is tax is
     setValue("total", getTotal(subTotal, getValues("tax")));
   };
+
+  const handleLotNumberChange = (e: SelectChangeEvent<Stock[]>, child: ReactNode) => {
+    // Get products from react-hook-form
+    const currentValues: Stock[] = getValues(e.target.name) as Stock[];
+    // Demote the previously selected lot number and mark currently active one
+    const updatedValues = currentValues.map(({ selected, ...rest }) => {
+      if (rest.lotNumber === e.target.value) return { ...rest, selected: true };
+      return rest;
+    });
+    setValue(e.target.name, updatedValues);
+  }
 
   const getTotal = (subTotal: number, tax: number): number =>
     (subTotal * tax) / 100 + subTotal;
@@ -321,29 +333,30 @@ export default function AddSalePage() {
                         <span>{field.code}</span> - <span>{field.name}</span>
                       </TableCell>
                       <TableCell className="text-lg">
-                        <Select
-                          size="small"
-                          label="Lot No."
-                          defaultValue={""}
-                          {...register(`products.${index}.lotNo`, {
-                            required: true,
-                          })}
-                          error={
-                            errors.products && !!errors.products[index]?.lotNo
-                          }
-                        >
-                          {field.stock.map((item) => (
-                            <MenuItem
-                              key={item.lotNumber}
-                              value={item.lotNumber}
+                        <Controller control={control} name={`products.${index}.stock`}
+                          rules={{ validate: (value, formValues) => value.filter(el => el.selected).length === 1 }}
+                          render={({ field: { onBlur, value, ref } }) => (
+                            <Select
+                            size="small" 
+                            label="Lot No."
+                            name={`products.${index}.stock`}
+                            onChange={handleLotNumberChange}
+                            error={isSubmitted && field.stock.filter(el => el.selected).length !== 1}
                             >
-                              {item.lotNumber}
-                            </MenuItem>
-                          ))}
-                        </Select>
+                              {field.stock.map((item, idx) => (
+                                <MenuItem
+                                  key={`products.${index}.stock.${idx}`}
+                                  value={item.lotNumber}
+                                >
+                                  {item.lotNumber}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          )}
+                        />
                       </TableCell>
                       <TableCell className="text-lg">
-                        <p>{(field.lotNo && field.stock.filter(el => el.lotNumber == field.lotNo)[0].quantity) || "-"}</p>
+                        <p>{(field.stock.filter(el => el.selected).length && field.stock.filter(el => el.selected)[0].quantity) || "-"}</p>
                       </TableCell>
                       <TableCell className="text-lg">
                         <p>{field.price}</p>
