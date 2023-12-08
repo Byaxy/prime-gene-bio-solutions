@@ -185,6 +185,34 @@ export default function AddSalePage() {
     setValue(e.target.name, updatedValues);
   }
 
+  // Ensure requested qty per product does not exceed in-stock qty 
+  const handleRequestedProductQtyValidation = () => {
+    const products = getValues("products");
+
+    const result = products.reduce((accum, current) => {
+      let stock = current.stock.filter(el => el.selected)[0];
+      // Append lotNumber to object key for differentiation purposes e.g. 
+      // productA-lotNumber0 should have different entry to productA-lotNumber1
+      let key = current.name + "-" + stock.lotNumber;
+      // Keep track of each product's requested and available stock.
+      if (!accum[key]) accum[key] = {"requested": 0, "available": 0}
+      accum[key].requested += current.productQuantity;
+      accum[key].available = stock.quantity;
+      return accum;
+    }, {} as Record<string, Record<string, number>>);
+
+    const errors: string[] = [];
+
+    for (const [ key, { requested, available } ] of Object.entries(result)) {
+      if (available < requested) {
+        let [name, lotNumber] = key.split("-");
+        errors.push(`Requested ${requested} ${name} of lot number ${lotNumber} but only ${available} available`);
+      }
+    }    
+
+    return errors;
+  }
+
 
   const getTax = (subTotal: number, tax: number): number => (subTotal * tax) / 100;
 
@@ -192,20 +220,27 @@ export default function AddSalePage() {
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data };
-      console.log(newData);
+      const requestedQtyValidationResult = handleRequestedProductQtyValidation();
+      
+      if (!requestedQtyValidationResult.length) {
+        const newData = { ...data };
+        console.log(newData);      
+        reset();
+      } else {
+        alert(requestedQtyValidationResult.join("\n"));
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-    }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
+  // useEffect(() => {
+  //   if (isSubmitSuccessful) {
+  //     reset();
+  //   }
+  //   console.log(isSubmitSuccessful);
+  // }, [isSubmitSuccessful, reset]);
 
   const columns = [
     "Name",
