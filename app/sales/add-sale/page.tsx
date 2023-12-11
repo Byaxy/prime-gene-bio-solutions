@@ -186,14 +186,15 @@ export default function AddSalePage() {
   };
 
   const handleLotNumberChange = (e: SelectChangeEvent<Stock[]>, child: ReactNode) => {
+    const key = e.target.name as `products.${number}.stock`;
     // Get products from react-hook-form
-    const currentValues: Stock[] = getValues(e.target.name) as Stock[];
+    const currentValues: Stock[] = getValues(key) as Stock[];
     // Demote the previously selected lot number and mark currently active one
     const updatedValues = currentValues.map(({ selected, ...rest }) => {
       if (rest.lotNumber === e.target.value) return { ...rest, selected: true };
       return rest;
     });
-    setValue(e.target.name, updatedValues);
+    setValue(key, updatedValues);
   }
 
   // Ensure requested qty per product does not exceed in-stock qty 

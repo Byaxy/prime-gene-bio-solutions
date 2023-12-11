@@ -24,7 +24,6 @@ const defaultValues: FormInput = {
   price: 0,
   description: "",
   alertQuantity: 5,
-  lotNo: "",
   productQuantity: 0,
   createdAt: new Date(),
 };
