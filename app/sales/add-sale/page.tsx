@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -12,10 +12,13 @@ import {
   Typography,
   Select,
   MenuItem,
+  SelectChangeEvent,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, Controller } from "react-hook-form";
 import type { Sale, Stock } from "@/components/Types";
 import type { Product } from "@/components/Types";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -102,6 +105,9 @@ export default function AddSalePage() {
   const [products, setProducts] = useState<Product[]>([
     ...allProductsData.data,
   ]);
+  const [snackbarMessage, setSnackbarMessage] = useState(<p>There is an issue with the submitted form</p>);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const router = useRouter();
   const {
     register,
@@ -115,7 +121,7 @@ export default function AddSalePage() {
   } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitSuccessful, isSubmitting, isSubmitted } = formState;
   const { fields, append, remove } = useFieldArray({
     control,
     name: "products",
@@ -125,7 +131,8 @@ export default function AddSalePage() {
     return {
       ...field,
       // Watch quantity field for changes so as to update the sub-total
-      productQuantity: watchFieldArray[index].productQuantity,
+      stock: watchFieldArray[index].stock,
+      productQuantity: watchFieldArray[index].productQuantity
     };
   });
 
@@ -142,6 +149,12 @@ export default function AddSalePage() {
     setProducts(searchedProducts);
   }, [products, searchTerm]);
 
+  const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+
+    setOpenSnackbar(false);
+  }
+
   const handleAddProduct = (product: Product) => {
     append({ ...product });
     const subTotal = getValues("subTotal") + product.price;
@@ -151,7 +164,16 @@ export default function AddSalePage() {
     setShowProductsList(false);
   };
 
-  const handleDeleteProduct = (index: number) => () => remove(index);
+  const handleDeleteProduct = (index: number) => () => {
+    // Delete product from react-hook-form and consequently the table
+    const subject = getValues(`products.${index}`);
+    remove(index);
+    // Update subtotals
+    const diff = subject.productQuantity * subject.price;
+    const subTotal = getValues("subTotal") - diff;
+    setValue("subTotal", subTotal);
+    setValue("total", getTotal(subTotal, getValues("tax")));
+  }
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const subTotal = getValues("products").reduce(
@@ -163,25 +185,80 @@ export default function AddSalePage() {
     setValue("total", getTotal(subTotal, getValues("tax")));
   };
 
-  const getTotal = (subTotal: number, tax: number): number =>
-    (subTotal * tax) / 100 + subTotal;
+  const handleLotNumberChange = (e: SelectChangeEvent<Stock[]>, child: ReactNode) => {
+    const key = e.target.name as `products.${number}.stock`;
+    // Get products from react-hook-form
+    const currentValues: Stock[] = getValues(key) as Stock[];
+    // Demote the previously selected lot number and mark currently active one
+    const updatedValues = currentValues.map(({ selected, ...rest }) => {
+      if (rest.lotNumber === e.target.value) return { ...rest, selected: true };
+      return rest;
+    });
+    setValue(key, updatedValues);
+  }
+
+  // Ensure requested qty per product does not exceed in-stock qty 
+  const handleRequestedProductQtyValidation = () => {
+    const products = getValues("products");
+
+    const result = products.reduce((accum, current) => {
+      let stock = current.stock.filter(el => el.selected)[0];
+      // Append lotNumber to object key for differentiation purposes e.g. 
+      // productA-lotNumber0 should have different entry to productA-lotNumber1
+      let key = current.name + "-" + stock.lotNumber;
+      // Keep track of each product's requested and available stock.
+      if (!accum[key]) accum[key] = {"requested": 0, "available": 0}
+      accum[key].requested += current.productQuantity;
+      accum[key].available = stock.quantity;
+      return accum;
+    }, {} as Record<string, Record<string, number>>);
+
+    const errors: string[] = [];
+
+    for (const [ key, { requested, available } ] of Object.entries(result)) {
+      if (available < requested) {
+        let [name, lotNumber] = key.split("-");
+        errors.push(`Requested ${requested} ${name} of lot number ${lotNumber} but only ${available} available`);
+      }
+    }    
+
+    return errors;
+  }
+
+
+  const getTax = (subTotal: number, tax: number): number => (subTotal * tax) / 100;
+
+  const getTotal = (subTotal: number, tax: number): number => getTax(subTotal, tax) + subTotal;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data };
-      console.log(newData);
+      const requestedQtyValidationResult = handleRequestedProductQtyValidation();
+      
+      if (!requestedQtyValidationResult.length) {
+        const newData = { ...data };
+        console.log(newData);      
+        reset();
+      } else {
+        setSnackbarMessage(
+          <div>
+            <p className="m-0 text-lg">Form has errors</p>
+            {requestedQtyValidationResult.map((msg, idx) => <p key={idx} className="m-0 text-sm">{msg}</p>)}
+          </div>
+        );
+        setOpenSnackbar(true);
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-    }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
+  // useEffect(() => {
+  //   if (isSubmitSuccessful) {
+  //     reset();
+  //   }
+  //   console.log(isSubmitSuccessful);
+  // }, [isSubmitSuccessful, reset]);
 
   const columns = [
     "Name",
@@ -195,6 +272,15 @@ export default function AddSalePage() {
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
+      <Snackbar open={openSnackbar} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleSnackbarClose} autoHideDuration={5000}>
+        <Alert 
+        severity="error" 
+        onClose={handleSnackbarClose} 
+        // sx={{ backgroundColor: "#DC4545", color: "white" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <div className="flex items-center justify-between w-full gap-5">
         <Typography
           variant="h3"
@@ -320,29 +406,30 @@ export default function AddSalePage() {
                         <span>{field.code}</span> - <span>{field.name}</span>
                       </TableCell>
                       <TableCell className="text-lg">
-                        <Select
-                          size="small"
-                          label="Lot No."
-                          defaultValue={""}
-                          {...register(`products.${index}.lotNo`, {
-                            required: true,
-                          })}
-                          error={
-                            errors.products && !!errors.products[index]?.lotNo
-                          }
-                        >
-                          {field.stock.map((item) => (
-                            <MenuItem
-                              key={item.lotNumber}
-                              value={item.lotNumber}
+                        <Controller control={control} name={`products.${index}.stock`}
+                          rules={{ validate: (value, formValues) => value.filter(el => el.selected).length === 1 }}
+                          render={({ field: { onBlur, value, ref } }) => (
+                            <Select
+                            size="small" 
+                            label="Lot No."
+                            name={`products.${index}.stock`}
+                            onChange={handleLotNumberChange}
+                            error={isSubmitted && field.stock.filter(el => el.selected).length !== 1}
                             >
-                              {item.lotNumber}
-                            </MenuItem>
-                          ))}
-                        </Select>
+                              {field.stock.map((item, idx) => (
+                                <MenuItem
+                                  key={`products.${index}.stock.${idx}`}
+                                  value={item.lotNumber}
+                                >
+                                  {item.lotNumber}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          )}
+                        />
                       </TableCell>
                       <TableCell className="text-lg">
-                        <p>0</p>
+                        <p>{(field.stock.filter(el => el.selected).length && field.stock.filter(el => el.selected)[0].quantity) || "-"}</p>
                       </TableCell>
                       <TableCell className="text-lg">
                         <p>{field.price}</p>

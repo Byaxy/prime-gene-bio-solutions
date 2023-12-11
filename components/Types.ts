@@ -132,7 +132,6 @@ export type Product = {
      type: string;
      unit: string;
      category: string;
-     lotNo: string;
      productQuantity: number;
      stock: Stock[];
      cost: number;
@@ -149,6 +148,7 @@ export type Stock = {
      manufactureDate: Date;
      expiryDate: Date;
      quantity: number;
+     selected?: boolean;
 }
 export type ProductStock = {
      id: string;
