@@ -272,7 +272,7 @@ export default function AddSalePage() {
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
-      <Snackbar open={openSnackbar} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleSnackbarClose}>
+      <Snackbar open={openSnackbar} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleSnackbarClose} autoHideDuration={5000}>
         <Alert 
         severity="error" 
         onClose={handleSnackbarClose} 
