@@ -13,6 +13,8 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
@@ -103,6 +105,9 @@ export default function AddSalePage() {
   const [products, setProducts] = useState<Product[]>([
     ...allProductsData.data,
   ]);
+  const [snackbarMessage, setSnackbarMessage] = useState(<p>There is an issue with the submitted form</p>);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
   const router = useRouter();
   const {
     register,
@@ -143,6 +148,12 @@ export default function AddSalePage() {
     });
     setProducts(searchedProducts);
   }, [products, searchTerm]);
+
+  const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+
+    setOpenSnackbar(false);
+  }
 
   const handleAddProduct = (product: Product) => {
     append({ ...product });
@@ -227,7 +238,13 @@ export default function AddSalePage() {
         console.log(newData);      
         reset();
       } else {
-        alert(requestedQtyValidationResult.join("\n"));
+        setSnackbarMessage(
+          <div>
+            <p className="m-0 text-lg">Form has errors</p>
+            {requestedQtyValidationResult.map((msg, idx) => <p key={idx} className="m-0 text-sm">{msg}</p>)}
+          </div>
+        );
+        setOpenSnackbar(true);
       }
     } catch (error) {
       console.error(error);
@@ -254,6 +271,15 @@ export default function AddSalePage() {
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
+      <Snackbar open={openSnackbar} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleSnackbarClose}>
+        <Alert 
+        severity="error" 
+        onClose={handleSnackbarClose} 
+        // sx={{ backgroundColor: "#DC4545", color: "white" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <div className="flex items-center justify-between w-full gap-5">
         <Typography
           variant="h3"
