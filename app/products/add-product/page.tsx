@@ -158,6 +158,7 @@ export default function AddProductPage() {
                 options={{
                   multiple: false,
                   clientAllowedFormats: ["jpg", "png", "webp", "svg"],
+                  sources: ["local", "url", "dropbox", "google_drive"],
                 }}
                 onSuccess={(result) => {
                   if (result.info && typeof result.info !== "string") {
