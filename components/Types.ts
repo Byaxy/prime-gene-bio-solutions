@@ -35,9 +35,9 @@ export type ProductCategory = {
      id: string;
      code: string;
      name: string;
+     parentCategory: string;
      description: string;
      image: string;
-     subCategories?: ProductSubCategory[]
      createdAt: Date;
      updatedAt: Date;
      isActive: boolean;
@@ -131,7 +131,6 @@ export type Product = {
      type: string;
      unit: string;
      category: string;
-     productQuantity: number;
      stock: Stock[];
      cost: number;
      price: number;

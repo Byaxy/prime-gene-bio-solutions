@@ -7,6 +7,43 @@ import { useRouter } from "next/navigation";
 import AddType from "@/components/products/types/AddType";
 import ListComponent from "@/components/ListComponent";
 import ViewTypeDetails from "@/components/products/types/ViewTypeDetails";
+import Link from "next/link";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+const columns = [
+  {
+    name: "Date",
+    selector: (row: { createdAt: Date }) => row.createdAt.toDateString(),
+    width: "180px",
+  },
+  {
+    name: "Name",
+    selector: (row: { name: string }) => row.name,
+  },
+  {
+    name: "Description",
+    selector: (row: { description: string }) => row.description,
+  },
+
+  {
+    name: "Actions",
+    cell: (row: { id: string }) => [
+      <Link href={`/settings/products-types/edit-type/${row.id}`} key={row.id}>
+        <EditIcon sx={{ color: "#475BE8" }} />
+      </Link>,
+      <Link key={row.id} href="/settings/products-types">
+        <DeleteIcon color="error" />
+      </Link>,
+    ],
+    width: "120px",
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      gap: "5px",
+    },
+  },
+];
 
 export default function ProductTypesPage() {
   const [add, setAdd] = useState<boolean>(false);
@@ -25,7 +62,6 @@ export default function ProductTypesPage() {
   const onRowClicked = (row: { id: string }) => {
     setTypeID(row.id);
     setView(true);
-    console.log(typeID);
   };
   return (
     <ListComponent
@@ -41,8 +77,8 @@ export default function ProductTypesPage() {
           typeID={typeID}
         />
         <DataTable
-          data={typesData.data}
-          columns={typesData.columns}
+          data={typesData}
+          columns={columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"

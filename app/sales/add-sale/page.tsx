@@ -73,7 +73,7 @@ export default function AddSalePage() {
   const [quantity, setQuantity] = useState<number>(1);
   const [availableQuantity, setAvailableQuantity] = useState<number>(0);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([
-    ...allProductsData.data,
+    ...allProductsData,
   ]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -118,7 +118,7 @@ export default function AddSalePage() {
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   useEffect(() => {
-    let searchedProducts = allProductsData.data.filter((product) => {
+    let searchedProducts = allProductsData.filter((product) => {
       return (
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.code.toLowerCase().includes(searchTerm.toLowerCase())

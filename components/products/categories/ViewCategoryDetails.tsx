@@ -22,7 +22,7 @@ export default function ViewCategoryDetails({
   const [category, setCategory] = useState<ProductCategory | null>(null);
 
   useEffect(() => {
-    const categoryDetails = categoriesData.data.find(
+    const categoryDetails = categoriesData.find(
       (cate) => cate.id === categoryID
     );
     if (categoryDetails) {

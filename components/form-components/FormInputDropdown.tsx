@@ -19,7 +19,11 @@ export const FormInputDropdown: React.FC<FormInputProps> = ({
   const generateSingleOptions = () => {
     return options.map((option: any) => {
       return (
-        <MenuItem key={option.value} value={option.value}>
+        <MenuItem
+          key={option.value}
+          value={option.value}
+          className="text-primaryDark"
+        >
           {option.label}
         </MenuItem>
       );

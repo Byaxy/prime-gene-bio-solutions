@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import prismaClient from "./prisma-client";
 import { ProductCategory } from "@prisma/client";
 import { v2 as cloudinary } from "cloudinary";
-
 export function generateRandomString(length: number = 8): string {
     let chars: string = "0123456789abcdefghijklmnopqrstuvwxyz@#&ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let password: string = "";

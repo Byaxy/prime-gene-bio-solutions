@@ -10,6 +10,8 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import { ProductCategory } from "@/components/Types";
 import Image from "next/image";
+import toast from "react-hot-toast";
+import { CldUploadWidget } from "next-cloudinary";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
@@ -55,41 +57,40 @@ export default function AddCategory({
     useForm<FormInput>({
       defaultValues: defaultValues,
     });
-  const { errors, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    "/placeholder.jpg"
-  );
+  const { errors, isSubmitting, isSubmitSuccessful } = formState;
+  const [imageUrl, setImageUrl] = useState<string | null>("/placeholder.jpg");
 
   const onSubmit = async (data: FormInput) => {
-    const { image, ...rest } = data;
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
+      const newData = { ...data, image: imageUrl };
 
-    formData.append("json", JSON.stringify(rest));
-    if (image) formData.append("image", image[0]);
+      formData.append("json", JSON.stringify(newData));
 
-    const response = await fetch("/api/product-category/add", {
-      method: "POST",
-      body: formData,
-    });
+      const response = await fetch("/api/product-category/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: formData,
+      });
 
-    console.log(response);
-    reset();
-    setPreviewImage("/placeholder.jpg");
-  };
-
-  // Set selected Image for preview
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage("/placeholder.jpg");
+      const result = await response.json();
+      toast.success("Category added successfully");
+      return result;
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong try again later");
     }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      setImageUrl("/placeholder.jpg");
+    }
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -164,23 +165,37 @@ export default function AddCategory({
               </label>
               <div className="flex flex-row gap-4 items-center">
                 <div>
-                  {previewImage && (
-                    <Image
-                      src={previewImage}
-                      alt="Preview"
-                      width={100}
-                      height={80}
-                    />
+                  {imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={imageUrl} alt="Preview" className="w-40 h-40" />
                   )}
                 </div>
-                <TextField
-                  id="image"
-                  type="file"
-                  variant="outlined"
-                  {...register("image")}
-                  onChange={handleImageChange}
-                  inputProps={{ accept: "image/*", multiple: false }}
-                />
+                <CldUploadWidget
+                  uploadPreset="prime-gene-biomedical-solutions"
+                  options={{
+                    multiple: false,
+                    clientAllowedFormats: ["jpg", "png", "webp", "svg"],
+                    sources: ["local", "url", "dropbox", "google_drive"],
+                  }}
+                  onSuccess={(result) => {
+                    if (result.info && typeof result.info !== "string") {
+                      const url: string = result.info.secure_url;
+                      setImageUrl(url);
+                    }
+                  }}
+                >
+                  {({ open }) => {
+                    return (
+                      <Button
+                        variant="contained"
+                        className="capitalize"
+                        onClick={() => open()}
+                      >
+                        Upload an Image
+                      </Button>
+                    );
+                  }}
+                </CldUploadWidget>
               </div>
             </div>
           </form>
@@ -189,7 +204,7 @@ export default function AddCategory({
           <Button
             variant="contained"
             size="large"
-            onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
+            onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
             className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel

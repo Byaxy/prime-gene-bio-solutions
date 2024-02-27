@@ -9,7 +9,8 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
 import Image from "next/image";
-import axios from "axios";
+import { CldUploadWidget } from "next-cloudinary";
+import toast from "react-hot-toast";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
@@ -36,31 +37,28 @@ export default function AddBrand({
     defaultValues: defaultValues,
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string>("/placeholder.jpg");
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>("/placeholder.jpg");
 
   const onSubmit = async (data: FormInput) => {
-    const formData = new FormData();
-    const { image, ...rest } = data;
-    formData.append("json", JSON.stringify(rest));
-    if (image) formData.append("image", image[0]);
-    await fetch("/api/product-brand/add", {
-      method: "POST",
-      body: formData,
-    });
-  };
+    try {
+      const formData = new FormData();
+      const newData = { ...data, image: imageUrl };
+      formData.append("json", JSON.stringify(newData));
 
-  // Set selected Image for preview
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage("/placeholder.jpg");
+      const response = await fetch("/api/product-brand/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+      toast.success("Brand added successfully");
+      return result;
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong try again later");
     }
   };
 
@@ -68,9 +66,8 @@ export default function AddBrand({
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setPreviewImage("/placeholder.jpg");
+      setImageUrl("/placeholder.jpg");
     }
-    console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
 
   return (
@@ -86,11 +83,11 @@ export default function AddBrand({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
@@ -125,25 +122,39 @@ export default function AddBrand({
               <label htmlFor="image">
                 <span className="text-primaryDark font-semibold">Image</span>
               </label>
-              <div className="flex flex-row gap-2 items-center">
+              <div className="flex flex-row gap-4 items-center">
                 <div>
-                  {previewImage && (
-                    <Image
-                      src={previewImage}
-                      alt="Preview"
-                      width={100}
-                      height={100}
-                    />
+                  {imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={imageUrl} alt="Preview" className="w-40 h-40" />
                   )}
                 </div>
-                <TextField
-                  id="image"
-                  type="file"
-                  variant="outlined"
-                  {...register("image")}
-                  onChange={handleImageChange}
-                  inputProps={{ accept: "image/*", multiple: false }}
-                />
+                <CldUploadWidget
+                  uploadPreset="prime-gene-biomedical-solutions"
+                  options={{
+                    multiple: false,
+                    clientAllowedFormats: ["jpg", "png", "webp", "svg"],
+                    sources: ["local", "url", "dropbox", "google_drive"],
+                  }}
+                  onSuccess={(result) => {
+                    if (result.info && typeof result.info !== "string") {
+                      const url: string = result.info.secure_url;
+                      setImageUrl(url);
+                    }
+                  }}
+                >
+                  {({ open }) => {
+                    return (
+                      <Button
+                        variant="contained"
+                        className="capitalize"
+                        onClick={() => open()}
+                      >
+                        Upload an Image
+                      </Button>
+                    );
+                  }}
+                </CldUploadWidget>
               </div>
             </div>
           </form>
@@ -152,7 +163,7 @@ export default function AddBrand({
           <Button
             size="large"
             variant="contained"
-            onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
+            onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
             className="font-bold bg-redColor/95 hover:bg-redColor text-white"
           >
             Cancel

@@ -22,7 +22,7 @@ export default function ViewTypeDetails({
   const [type, setType] = useState<Types | null>(null);
 
   useEffect(() => {
-    let typeDetails = typesData.data.filter((type) => type.id === typeID);
+    let typeDetails = typesData.filter((type) => type.id === typeID);
     if (typeDetails) {
       setType(typeDetails[0]);
     }

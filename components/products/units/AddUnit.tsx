@@ -8,6 +8,7 @@ import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Unit } from "@/components/Types";
+import toast from "react-hot-toast";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
@@ -32,26 +33,36 @@ export default function AddUnit({
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitting } = formState;
+  const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      console.log(data);
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(data));
 
       const response = await fetch("/api/unit-of-measure/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
-      reset();
+      const result = await response.json();
+      toast.success("Unit added successfully");
+      return result;
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong try again later");
     }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>

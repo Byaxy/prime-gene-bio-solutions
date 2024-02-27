@@ -4,12 +4,15 @@ import React, { useEffect, useState } from "react";
 import { Button, TextField, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import type { Product } from "@/components/Types";
 import { useForm } from "react-hook-form";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
+import { typesData } from "@/data/typesData";
+import { categoriesData } from "@/data/categoriesData";
+import { brandsData } from "@/data/brandsData";
+import { unitsData } from "@/data/unitsData";
 
 type FormInput = Omit<Product, "id" | "updatedAt" | "isActive" | "stock">;
 
@@ -25,28 +28,27 @@ const defaultValues: FormInput = {
   price: 0,
   description: "",
   alertQuantity: 5,
-  productQuantity: 0,
   createdAt: new Date(),
 };
+const typeOptions = typesData.map((type) => ({
+  label: type.name,
+  value: type.name,
+}));
 
-const options = [
-  {
-    label: "Purchase",
-    value: "Purchase",
-  },
-  {
-    label: "Office Maintenance",
-    value: "Office Maintenance",
-  },
-  {
-    label: "Transportation",
-    value: "Transportation",
-  },
-  {
-    label: "Salary",
-    value: "Salary",
-  },
-];
+const categoryOptions = categoriesData.map((category) => ({
+  label: category.name,
+  value: category.name,
+}));
+
+const brandOptions = brandsData.map((brand) => ({
+  label: brand.name,
+  value: brand.name,
+}));
+
+const unitOptions = unitsData.map((unit) => ({
+  label: unit.name,
+  value: unit.name,
+}));
 
 const AddProductPage = () => {
   const router = useRouter();
@@ -56,42 +58,31 @@ const AddProductPage = () => {
       defaultValues: defaultValues,
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string>("/placeholder.jpg");
+  const [imageUrl, setImageUrl] = useState<string>("/placeholder.jpg");
 
   const watchCost = watch("cost");
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data, image: previewImage };
+      const formData = new FormData();
+      const newData = { ...data, image: imageUrl };
 
-      // TODO: update API call to accept newData object
+      formData.append("json", JSON.stringify(newData));
 
-      //  const response = await fetch("/api/product/add", {
-      //    method: "POST",
-      //    body: JSON.stringify(newData),
-      //  });
+      const response = await fetch("/api/product/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: formData,
+      });
 
-      //  const result = await response.json();
-
-      console.log("Success", newData);
-
+      const result = await response.json();
       toast.success("Product added successfully");
+      return result;
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong try again later");
-    }
-  };
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage("/placeholder.jpg");
     }
   };
 
@@ -99,9 +90,8 @@ const AddProductPage = () => {
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setPreviewImage("/placeholder.jpg");
+      setImageUrl("/placeholder.jpg");
     }
-    console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
 
   return (
@@ -139,12 +129,11 @@ const AddProductPage = () => {
                 </span>
               </label>
               <div className="relative mt-1 w-[min(100%,18rem)] h-[12.5rem] sm:h-[20rem] object-cover">
-                {previewImage && (
-                  <Image
-                    src={previewImage}
+                {imageUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={imageUrl}
                     alt="Preview"
-                    width={300}
-                    height={300}
                     className="object-cover w-full h-full"
                   />
                 )}
@@ -159,7 +148,7 @@ const AddProductPage = () => {
                 onSuccess={(result) => {
                   if (result.info && typeof result.info !== "string") {
                     const url: string = result.info.secure_url;
-                    setPreviewImage(url);
+                    setImageUrl(url);
                   }
                 }}
               >
@@ -235,7 +224,7 @@ const AddProductPage = () => {
                     id="type"
                     control={control}
                     label="Product Type"
-                    options={options}
+                    options={typeOptions}
                     {...register("type", {
                       required: "Product Type is required",
                     })}
@@ -257,7 +246,7 @@ const AddProductPage = () => {
                     id="category"
                     control={control}
                     label="Product Category"
-                    options={options}
+                    options={categoryOptions}
                     {...register("category", {
                       required: "Product Category is required",
                     })}
@@ -343,7 +332,7 @@ const AddProductPage = () => {
                     id="brand"
                     control={control}
                     label="Product Type"
-                    options={options}
+                    options={brandOptions}
                     {...register("brand", {
                       required: "Product Brand is required",
                     })}
@@ -364,7 +353,7 @@ const AddProductPage = () => {
                     id="unit"
                     control={control}
                     label="Product Category"
-                    options={options}
+                    options={unitOptions}
                     {...register("unit", {
                       required: "Product Unit is required",
                     })}
@@ -423,7 +412,7 @@ const AddProductPage = () => {
             className="font-bold bg-redColor/95 hover:bg-redColor text-white outline-redColor"
             variant="outlined"
             size="large"
-            onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
+            onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
           >
             Cancel
           </Button>

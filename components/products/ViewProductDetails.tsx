@@ -38,7 +38,7 @@ export default function ViewProductDetails({
   const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    let productDetails = allProductsData.data.filter(
+    let productDetails = allProductsData.filter(
       (product) => product.id === productID
     );
     if (productDetails) {

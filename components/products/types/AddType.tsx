@@ -8,6 +8,7 @@ import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Types } from "@/components/Types";
+import toast from "react-hot-toast";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
@@ -35,22 +36,33 @@ export default function AddType({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      console.log(data);
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(data));
 
       const response = await fetch("/api/product-type/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: formData,
       });
 
-      reset();
+      const result = await response.json();
+
+      toast.success("Type added successfully");
+      return result;
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong try again later");
     }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -65,11 +77,11 @@ export default function AddType({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">

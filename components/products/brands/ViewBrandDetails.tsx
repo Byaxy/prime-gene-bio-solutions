@@ -25,7 +25,7 @@ export default function ViewBrandDetails({
   const [brand, setBrand] = useState<DataCells | null>(null);
 
   useEffect(() => {
-    let brandDetails = brandsData.data.filter((brand) => brand.id === brandID);
+    let brandDetails = brandsData.filter((brand) => brand.id === brandID);
     if (brandDetails) {
       setBrand(brandDetails[0]);
     }
