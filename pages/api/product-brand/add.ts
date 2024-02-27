@@ -25,19 +25,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 const form = formidable({});
                 let [fields, files] = await form.parse(req);
-                const { createdAt, ...body } = JSON.parse(fields.json[0]);
-                const brand = { ...body };
+                if(fields.json) {
+                    const { createdAt, ...body } = JSON.parse(fields.json[0]);
+                    const brand = { ...body };
 
-                if (files["image"]) {
-                    brand.image = await uploadImagesToCloudinary(files["image"][0].filepath) as string;
+                    if (files["image"]) {
+                        brand.image = await uploadImagesToCloudinary(files["image"][0].filepath) as string;
+                    }
+                    
+                    const response = await prismaClient.productBrand.create({
+                        data: brand
+                    });
+                    res.statusMessage = statusMessages[201];
+                    return res.status(201).json(response);
                 }
-
-                console.log(brand);
-                const response = await prismaClient.productBrand.create({
-                    data: brand
-                });
-                res.statusMessage = statusMessages[201];
-                return res.status(201).json(response);
             } catch(e) {
                 console.log(e);
                 if(e instanceof Prisma.PrismaClientValidationError) {

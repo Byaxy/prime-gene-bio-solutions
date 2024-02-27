@@ -8,11 +8,7 @@ import Image from "next/image";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import type { Product } from "@/components/Types";
 import { useForm } from "react-hook-form";
-import {
-  CldUploadWidget,
-  CldUploadWidgetInfo,
-  CldUploadWidgetResults,
-} from "next-cloudinary";
+import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
 
 type FormInput = Omit<Product, "id" | "updatedAt" | "isActive" | "stock">;
@@ -52,7 +48,7 @@ const options = [
   },
 ];
 
-export default function AddProductPage() {
+const AddProductPage = () => {
   const router = useRouter();
 
   const { register, handleSubmit, reset, formState, control, watch } =
@@ -445,4 +441,6 @@ export default function AddProductPage() {
       </form>
     </div>
   );
-}
+};
+
+export default AddProductPage;

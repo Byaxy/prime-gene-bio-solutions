@@ -124,7 +124,6 @@ export const allProductsData: DataType = {
       brand: "Allele Diagnostic",
       type: "Sample Type",
       category: "General Lab Equipment",
-      lotNo: "",
       productQuantity: 1,
       stock: [
         {
@@ -147,7 +146,6 @@ export const allProductsData: DataType = {
       unit: "Pcs/Pk",
       alertQuantity: 5,
       description: "",
-      gallery: [],
       updatedAt: new Date(),
       isActive: true,
     },
@@ -160,7 +158,6 @@ export const allProductsData: DataType = {
       brand: "Allele Diagnostic",
       type: "Sample type",
       category: "General Lab Equipment",
-      lotNo: "",
       productQuantity: 1,
       stock: [
         {
@@ -176,7 +173,6 @@ export const allProductsData: DataType = {
       unit: "Pcs/Pk",
       alertQuantity: 5,
       description: "",
-      gallery: [],
       updatedAt: new Date(),
       isActive: true,
     },

@@ -1,10 +1,10 @@
 import React from "react";
 import DataTable from "react-data-table-component";
 import { invoiceTableStyles } from "@/styles/InvoiceTableStyles";
-import type { InvoiceProduct } from "@/components/Types";
+import type { SaleProduct } from "@/components/Types";
 
 type ProductsTableProps = {
-  products?: InvoiceProduct[];
+  products?: SaleProduct[];
 };
 
 const columns = [
@@ -12,10 +12,7 @@ const columns = [
     name: "Name",
     selector: (row: { name: string }) => row.name,
   },
-  {
-    name: "Description",
-    selector: (row: { description: string }) => row.description,
-  },
+
   {
     name: "Quantity",
     selector: (row: { quantity: number }) => row.quantity,

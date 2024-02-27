@@ -125,15 +125,17 @@ export default function AddDelivery({ open, handleClose }: AddDeliveryProps) {
       setCustomer(sale.customer);
 
       let products: DeliveryProduct[] = [];
-      sale.products.forEach((product) => {
-        products.push({
-          id: product.id,
-          lotNumber: product.lotNumber,
-          name: product.name,
-          quantityRequested: product.quantity,
-          quantitySupplied: 0,
-        });
-      });
+      sale.products.forEach(
+        (product: { id: any; lotNumber: any; name: any; quantity: any }) => {
+          products.push({
+            id: product.id,
+            lotNumber: product.lotNumber,
+            name: product.name,
+            quantityRequested: product.quantity,
+            quantitySupplied: 0,
+          });
+        }
+      );
       setProducts(products);
     }
   }, [invoiceNumber]);

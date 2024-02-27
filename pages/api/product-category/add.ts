@@ -25,25 +25,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 const form = formidable({});
                 let [fields, files] = await form.parse(req);
-                const { createdAt, ...body } = JSON.parse(fields.json[0]);
+                if(fields.json) {
+                    const { createdAt, ...body } = JSON.parse(fields.json[0]);
 
-                const category: any = {
-                    name: body.name,
-                    code: body.code,
-                    description: body.description,
-                    parentCategoryId: body.parentCategory
-                };
+                    const category: any = {
+                        name: body.name,
+                        code: body.code,
+                        description: body.description,
+                        parentCategoryId: body.parentCategory
+                    };
 
-                if (files["image"]) {
-                    category.image = await uploadImagesToCloudinary(files["image"][0].filepath) as string;
+                    if (files["image"]) {
+                        category.image = await uploadImagesToCloudinary(files["image"][0].filepath) as string;
+                    }
+
+                    console.log(category);
+                    const result = await prismaClient.productBrand.create({
+                        data: category
+                    });
+                    
+                    res.statusMessage = statusMessages[201];
+                    return res.status(201).json(result);
                 }
-
-                console.log(category);
-                const result = await prismaClient.productBrand.create({
-                    data: category
-                });
-                res.statusMessage = statusMessages[201];
-                return res.status(201).json(result);
             } catch(e) {
                 if(e instanceof Prisma.PrismaClientValidationError) {
                     // Missing required fields are missing. See https://www.prisma.io/docs/reference/api-reference/error-reference#prismaclientvalidationerror
