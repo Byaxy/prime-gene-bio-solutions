@@ -32,6 +32,7 @@ import { data } from "@/data/sidenavData";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SidebarMenu from "@/components/side-nav/SidebarMenu";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -155,6 +156,8 @@ export default function RootLayout({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Box className="flex">
                 <CssBaseline />
+                <Toaster />
+
                 <AppBar
                   className="fixed shadow-md"
                   open={open}

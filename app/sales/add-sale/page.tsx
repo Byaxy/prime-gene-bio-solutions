@@ -12,65 +12,49 @@ import {
   Typography,
   Select,
   MenuItem,
+  Popover,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { useRouter } from "next/navigation";
-import { useFieldArray, useForm } from "react-hook-form";
-import type { Sale, Stock } from "@/components/Types";
+import { useForm } from "react-hook-form";
+import type { Sale, SaleProduct } from "@/components/Types";
 import type { Product } from "@/components/Types";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import { customersData } from "@/data/customersData";
 import { allProductsData } from "@/data/allProductsData";
-import { styled } from "@mui/material/styles";
+import {
+  ArrowDropDownOutlined,
+  ArrowDropUpOutlined,
+} from "@mui/icons-material";
+import toast from "react-hot-toast";
+import { paymentStatus } from "@/components/constants";
+import { saleStatus } from "@/components/constants";
 
-type FormInput = Omit<Sale<Product>, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<Sale, "id" | "updatedAt" | "isActive">;
 type Options = {
   label: string;
   value: string;
 };
+
+const tax: number = 10;
 
 const customers: Options[] = customersData.data.map((customer) => ({
   label: customer.name,
   value: customer.name,
 }));
 
-const saleStatus: Options[] = [
-  {
-    label: "Complete",
-    value: "complete",
-  },
-  {
-    label: "Pending",
-    value: "pending",
-  },
-];
-
-const paymentStatus: Options[] = [
-  {
-    label: "Pending",
-    value: "pending",
-  },
-  {
-    label: "Due",
-    value: "due",
-  },
-  {
-    label: "Partial",
-    value: "partial",
-  },
-  {
-    label: "Paid",
-    value: "paid",
-  },
-];
-
 const defaultValues: FormInput = {
   invoiceNumber: "",
   purchaseOrderNumber: "",
   customer: "",
-  tax: 16,
+  tax: tax,
   subTotal: 0,
   total: 0,
   paid: 0,
@@ -81,106 +65,158 @@ const defaultValues: FormInput = {
   createdAt: new Date(),
 };
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  "&:last-child td, &:last-child th": {
-    border: 0,
-  },
-  "&:hover": {
-    cursor: "pointer",
-    backgroundColor: "#e5e7eb",
-  },
-}));
-
 export default function AddSalePage() {
   const [saleDate, setSaleDate] = useState<Dayjs | null>(dayjs());
   const [searchTerm, setSearchTerm] = useState("");
-  const [showProductsList, setShowProductsList] = useState(false);
-  const [products, setProducts] = useState<Product[]>([
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [lotNumber, setLotNumber] = useState<string>("");
+  const [quantity, setQuantity] = useState<number>(1);
+  const [availableQuantity, setAvailableQuantity] = useState<number>(0);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([
     ...allProductsData.data,
   ]);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [saleProducts, setSaleProducts] = useState<SaleProduct[]>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [grandTotal, setGrandTotal] = useState<number>(0);
+  const [taxAmount, setTaxAmount] = useState<number>(0);
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null);
+    setLotNumber("");
+    setQuantity(1);
+    setAvailableQuantity(0);
+    setOpenModal(false);
+  };
+
+  const handleOpenModal = (product: Product) => {
+    setSelectedProduct(product);
+    setOpenModal(true);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setSearchTerm("");
+    setSelectedProduct(null);
+    setLotNumber("");
+    setQuantity(1);
+    setAvailableQuantity(0);
+    setOpenModal(false);
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState,
-    control,
-    watch,
-    getValues,
-    setValue,
-  } = useForm<FormInput>({
-    defaultValues: defaultValues,
-  });
+  const { register, handleSubmit, reset, formState, control } =
+    useForm<FormInput>({
+      defaultValues: defaultValues,
+    });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "products",
-  });
-  const watchFieldArray = watch("products");
-  const controlledFields = fields.map((field, index) => {
-    return {
-      ...field,
-      // Watch quantity field for changes so as to update the sub-total
-      productQuantity: watchFieldArray[index].productQuantity,
-    };
-  });
 
   useEffect(() => {
-    if (searchTerm) {
-      setShowProductsList(true);
-    }
     let searchedProducts = allProductsData.data.filter((product) => {
       return (
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.code.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-    setProducts(searchedProducts);
-  }, [products, searchTerm]);
+    setFilteredProducts(searchedProducts);
+  }, [searchTerm]);
 
   const handleAddProduct = (product: Product) => {
-    append({ ...product });
-    const subTotal = getValues("subTotal") + product.price;
-    setValue("subTotal", subTotal);
-    setValue("total", getTotal(subTotal, getValues("tax")));
-    setSearchTerm("");
-    setShowProductsList(false);
+    if (!lotNumber) {
+      toast.error("Please select lot number");
+      return;
+    }
+
+    if (quantity > availableQuantity) {
+      toast.error("Insufficient quantity in stock");
+    }
+
+    setSaleProducts([
+      ...saleProducts,
+      {
+        id: product.id,
+        name: product.name,
+        code: product.code,
+        quantity: quantity,
+        lotNumber: lotNumber,
+        price: product.price,
+        subTotal: product.price * quantity,
+        availableQuantity: availableQuantity,
+      },
+    ]);
+
+    toast.success("Product added successfully");
+    handleCloseModal();
   };
 
-  const handleDeleteProduct = (index: number) => () => remove(index);
+  const handleDeleteProduct = (index: number) => {
+    let newSaleProducts = [...saleProducts];
+    newSaleProducts.splice(index, 1);
+    setSaleProducts(newSaleProducts);
 
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const subTotal = getValues("products").reduce(
-      (accum, curr) => accum + curr.price * curr.productQuantity,
+    toast.success("Product deleted successfully");
+  };
+
+  const getTotal = (saleProducts: SaleProduct[]): number =>
+    saleProducts.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.subTotal,
       0
     );
-    setValue("subTotal", subTotal);
-    // Add tax to subTotal. Current assumption is tax is
-    setValue("total", getTotal(subTotal, getValues("tax")));
-  };
 
-  const getTotal = (subTotal: number, tax: number): number =>
-    (subTotal * tax) / 100 + subTotal;
+  const getGrandTotal = (total: number, tax: number): number =>
+    (total * tax) / 100 + total;
+
+  const getTaxAmount = (total: number, tax: number): number =>
+    (total * tax) / 100;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data };
+      if (saleProducts.length === 0) {
+        toast.error("Please add atleast one products");
+        return;
+      }
+
+      const newData = {
+        ...data,
+        products: [...saleProducts],
+        subTotal: total,
+        tax: taxAmount,
+        total: grandTotal,
+      };
+
+      // TODO: update API call to accept newData object
+
       console.log(newData);
+      toast.success("Sale added successfully");
     } catch (error) {
       console.error(error);
     }
   };
 
+  useEffect(() => {
+    let total = getTotal(saleProducts);
+    setTotal(total);
+    let taxAmount = getTaxAmount(total, tax);
+    setTaxAmount(taxAmount);
+    let grandTotal = getGrandTotal(total, tax);
+    setGrandTotal(grandTotal);
+  }, [saleProducts]);
+
   // Reset form to defaults on Successfull submission of data
   useEffect(() => {
     if (isSubmitSuccessful) {
+      setSaleProducts([]);
+      setTotal(0);
+      setTaxAmount(0);
+      setGrandTotal(0);
       reset();
     }
-    console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
 
   const columns = [
@@ -251,20 +287,30 @@ export default function AddSalePage() {
                 {...register("invoiceNumber", {
                   required: "Invoice Number is required",
                 })}
-                error={!!errors.invoiceNumber}
               />
+              {errors.invoiceNumber && (
+                <span className="text-redColor text-sm -mt-1">
+                  {errors.invoiceNumber?.message}
+                </span>
+              )}
             </div>
             <div className="flex flex-col gap-2 flex-1">
               <label>
                 <span className="text-primaryDark font-semibold">Customer</span>
+                <span className="text-redColor"> *</span>
               </label>
               <FormInputDropdown
                 id="customer"
-                name="customer"
                 control={control}
                 label="Select Customer"
                 options={customers}
+                {...register("customer", { required: "Customer is required" })}
               />
+              {errors.customer && (
+                <span className="text-redColor text-sm -mt-1">
+                  {errors.customer?.message}
+                </span>
+              )}
             </div>
           </div>
           <div>
@@ -272,38 +318,183 @@ export default function AddSalePage() {
               <span className="text-primaryDark font-semibold">Products</span>
               <span className="text-redColor"> *</span>
             </label>
-            <TextField
-              id="products"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search products by Name or Code"
-              className="w-full"
-            />
-            {showProductsList && (
-              <div className="relative  w-full md:w-1/3 text-primaryDark ">
-                <div className="absolute top-0 left-0 overflow-y-scroll max-h-[40vh] bg-grayColor shadow-md rounded-b-md w-full z-50">
-                  <ul className="w-full list-none p-0">
-                    {products.map((product) => (
-                      <li
-                        key={product.id}
-                        onClick={() => handleAddProduct(product)}
-                        className="cursor-pointer text-primaryDark p-4 rounded-md hover:bg-white"
+            {/** Turn into popper */}
+            <Button
+              variant="outlined"
+              size="large"
+              className="w-full flex flex-row items-center justify-between"
+              onClick={handleClick}
+            >
+              <span className="text-gray-400 capitalize sm:text-lg">
+                Select product
+              </span>
+              {open ? <ArrowDropUpOutlined /> : <ArrowDropDownOutlined />}
+            </Button>
+            <Popover
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+            >
+              <div className="min-w-[600px] flex flex-col gap-5 p-5">
+                <TextField
+                  type="text"
+                  size="small"
+                  placeholder="Search products by Name or Code"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <Table size="small">
+                  <TableHead>
+                    <TableRow className="bg-primaryColor font-semibold text-lg">
+                      <TableCell className="text-white text-lg w-24">
+                        Code
+                      </TableCell>
+                      <TableCell className="text-white text-lg">Name</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {filteredProducts.map((product, index) => (
+                      <TableRow
+                        key={product.id + index}
+                        onClick={() => handleOpenModal(product)}
+                        className="cursor-pointer hover:bg-grayColor"
                       >
-                        {product.name}
-                      </li>
+                        <TableCell className="text-primaryDark text-lg">
+                          {product.code}
+                        </TableCell>
+                        <TableCell className="text-primaryDark text-lg">
+                          {product.name}
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </ul>
-                </div>
+                  </TableBody>
+                </Table>
               </div>
-            )}
+            </Popover>
+            <div>
+              <Dialog
+                open={openModal}
+                onClose={handleCloseModal}
+                maxWidth="lg"
+                fullWidth
+              >
+                <DialogTitle className="flex justify-between items-center">
+                  <span className="text-xl text-primaryDark font-bold">
+                    Add Product Details
+                  </span>
+                  <CancelIcon
+                    fontSize="medium"
+                    className="text-primaryDark cursor-pointer"
+                    onClick={handleCloseModal}
+                  />
+                </DialogTitle>
+                <DialogContent>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow className="bg-primaryColor">
+                        {columns.map((column, index) => (
+                          <TableCell
+                            key={column + index}
+                            className="text-white font-semibold last:hidden"
+                          >
+                            {column}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {selectedProduct ? (
+                        <TableRow>
+                          <TableCell className="text-primaryDark">
+                            {selectedProduct.code} - {selectedProduct.name}
+                          </TableCell>
+                          <TableCell className="text-primaryDark">
+                            <Select
+                              size="small"
+                              label="Lot No."
+                              defaultValue={""}
+                            >
+                              {selectedProduct.stock.map((item) => (
+                                <MenuItem
+                                  key={item.lotNumber}
+                                  value={item.lotNumber}
+                                  onClick={() => (
+                                    setLotNumber(item.lotNumber),
+                                    setAvailableQuantity(item.quantity)
+                                  )}
+                                >
+                                  {item.lotNumber}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </TableCell>
+                          <TableCell className="text-primaryDark">
+                            {availableQuantity}
+                          </TableCell>
+                          <TableCell className="text-primaryDark">
+                            {selectedProduct.price}
+                          </TableCell>
+                          <TableCell className="text-lg">
+                            <TextField
+                              type="number"
+                              size="small"
+                              className="max-w-[80px]"
+                              inputProps={{ min: 1 }}
+                              defaultValue={1}
+                              onChange={(e) =>
+                                setQuantity(parseInt(e.target.value))
+                              }
+                            />
+                          </TableCell>
+                          <TableCell className="text-lg">
+                            <span>
+                              {selectedProduct.price * Math.max(1, quantity)}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        <TableRow>
+                          <TableCell
+                            colSpan={8}
+                            className="text-center text-lg text-primaryDark"
+                          >
+                            No Items To Display
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    variant="contained"
+                    onClick={handleCloseModal}
+                    className="font-bold bg-redColor/95 hover:bg-redColor transition text-white capitalize"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleAddProduct(selectedProduct!)}
+                    className="font-bold bg-primaryColor/95 hover:bg-primaryColor transition text-white capitalize"
+                  >
+                    Add Product
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </div>
           </div>
 
-          <Table>
+          <Table size="small">
             <TableHead>
               <TableRow className="bg-primaryColor">
-                {columns.map((column) => (
+                {columns.map((column, index) => (
                   <TableCell
-                    key={column}
+                    key={index + column}
                     className="text-white font-semibold text-lg"
                   >
                     {column}
@@ -312,75 +503,75 @@ export default function AddSalePage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {controlledFields.length > 0 ? (
+              {saleProducts ? (
                 <>
-                  {controlledFields.map((field, index) => (
-                    <StyledTableRow key={field.id}>
-                      <TableCell className="text-lg">
-                        <span>{field.code}</span> - <span>{field.name}</span>
+                  {saleProducts.map((product, index) => (
+                    <TableRow key={index + product.id}>
+                      <TableCell className="text-primaryDark text-lg">
+                        <span>{product.code}</span> -{" "}
+                        <span>{product.name}</span>
                       </TableCell>
-                      <TableCell className="text-lg">
-                        <Select
-                          size="small"
-                          label="Lot No."
-                          defaultValue={""}
-                          {...register(`products.${index}.lotNo`, {
-                            required: true,
-                          })}
-                          error={
-                            errors.products && !!errors.products[index]?.lotNo
-                          }
-                        >
-                          {field.stock.map((item) => (
-                            <MenuItem
-                              key={item.lotNumber}
-                              value={item.lotNumber}
-                            >
-                              {item.lotNumber}
-                            </MenuItem>
-                          ))}
-                        </Select>
+                      <TableCell className="text-primaryDark text-lg">
+                        {product.lotNumber}
                       </TableCell>
-                      <TableCell className="text-lg">
-                        <p>0</p>
+                      <TableCell className="text-primaryDark text-lg">
+                        {product.availableQuantity}
                       </TableCell>
-                      <TableCell className="text-lg">
-                        <p>{field.price}</p>
+                      <TableCell className="text-primaryDark text-lg">
+                        {product.price}
                       </TableCell>
-                      <TableCell className="text-lg">
-                        <TextField
-                          type="number"
-                          size="small"
-                          className="max-w-[80px]"
-                          inputProps={{ min: 1 }}
-                          defaultValue={1}
-                          {...register(`products.${index}.productQuantity`, {
-                            required: true,
-                            min: 1,
-                            valueAsNumber: true,
-                            onChange: handleQuantityChange,
-                          })}
-                          error={
-                            errors.products &&
-                            !!errors.products[index]?.productQuantity
-                          }
-                        />
+                      <TableCell className="text-primaryDark text-lg">
+                        {product.quantity}
                       </TableCell>
-                      <TableCell className="text-lg">
-                        <p>
-                          {field.price * Math.max(1, field.productQuantity)}
-                        </p>
+                      <TableCell className="text-primaryDark text-lg">
+                        {product.subTotal}
                       </TableCell>
-                      <TableCell className="text-lg">
+                      <TableCell className="text-primaryDark text-lg">
                         <Button
-                          onClick={handleDeleteProduct(index)}
-                          className="bg-redColor/95 text-white hover:!bg-redColor"
+                          variant="contained"
+                          size="small"
+                          className="bg-redColor/95 hover:bg-redColor text-white font-bold"
+                          onClick={() => handleDeleteProduct(index)}
                         >
                           Delete
                         </Button>
                       </TableCell>
-                    </StyledTableRow>
+                    </TableRow>
                   ))}
+                  <TableRow>
+                    <TableCell rowSpan={3} colSpan={4}></TableCell>
+                    <TableCell
+                      className="text-primaryDark font-bold text-lg pt-8"
+                      colSpan={2}
+                    >
+                      Total
+                    </TableCell>
+                    <TableCell className="text-primaryDark font-bold text-lg pt-8">
+                      ${total}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-primaryDark font-bold text-lg">
+                      Tax
+                    </TableCell>
+                    <TableCell className="text-primaryDark font-bold text-lg">
+                      {tax}%
+                    </TableCell>
+                    <TableCell className="text-primaryDark font-bold text-lg">
+                      ${taxAmount}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell
+                      className="text-primaryDark font-bold text-lg"
+                      colSpan={2}
+                    >
+                      Grand Total
+                    </TableCell>
+                    <TableCell className="text-primaryDark font-bold text-lg">
+                      ${grandTotal}
+                    </TableCell>
+                  </TableRow>
                 </>
               ) : (
                 <TableRow>
@@ -395,38 +586,6 @@ export default function AddSalePage() {
             </TableBody>
           </Table>
 
-          <div className="w-full flex justify-end break-inside-avoid">
-            <div className="w-[300px]">
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      Total
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      ${getValues("subTotal")}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      Tax
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      {getValues("tax")}%
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      Grand Total
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      ${getValues("total")}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          </div>
           <div className="flex flex-col sm:flex-row gap-5 w-full">
             <div className="flex flex-col gap-2 flex-1">
               <label htmlFor="purchaseOrderNumber">
@@ -440,8 +599,12 @@ export default function AddSalePage() {
                 label="Purchase Order Number"
                 variant="outlined"
                 {...register("purchaseOrderNumber")}
-                error={!!errors.purchaseOrderNumber}
               />
+              {errors.purchaseOrderNumber && (
+                <span className="text-redColor text-sm -mt-1">
+                  {errors.purchaseOrderNumber?.message}
+                </span>
+              )}
             </div>
             <div className="flex flex-col gap-2 flex-1">
               <label>
@@ -452,11 +615,18 @@ export default function AddSalePage() {
               </label>
               <FormInputDropdown
                 id="paymentStatus"
-                name="paymentStatus"
                 control={control}
                 label="Select Payment Status"
                 options={paymentStatus}
+                {...register("paymentStatus", {
+                  required: "Payment Status is required",
+                })}
               />
+              {errors.paymentStatus && (
+                <span className="text-redColor text-sm -mt-1">
+                  {errors.paymentStatus?.message}
+                </span>
+              )}
             </div>
             <div className="flex flex-col gap-2 flex-1">
               <label>
@@ -467,11 +637,18 @@ export default function AddSalePage() {
               </label>
               <FormInputDropdown
                 id="saleStatus"
-                name="saleStatus"
                 control={control}
                 label="Select Sale Status"
                 options={saleStatus}
+                {...register("saleStatus", {
+                  required: "Sale Status is required",
+                })}
               />
+              {errors.saleStatus && (
+                <span className="text-redColor text-sm -mt-1">
+                  {errors.saleStatus?.message}
+                </span>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-2 sm:w-1/3">
@@ -486,22 +663,31 @@ export default function AddSalePage() {
               type="number"
               label="Amount Paid"
               variant="outlined"
-              {...register("paid", { required: "Amount Paid is required" })}
-              error={!!errors.paid}
+              {...register("paid", {
+                required: "Amount Paid is required",
+                valueAsNumber: true,
+                max: {
+                  value: grandTotal,
+                  message: "Amount paid cannot be greater than grand total",
+                },
+              })}
             />
+            {errors.paid && (
+              <span className="text-redColor text-sm -mt-1">
+                {errors.paid?.message}
+              </span>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="notes">
               <span className="text-primaryDark font-semibold">Notes</span>
-              <span className="text-redColor"> *</span>
             </label>
             <TextField
               id="notes"
               label="Notes"
               multiline
               rows={6}
-              {...register("notes", { required: "Notes is required" })}
-              error={!!errors.notes}
+              {...register("notes")}
             />
           </div>
           <div className="flex justify-end gap-4">

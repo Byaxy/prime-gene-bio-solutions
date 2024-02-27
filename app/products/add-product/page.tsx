@@ -8,6 +8,12 @@ import Image from "next/image";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import type { Product } from "@/components/Types";
 import { useForm } from "react-hook-form";
+import {
+  CldUploadWidget,
+  CldUploadWidgetInfo,
+  CldUploadWidgetResults,
+} from "next-cloudinary";
+import toast from "react-hot-toast";
 
 type FormInput = Omit<Product, "id" | "updatedAt" | "isActive" | "stock">;
 
@@ -15,7 +21,6 @@ const defaultValues: FormInput = {
   code: "",
   name: "",
   image: "",
-  gallery: [],
   brand: "",
   type: "",
   unit: "",
@@ -24,7 +29,6 @@ const defaultValues: FormInput = {
   price: 0,
   description: "",
   alertQuantity: 5,
-  lotNo: "",
   productQuantity: 0,
   createdAt: new Date(),
 };
@@ -51,31 +55,34 @@ const options = [
 export default function AddProductPage() {
   const router = useRouter();
 
-  const { register, handleSubmit, reset, formState, control } =
+  const { register, handleSubmit, reset, formState, control, watch } =
     useForm<FormInput>({
       defaultValues: defaultValues,
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [galleryImages, setGalleryImages] = useState<string[]>([
-    "/placeholder.jpg",
-  ]);
   const [previewImage, setPreviewImage] = useState<string>("/placeholder.jpg");
+
+  const watchCost = watch("cost");
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
-      const { image, gallery, ...rest } = data;
-      formData.append("product", JSON.stringify(rest));
-      if (image.length) formData.append("product-main-img", image[0]);
-      for (let i = 0; i < gallery.length; i++)
-        formData.append("product-gallery-" + i, gallery[i]);
-      const response = await fetch("/api/product/add", {
-        method: "POST",
-        body: formData,
-      });
-      console.log(response);
+      const newData = { ...data, image: previewImage };
+
+      // TODO: update API call to accept newData object
+
+      //  const response = await fetch("/api/product/add", {
+      //    method: "POST",
+      //    body: JSON.stringify(newData),
+      //  });
+
+      //  const result = await response.json();
+
+      console.log("Success", newData);
+
+      toast.success("Product added successfully");
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong try again later");
     }
   };
 
@@ -92,33 +99,11 @@ export default function AddProductPage() {
     }
   };
 
-  const handleGalleryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const loadImage = (file: File) => {
-        return new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            resolve(reader.result as string);
-          };
-          reader.readAsDataURL(file);
-        });
-      };
-
-      Promise.all(Array.from(files).map(loadImage)).then((galleryImages) => {
-        setGalleryImages(galleryImages);
-      });
-    } else {
-      setGalleryImages([]);
-    }
-  };
-
   // Reset form to defaults on Successfull submission of data
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
       setPreviewImage("/placeholder.jpg");
-      setGalleryImages(["/placeholder.jpg"]);
     }
     console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
@@ -151,25 +136,48 @@ export default function AddProductPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-col md:flex-row gap-5 mb-2">
-            <div className="flex flex-col gap-4 items-center">
+            <div className="flex flex-1 flex-col gap-4 items-center">
               <label htmlFor="image">
                 <span className="text-primaryDark font-semibold text-xl">
-                  Product Profile Image
+                  Product Image
                 </span>
               </label>
-              <div className="relative mt-5 w-[min(100%,17.5rem)] h-[12.5rem] sm:h-[17.5rem] object-cover">
+              <div className="relative mt-1 w-[min(100%,18rem)] h-[12.5rem] sm:h-[20rem] object-cover">
                 {previewImage && (
-                  <Image src={previewImage} alt="Preview" fill />
+                  <Image
+                    src={previewImage}
+                    alt="Preview"
+                    width={300}
+                    height={300}
+                    className="object-cover w-full h-full"
+                  />
                 )}
               </div>
-              <TextField
-                id="image"
-                type="file"
-                variant="outlined"
-                {...register("image")}
-                onChange={handleImageChange}
-                inputProps={{ accept: "image/*", multiple: false }}
-              />
+              <CldUploadWidget
+                uploadPreset="prime-gene-biomedical-solutions"
+                options={{
+                  multiple: false,
+                  clientAllowedFormats: ["jpg", "png", "webp", "svg"],
+                }}
+                onSuccess={(result) => {
+                  if (result.info && typeof result.info !== "string") {
+                    const url: string = result.info.secure_url;
+                    setPreviewImage(url);
+                  }
+                }}
+              >
+                {({ open }) => {
+                  return (
+                    <Button
+                      variant="contained"
+                      className="capitalize"
+                      onClick={() => open()}
+                    >
+                      Upload an Image
+                    </Button>
+                  );
+                }}
+              </CldUploadWidget>
             </div>
 
             <div className="flex flex-col flex-[2] gap-5">
@@ -188,9 +196,12 @@ export default function AddProductPage() {
                     {...register("name", {
                       required: "Name is required",
                     })}
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
                   />
+                  {errors.name && (
+                    <span className="text-redColor text-sm">
+                      {errors.name?.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label htmlFor="code">
@@ -206,9 +217,12 @@ export default function AddProductPage() {
                     {...register("code", {
                       required: "Product Code is required",
                     })}
-                    error={!!errors.code}
-                    helperText={errors.code?.message}
                   />
+                  {errors.code && (
+                    <span className="text-redColor text-sm">
+                      {errors.code?.message}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -218,28 +232,44 @@ export default function AddProductPage() {
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Type
                     </span>
+                    <span className="text-redColor"> *</span>
                   </label>
                   <FormInputDropdown
                     id="type"
-                    name="type"
                     control={control}
                     label="Product Type"
                     options={options}
+                    {...register("type", {
+                      required: "Product Type is required",
+                    })}
                   />
+                  {errors.type && (
+                    <span className="text-redColor text-sm">
+                      {errors.type?.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col flex-1 gap-2">
                   <label htmlFor="category">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Category
                     </span>
+                    <span className="text-redColor"> *</span>
                   </label>
                   <FormInputDropdown
                     id="category"
-                    name="category"
                     control={control}
                     label="Product Category"
                     options={options}
+                    {...register("category", {
+                      required: "Product Category is required",
+                    })}
                   />
+                  {errors.category && (
+                    <span className="text-redColor text-sm">
+                      {errors.category?.message}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -256,18 +286,22 @@ export default function AddProductPage() {
                     type="number"
                     label="Product Cost"
                     variant="outlined"
+                    inputProps={{ min: 1 }}
+                    defaultValue={1}
                     {...register("cost", {
-                      required: true,
+                      required: "Product Cost is required",
                       valueAsNumber: true,
-                      validate: (value) => value > 0,
+                      min: {
+                        value: 1,
+                        message: "Product Cost cannot be Zero",
+                      },
                     })}
-                    error={!!errors.cost}
-                    helperText={
-                      errors.cost
-                        ? "Product Cost is required and cannot be Zero"
-                        : ""
-                    }
                   />
+                  {errors.cost && (
+                    <span className="text-redColor text-sm">
+                      {errors.cost?.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
                   <label htmlFor="price">
@@ -281,18 +315,23 @@ export default function AddProductPage() {
                     type="number"
                     label="Product Price"
                     variant="outlined"
+                    inputProps={{ min: 1 }}
+                    defaultValue={watchCost || 1}
                     {...register("price", {
-                      required: true,
+                      required: "Product Price is required",
                       valueAsNumber: true,
-                      validate: (value) => value > 0,
+                      min: {
+                        value: watchCost || 1,
+                        message:
+                          "Product Price cannot be less than Product Cost price",
+                      },
                     })}
-                    error={!!errors.price}
-                    helperText={
-                      errors.price
-                        ? "Product Price is required and cannot be Zero"
-                        : ""
-                    }
                   />
+                  {errors.price && (
+                    <span className="text-redColor text-sm">
+                      {errors.price?.message}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -305,11 +344,18 @@ export default function AddProductPage() {
                   </label>
                   <FormInputDropdown
                     id="brand"
-                    name="brand"
                     control={control}
                     label="Product Type"
                     options={options}
+                    {...register("brand", {
+                      required: "Product Brand is required",
+                    })}
                   />
+                  {errors.brand && (
+                    <span className="text-redColor text-sm">
+                      {errors.brand?.message}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col flex-1 gap-2">
                   <label htmlFor="unit">
@@ -319,11 +365,18 @@ export default function AddProductPage() {
                   </label>
                   <FormInputDropdown
                     id="unit"
-                    name="unit"
                     control={control}
                     label="Product Category"
                     options={options}
+                    {...register("unit", {
+                      required: "Product Unit is required",
+                    })}
                   />
+                  {errors.unit && (
+                    <span className="text-redColor text-sm">
+                      {errors.unit?.message}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -341,36 +394,7 @@ export default function AddProductPage() {
             {...register("description")}
           />
           <div className="flex flex-col sm:flex-row gap-5 w-full mt-2">
-            <div className="flex flex-col gap-2 flex-[3]">
-              <label htmlFor="image">
-                <span className="text-primaryDark font-semibold text-xl">
-                  Product Gallery
-                </span>
-              </label>
-              <div className="flex flex-col sm:flex-row gap-4 items-center">
-                <div className="flex flex-wrap gap-2">
-                  {galleryImages &&
-                    galleryImages.map((galleryImage) => (
-                      <Image
-                        key={galleryImage}
-                        src={galleryImage}
-                        alt="Preview"
-                        width={80}
-                        height={80}
-                      />
-                    ))}
-                </div>
-                <TextField
-                  id="image"
-                  type="file"
-                  variant="outlined"
-                  {...register("gallery")}
-                  onChange={handleGalleryChange}
-                  inputProps={{ accept: "image/*", multiple: true }}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-2 flex-1">
+            <div className="flex flex-col gap-2">
               <label htmlFor="alertQuantity">
                 <span className="text-primaryDark font-semibold text-xl">
                   Alert Quantity
@@ -402,11 +426,7 @@ export default function AddProductPage() {
             className="font-bold bg-redColor/95 hover:bg-redColor text-white outline-redColor"
             variant="outlined"
             size="large"
-            onClick={() => (
-              reset(),
-              setPreviewImage("/placeholder.jpg"),
-              setGalleryImages(["/placeholder.jpg"])
-            )}
+            onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
           >
             Cancel
           </Button>

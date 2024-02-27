@@ -127,12 +127,10 @@ export type Product = {
      code: string;
      name: string;
      image: string;
-     gallery: string[];
      brand: string;
      type: string;
      unit: string;
      category: string;
-     lotNo: string;
      productQuantity: number;
      stock: Stock[];
      cost: number;
@@ -164,16 +162,18 @@ export type ProductStock = {
      updatedAt: Date;
      isActive: boolean;
 }
-export type InvoiceProduct = {
+export type SaleProduct = {
      id: string,
      lotNumber: string,
      name: string,
-     description: string,
+     code: string,
      quantity: number,
+     availableQuantity: number,
      price: number,
      subTotal: number,
 }
-export type Sale<T> = {
+
+export type Sale = {
      id: string;
      invoiceNumber: string;
      purchaseOrderNumber: string;
@@ -184,7 +184,7 @@ export type Sale<T> = {
      paid: number;
      paymentStatus: string;
      saleStatus: string;
-     products: T[];
+     products: SaleProduct[];
      notes: string;
      createdAt: Date;
      updatedAt: Date;
