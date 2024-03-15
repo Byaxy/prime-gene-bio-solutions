@@ -31,9 +31,9 @@ export default function ViewSaleDetails({
   });
 
   useEffect(() => {
-    let sale = allSalesData.data.filter((item) => item.id === saleID);
+    let sale = allSalesData.data.find((item) => item.id === saleID);
     if (sale) {
-      setSaleDetails(sale[0]);
+      setSaleDetails(sale);
     }
   }, [saleID]);
 

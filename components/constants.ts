@@ -17,3 +17,18 @@ export const saleStatus = [
     value: "Canceled",
   },
 ];
+
+export const quotationStatus = [
+  {
+    label: "Pending",
+    value: "Pending",
+  },
+  {
+    label: "Complete",
+    value: "Complete",
+  },
+  {
+    label: "Canceled",
+    value: "Canceled",
+  },
+];

@@ -7,6 +7,33 @@ import ListComponent from "@/components/ListComponent";
 import AddCustomer from "@/components/customers/AddCustomer";
 import ViewCustomerDetails from "@/components/customers/ViewCustomerDetails";
 
+const columns = [
+  {
+    name: "Name",
+    selector: (row: { name: string }) => row.name,
+    style: {
+      fontWeight: "600",
+    },
+  },
+  {
+    name: "Email",
+    selector: (row: { email: string }) => row.email,
+  },
+  {
+    name: "Phone Number",
+    selector: (row: { phone: string }) => row.phone,
+    width: "160px",
+  },
+  {
+    name: "Address",
+    selector: (row: { address: string }) => row.address,
+  },
+  {
+    name: "City",
+    selector: (row: { city: string }) => row.city,
+  },
+];
+
 export default function CustomersPage() {
   const [add, setAdd] = useState<boolean>(false);
   const [view, setView] = useState<boolean>(false);
@@ -40,8 +67,8 @@ export default function CustomersPage() {
           customerID={customerID}
         />
         <DataTable
-          data={customersData.data}
-          columns={customersData.columns}
+          data={customersData}
+          columns={columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"

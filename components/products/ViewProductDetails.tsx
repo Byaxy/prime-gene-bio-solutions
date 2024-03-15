@@ -38,11 +38,11 @@ export default function ViewProductDetails({
   const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    let productDetails = allProductsData.filter(
+    let productDetails = allProductsData.find(
       (product) => product.id === productID
     );
     if (productDetails) {
-      setProduct(productDetails[0]);
+      setProduct(productDetails);
     }
   }, [productID]);
 

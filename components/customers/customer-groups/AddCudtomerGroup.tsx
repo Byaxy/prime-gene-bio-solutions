@@ -4,7 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { CustomerGroups } from "@/components/Types";
@@ -60,18 +60,18 @@ export default function AddCustomerGroup({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -81,11 +81,11 @@ export default function AddCustomerGroup({
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="percentage">
+              <FormLabel htmlFor="percentage">
                 <span className="text-primaryDark font-semibold">
                   Peercentage
                 </span>
-              </label>
+              </FormLabel>
               <TextField
                 id="percentage"
                 type="number"
@@ -97,7 +97,12 @@ export default function AddCustomerGroup({
           </form>
         </DialogContent>
         <DialogActions>
-          <Button size="large" variant="outlined" onClick={() => reset()}>
+          <Button
+            size="large"
+            variant="contained"
+            onClick={() => reset()}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white border-0 hover:border-0"
+          >
             Cancel
           </Button>
           <Button

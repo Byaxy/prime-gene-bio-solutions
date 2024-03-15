@@ -45,7 +45,7 @@ type Options = {
 
 const tax: number = 10;
 
-const customers: Options[] = customersData.data.map((customer) => ({
+const customers: Options[] = customersData.map((customer) => ({
   label: customer.name,
   value: customer.name,
 }));
@@ -177,6 +177,7 @@ export default function AddSalePage() {
 
   const onSubmit = async (data: FormInput) => {
     try {
+      const formData = new FormData();
       if (saleProducts.length === 0) {
         toast.error("Please add atleast one products");
         return;
@@ -190,12 +191,20 @@ export default function AddSalePage() {
         total: grandTotal,
       };
 
-      // TODO: update API call to accept newData object
-
-      console.log(newData);
+      formData.append("json", JSON.stringify(newData));
+      const response = await fetch("/api/sales/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: formData,
+      });
+      const result = await response.json();
       toast.success("Sale added successfully");
+      return result;
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong try again later");
     }
   };
 
@@ -318,11 +327,11 @@ export default function AddSalePage() {
               <span className="text-primaryDark font-semibold">Products</span>
               <span className="text-redColor"> *</span>
             </label>
-            {/** Turn into popper */}
+
             <Button
               variant="outlined"
               size="large"
-              className="w-full flex flex-row items-center justify-between"
+              className="w-full flex flex-row items-center justify-between max-w-2xl"
               onClick={handleClick}
             >
               <span className="text-gray-400 capitalize sm:text-lg">
@@ -339,7 +348,7 @@ export default function AddSalePage() {
                 horizontal: "left",
               }}
             >
-              <div className="min-w-[600px] flex flex-col gap-5 p-5">
+              <div className="min-w-[672px] flex flex-col gap-5 p-5">
                 <TextField
                   type="text"
                   size="small"
@@ -379,7 +388,7 @@ export default function AddSalePage() {
               <Dialog
                 open={openModal}
                 onClose={handleCloseModal}
-                maxWidth="lg"
+                maxWidth="md"
                 fullWidth
               >
                 <DialogTitle className="flex justify-between items-center">
@@ -442,7 +451,7 @@ export default function AddSalePage() {
                             <TextField
                               type="number"
                               size="small"
-                              className="max-w-[80px]"
+                              className="max-w-[60px]"
                               inputProps={{ min: 1 }}
                               defaultValue={1}
                               onChange={(e) =>
@@ -450,7 +459,7 @@ export default function AddSalePage() {
                               }
                             />
                           </TableCell>
-                          <TableCell className="text-lg">
+                          <TableCell className="text-lg text-primaryDark">
                             <span>
                               {selectedProduct.price * Math.max(1, quantity)}
                             </span>

@@ -22,9 +22,9 @@ export default function ViewUnitDetails({
   const [unit, setUnit] = useState<Unit | null>(null);
 
   useEffect(() => {
-    let unitDetails = unitsData.filter((unit) => unit.id === unitID);
+    let unitDetails = unitsData.find((unit) => unit.id === unitID);
     if (unitDetails) {
-      setUnit(unitDetails[0]);
+      setUnit(unitDetails);
     }
   }, [unitID]);
 

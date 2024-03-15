@@ -74,15 +74,6 @@ export default function ViewCategoryDetails({
                   {category.description}
                 </TableCell>
               </TableRow>
-
-              <TableRow>
-                <TableCell className="font-semibold text-lg">
-                  Sub Categories
-                </TableCell>
-                <TableCell className="text-[17px]">
-                  {category.subCategories?.map((sub) => sub.name).join(", ")}
-                </TableCell>
-              </TableRow>
             </TableBody>
           </Table>
         </DialogContent>

@@ -58,7 +58,7 @@ const AddProductPage = () => {
       defaultValues: defaultValues,
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [imageUrl, setImageUrl] = useState<string>("/placeholder.jpg");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const watchCost = watch("cost");
 
@@ -132,7 +132,7 @@ const AddProductPage = () => {
                 {imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={imageUrl}
+                    src={imageUrl === null ? "/placeholder.jpg" : imageUrl}
                     alt="Preview"
                     className="object-cover w-full h-full"
                   />

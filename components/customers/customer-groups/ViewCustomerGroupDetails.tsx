@@ -51,28 +51,34 @@ export default function ViewCustomerGroupDetails({
           <Table size="medium">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Group ID
                 </TableCell>
-                <TableCell className="text-[17px]">{group.id}</TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {group.id}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Date of Registration
                 </TableCell>
-                <TableCell className="text-[17px]">
+                <TableCell className="text-[17px] text-primaryDark">
                   {group.createdAt.toISOString()}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Name</TableCell>
-                <TableCell className="text-[17px]">{group.name}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Name
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {group.name}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Percentage
                 </TableCell>
-                <TableCell className="text-[17px]">
+                <TableCell className="text-[17px] text-primaryDark">
                   {group.percentage}
                 </TableCell>
               </TableRow>
@@ -80,7 +86,12 @@ export default function ViewCustomerGroupDetails({
           </Table>
         </DialogContent>
         <DialogActions>
-          <Button size="large" variant="contained" onClick={handleClose}>
+          <Button
+            size="large"
+            variant="contained"
+            onClick={handleClose}
+            className="font-bold bg-redColor/95 hover:bg-redColor text-white border-0 hover:border-0"
+          >
             Close
           </Button>
         </DialogActions>

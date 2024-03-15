@@ -1,12 +1,37 @@
 "use client";
 import React, { useCallback, useState } from "react";
-import { customersData } from "@/data/customersData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import ListComponent from "@/components/ListComponent";
 import AddSupplier from "@/components/suppliers/AddSupplier";
 import ViewSupplierDetails from "@/components/suppliers/ViewSupplierDetails";
 import { suppliersData } from "@/data/suppliersData";
+
+const columns = [
+  {
+    name: "Name",
+    selector: (row: { name: string }) => row.name,
+    style: {
+      fontWeight: "600",
+    },
+  },
+  {
+    name: "Email",
+    selector: (row: { email: string }) => row.email,
+  },
+  {
+    name: "Phone Number",
+    selector: (row: { phone: string }) => row.phone,
+  },
+  {
+    name: "City",
+    selector: (row: { city: string }) => row.city,
+  },
+  {
+    name: "Country",
+    selector: (row: { country: string }) => row.country,
+  },
+];
 
 export default function SuppliersPage() {
   const [add, setAdd] = useState<boolean>(false);
@@ -41,8 +66,8 @@ export default function SuppliersPage() {
           supplierID={supplierID}
         />
         <DataTable
-          data={suppliersData.data}
-          columns={suppliersData.columns}
+          data={suppliersData}
+          columns={columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
           className="scrollbar-hide"

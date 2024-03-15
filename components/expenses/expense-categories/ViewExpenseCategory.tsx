@@ -24,11 +24,11 @@ export default function ViewExpenseCategory({
   const [category, setCategory] = useState<DataCells | null>(null);
 
   useEffect(() => {
-    let expenseCategory = expenseCategoriesData.data.filter(
+    let expenseCategory = expenseCategoriesData.data.find(
       (expense) => expense.id === expenseCategoryID
     );
     if (expenseCategory) {
-      setCategory(expenseCategory[0]);
+      setCategory(expenseCategory);
     }
   }, [expenseCategoryID]);
 

@@ -73,38 +73,42 @@ export type User = {
      email: string;
      phone: string;
      password: string;
-     confirmPassword: string;
      createdAt: Date;
      updatedAt: Date;
      isActive: boolean;
 }
 export type Supplier = {
      id: string;
-     company: string;
      name: string;
      email: string;
      phone: string;
      address: string;
      city: string;
      state: string;
-     postalCode: string;
      country: string;
+     contactPerson?: ContactPerson;
      createdAt: Date;
      updatedAt: Date;
      isActive: boolean;
 }
+export type ContactPerson = {
+     name: string;
+     email: string;
+     phone: string;
+     isActive: boolean;
+}
+
 export type Customer = {
      id: string;
      customerGroup: string;
-     company: string;
      name: string;
      email: string;
      phone: string;
      address: string;
      city: string;
      state: string;
-     postalCode: string;
      country: string;
+     contactPerson?: ContactPerson;
      createdAt: Date;
      updatedAt: Date;
      isActive: boolean;
@@ -183,6 +187,20 @@ export type Sale = {
      paid: number;
      paymentStatus: string;
      saleStatus: string;
+     products: SaleProduct[];
+     notes: string;
+     createdAt: Date;
+     updatedAt: Date;
+     isActive: boolean;
+}
+export type Quotation = {
+     id: string;
+     quotationNumber: string;
+     customer: string;
+     tax: number;
+     subTotal: number;
+     total: number;
+     quotationStatus: string;
      products: SaleProduct[];
      notes: string;
      createdAt: Date;

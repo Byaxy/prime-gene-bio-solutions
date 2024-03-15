@@ -7,14 +7,7 @@ import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { usersData } from "@/data/usersData";
 import Image from "next/image";
-
-type UserType = {
-  image: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-};
+import { User } from "../Types";
 
 type ViewUserDetailsProps = {
   open: boolean;
@@ -27,12 +20,12 @@ export default function ViewUserDetails({
   handleClose,
   userID,
 }: ViewUserDetailsProps) {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    let userDetails = usersData.data.filter((user) => user.id === userID);
+    let userDetails = usersData.find((user) => user.id === userID);
     if (userDetails) {
-      setUser(userDetails[0]);
+      setUser(userDetails);
     }
   }, [userID]);
 
@@ -57,24 +50,60 @@ export default function ViewUserDetails({
           <Table size="medium">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Role
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.role}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   First Name
                 </TableCell>
-                <TableCell className="text-[17px]">{user.firstName}</TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.firstName}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Last Name
                 </TableCell>
-                <TableCell className="text-[17px]">{user.lastName}</TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.lastName}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Email</TableCell>
-                <TableCell className="text-[17px]">{user.email}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Email
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.email}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Phone</TableCell>
-                <TableCell className="text-[17px]">{user.role}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Phone Number
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.phone}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Gender
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.gender}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Status
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.isActive ? "Active" : "Not Active"}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

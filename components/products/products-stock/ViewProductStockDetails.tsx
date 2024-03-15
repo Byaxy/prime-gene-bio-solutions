@@ -27,11 +27,11 @@ export default function ViewProductStockDetails({
   );
 
   useEffect(() => {
-    let productStockDetails = productsStockData.filter(
+    let productStockDetails = productsStockData.find(
       (stock) => stock.id === stockID
     );
     if (productStockDetails) {
-      setProductStock(productStockDetails[0]);
+      setProductStock(productStockDetails);
     }
   }, [stockID]);
 
