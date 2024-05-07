@@ -6,31 +6,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { typesData } from "@/data/typesData";
-import type { Types } from "@/components/Types";
+import type { ProductType } from "@/components/Types";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 type ViewTypeDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  typeID: string;
+  type: ProductType;
 };
 
 export default function ViewTypeDetails({
   open,
   handleClose,
-  typeID,
+  type,
 }: ViewTypeDetailsProps) {
-  const [type, setType] = useState<Types | null>(null);
-
-  useEffect(() => {
-    let typeDetails = typesData.find((type) => type.id === typeID);
-    if (typeDetails) {
-      setType(typeDetails);
-    }
-  }, [typeID]);
-
-  if (!type) {
-    return null;
-  }
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -45,24 +35,38 @@ export default function ViewTypeDetails({
           />
         </DialogTitle>
         <DialogContent>
-          <Table size="medium">
+          <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Date of Registration
                 </TableCell>
-                <TableCell className="text-[17px]">
-                  {type.createdAt.toDateString()}
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(type.createdAt).toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Name</TableCell>
-                <TableCell className="text-[17px]">{type.name}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Name
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {type.name}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Code</TableCell>
-                <TableCell className="text-[17px]">
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Code
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
                   {type.description}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last Updated
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(type.updatedAt).toDateString()}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -73,7 +77,7 @@ export default function ViewTypeDetails({
             variant="contained"
             size="large"
             onClick={handleClose}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Close
           </Button>

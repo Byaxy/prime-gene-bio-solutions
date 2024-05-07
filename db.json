@@ -1,0 +1,2394 @@
+{
+  "products": [
+    {
+      "id": "edd9",
+      "code": "GS300 Plus ",
+      "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711964958/Prime%20Gene%20Biomedical%20Solutions/o1nkv8iuz4xapk5kdl0m.jpg",
+      "brand": "Genrui",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Fully Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "c9376388",
+          "lotNumber": "2302808",
+          "manufactureDate": "2020-04-06T00:00:00.000Z",
+          "expiryDate": "2030-04-05T00:00:00.000Z",
+          "quantity": 21,
+          "createdAt": "2024-04-06T17:16:59.032Z",
+          "updatedAt": "2024-04-09T16:07:07.331Z"
+        },
+        {
+          "id": "c8ce6da1",
+          "lotNumber": "2301608",
+          "manufactureDate": "2024-01-01T00:00:00.000Z",
+          "expiryDate": "2025-12-17T00:00:00.000Z",
+          "quantity": 17,
+          "createdAt": "2024-04-06T17:40:28.553Z",
+          "updatedAt": "2024-04-09T16:00:31.878Z"
+        }
+      ],
+      "cost": 500,
+      "price": 750,
+      "description": "GS300 Plus is one of the best bench-top chemistry analyzers, which is flexible for small to medium-sized laboratories. ",
+      "alertQuantity": 5,
+      "createdAt": "2024-04-01T09:47:03.046Z",
+      "updatedAt": "2024-04-11T17:22:32.245Z",
+      "isActive": true
+    },
+    {
+      "id": "21a7",
+      "code": "BS-240",
+      "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711966421/Prime%20Gene%20Biomedical%20Solutions/kjszpuqra946ca6vmkco.jpg",
+      "brand": "Mindray",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Fully Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "66207157",
+          "lotNumber": "2301609",
+          "manufactureDate": "2017-04-09T00:00:00.000Z",
+          "expiryDate": "2029-04-09T00:00:00.000Z",
+          "quantity": 16,
+          "createdAt": "2024-04-09T16:02:55.500Z",
+          "updatedAt": "2024-04-09T16:07:22.338Z"
+        }
+      ],
+      "cost": 500,
+      "price": 800,
+      "description": "BS-240 is a “CUTE”, multi-functional benchtop chemistry analyzer with a throughput of 200 tests per hour. ",
+      "alertQuantity": 2,
+      "createdAt": "2024-04-01T10:10:02.871Z",
+      "updatedAt": "2024-04-14T15:35:43.983Z",
+      "isActive": true
+    },
+    {
+      "id": "501b",
+      "code": "XL-180",
+      "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711966682/Prime%20Gene%20Biomedical%20Solutions/cfd5vbs1qlgoc0jyqngk.jpg",
+      "brand": "Erba",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Fully Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "66207157",
+          "lotNumber": "2301607",
+          "manufactureDate": "2023-01-02T00:00:00.000Z",
+          "expiryDate": "2025-02-12T00:00:00.000Z",
+          "quantity": 12,
+          "createdAt": "2024-04-09T16:02:55.500Z",
+          "updatedAt": "2024-04-09T16:06:51.230Z"
+        },
+        {
+          "id": "26b03dd8",
+          "lotNumber": "XL-180-001",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 16,
+          "createdAt": "2024-04-09T17:15:23.452Z",
+          "updatedAt": "2024-04-09T17:15:23.452Z"
+        }
+      ],
+      "cost": 450,
+      "price": 650,
+      "description": "XL 180 is a fully automated, random access, and discrete clinical chemistry analyzer with a throughput of 180 tests per hour with minimal water consumption.",
+      "alertQuantity": 2,
+      "createdAt": "2024-04-01T10:10:02.871Z",
+      "updatedAt": "2024-04-14T15:41:14.192Z",
+      "isActive": true
+    },
+    {
+      "id": "3003",
+      "code": "XL-200",
+      "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711966827/Prime%20Gene%20Biomedical%20Solutions/s3utau1r7x3dxtzsoohd.jpg",
+      "brand": "Erba",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Fully Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "6995c21a",
+          "lotNumber": "XL-200",
+          "manufactureDate": "2023-04-09T00:00:00.000Z",
+          "expiryDate": "2024-04-09T00:00:00.000Z",
+          "quantity": 2,
+          "createdAt": "2024-04-09T16:40:27.592Z",
+          "updatedAt": "2024-04-09T17:19:56.859Z"
+        },
+        {
+          "id": "26b03dd8",
+          "lotNumber": "XL-200-001",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 5,
+          "createdAt": "2024-04-09T17:15:23.452Z",
+          "updatedAt": "2024-04-09T17:15:23.452Z"
+        }
+      ],
+      "cost": 500,
+      "price": 750,
+      "description": "XL 200 is a fully automated, random access and discrete clinical chemistry analyzer that enhances productivity and turnaround time.",
+      "alertQuantity": 2,
+      "createdAt": "2024-04-01T10:10:02.871Z",
+      "updatedAt": "2024-04-14T15:43:34.208Z",
+      "isActive": true
+    },
+    {
+      "id": "cd6d",
+      "code": "XL-640 ",
+      "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711967077/Prime%20Gene%20Biomedical%20Solutions/t283tpgrrsrb98jgafzt.jpg",
+      "brand": "Erba",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Fully Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "6995c21a",
+          "lotNumber": "XL-640",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 0,
+          "createdAt": "2024-04-09T16:40:27.592Z",
+          "updatedAt": "2024-04-09T16:40:27.592Z"
+        },
+        {
+          "id": "26b03dd8",
+          "lotNumber": "XL-640-001",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 12,
+          "createdAt": "2024-04-09T17:15:23.452Z",
+          "updatedAt": "2024-04-09T17:15:23.452Z"
+        }
+      ],
+      "cost": 500,
+      "price": 800,
+      "description": "XL 640 is a fully automated biochemistry analyzer with a throughput of 640 tests per hour.",
+      "alertQuantity": 5,
+      "createdAt": "2024-04-01T10:10:02.871Z",
+      "updatedAt": "2024-04-14T15:46:14.363Z",
+      "isActive": true
+    },
+    {
+      "id": "ff32",
+      "code": "XL-1000",
+      "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711967262/Prime%20Gene%20Biomedical%20Solutions/sw3inptycenka8fagvif.webp",
+      "brand": "Erba",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Fully Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "6995c21a",
+          "lotNumber": "XL-1000",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 0,
+          "createdAt": "2024-04-09T16:40:27.592Z",
+          "updatedAt": "2024-04-09T16:40:27.592Z"
+        }
+      ],
+      "cost": 500,
+      "price": 800,
+      "description": "XL 1000 with a throughput of up to 1040 tests per hour is the ideal instrument for centralizing the complete biochemistry testing load on a single fully automated platform. Increased walk-away productivity and less human intervention make it an ideal analyzer for large laboratories.",
+      "alertQuantity": 2,
+      "createdAt": "2024-04-01T10:10:02.871Z",
+      "updatedAt": "2024-04-14T15:49:44.627Z",
+      "isActive": true
+    },
+    {
+      "id": "e396",
+      "code": "GS480A",
+      "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711967395/Prime%20Gene%20Biomedical%20Solutions/abj4n9ivm7tz8quh0dat.jpg",
+      "brand": "Genrui",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Fully Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "6995c21a",
+          "lotNumber": "GS480A",
+          "manufactureDate": "2024-04-09T00:00:00.000Z",
+          "expiryDate": "2024-04-09T00:00:00.000Z",
+          "quantity": 2,
+          "createdAt": "2024-04-09T16:40:27.592Z",
+          "updatedAt": "2024-04-09T16:44:14.139Z"
+        }
+      ],
+      "cost": 450,
+      "price": 750,
+      "description": "The GS480A is a robust and fully-auto chemistry analyzer.",
+      "alertQuantity": 2,
+      "createdAt": "2024-04-01T10:10:02.871Z",
+      "updatedAt": "2024-04-14T15:51:14.650Z",
+      "isActive": true
+    },
+    {
+      "id": "82e8",
+      "code": "WP-21A ",
+      "name": "Genrui WP-21A Semi-Automated Systems",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711968152/Prime%20Gene%20Biomedical%20Solutions/b5ibwtrfr99de7gbmvnu.jpg",
+      "brand": "Genrui",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Semi-Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "6995c21a",
+          "lotNumber": "WP-21A",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 0,
+          "createdAt": "2024-04-09T16:40:27.592Z",
+          "updatedAt": "2024-04-09T16:40:27.592Z"
+        },
+        {
+          "id": "26b03dd8",
+          "lotNumber": "WP-21A-001",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 10,
+          "createdAt": "2024-04-09T17:15:23.452Z",
+          "updatedAt": "2024-04-09T17:15:23.452Z"
+        }
+      ],
+      "cost": 500,
+      "price": 700,
+      "description": "Genrui WP21A is a NEW generation semi-auto chemistry analyzer, it is one of the best models in the same series.",
+      "alertQuantity": 2,
+      "createdAt": "2024-04-01T10:40:23.245Z",
+      "updatedAt": "2024-04-14T15:55:39.131Z",
+      "isActive": true
+    },
+    {
+      "id": "f3d1",
+      "code": "BA-88A",
+      "name": "Mindray BA-88A Semi-Automated Systems",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711968385/Prime%20Gene%20Biomedical%20Solutions/tezusziggpo6bz3gtsij.jpg",
+      "brand": "Mindray",
+      "type": "Analyzer",
+      "unit": "Pcs",
+      "category": "Semi-Automated Chemistry Systems",
+      "stock": [
+        {
+          "id": "26b03dd8",
+          "lotNumber": "BA-88A-001",
+          "manufactureDate": null,
+          "expiryDate": null,
+          "quantity": 2,
+          "createdAt": "2024-04-09T17:15:23.452Z",
+          "updatedAt": "2024-04-09T17:15:23.452Z"
+        }
+      ],
+      "cost": 550,
+      "price": 850,
+      "description": "A semi-automatic chemistry analyzer with a large touch-screen and easy-to-use operation software.",
+      "alertQuantity": 2,
+      "createdAt": "2024-04-01T10:40:23.245Z",
+      "updatedAt": "2024-04-14T16:00:38.061Z",
+      "isActive": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "7d87",
+      "name": "Primary Care",
+      "code": "PC",
+      "description": "Primary care solutions",
+      "parentCategory": "Medical Solutions",
+      "createdAt": "2024-03-31T09:13:30.337Z",
+      "updatedAt": "2024-03-31T18:39:40.099Z",
+      "isActive": true
+    },
+    {
+      "id": "6ef4",
+      "name": "Laboratory Solutions",
+      "code": "LS",
+      "description": "Laboratory solutions category",
+      "parentCategory": "None",
+      "createdAt": "2024-03-31T18:27:25.371Z",
+      "updatedAt": "2024-03-31T18:27:25.371Z",
+      "isActive": true
+    },
+    {
+      "id": "59f0",
+      "name": "Medical Solutions",
+      "code": "MS ",
+      "description": "Medical solutions category",
+      "parentCategory": "None",
+      "createdAt": "2024-03-31T18:27:25.371Z",
+      "updatedAt": "2024-03-31T18:27:25.371Z",
+      "isActive": true
+    },
+    {
+      "id": "0281",
+      "name": "Imaging Solutions",
+      "code": "IS",
+      "description": "Imaging solutions category",
+      "parentCategory": "None",
+      "createdAt": "2024-03-31T18:27:25.371Z",
+      "updatedAt": "2024-03-31T18:27:25.371Z",
+      "isActive": true
+    },
+    {
+      "id": "2c08",
+      "name": "Dental Solutions",
+      "code": "DS",
+      "description": "Dental solutions category",
+      "parentCategory": "None",
+      "createdAt": "2024-03-31T18:30:21.676Z",
+      "updatedAt": "2024-03-31T18:30:21.676Z",
+      "isActive": true
+    },
+    {
+      "id": "8522",
+      "name": "Research Solutions",
+      "code": "RS",
+      "description": "Research solutions category",
+      "parentCategory": "None",
+      "createdAt": "2024-03-31T18:30:21.676Z",
+      "updatedAt": "2024-03-31T18:30:21.676Z",
+      "isActive": true
+    },
+    {
+      "id": "56ea",
+      "name": "Teaching Solutions",
+      "code": "TS",
+      "description": "Teaching solutions category",
+      "parentCategory": "None",
+      "createdAt": "2024-03-31T18:32:34.102Z",
+      "updatedAt": "2024-03-31T18:32:34.102Z",
+      "isActive": true
+    },
+    {
+      "id": "16ab",
+      "name": "Veterinary Solutions",
+      "code": "VS",
+      "description": "Veterinary solutions category",
+      "parentCategory": "None",
+      "createdAt": "2024-03-31T18:32:34.102Z",
+      "updatedAt": "2024-03-31T18:32:34.102Z",
+      "isActive": true
+    },
+    {
+      "id": "c11e",
+      "name": "Chemistry Solutions ",
+      "code": "CS ",
+      "description": "Chemistry solutions category ",
+      "parentCategory": "Medical Solutions",
+      "createdAt": "2024-03-31T18:34:11.667Z",
+      "updatedAt": "2024-03-31T18:41:35.154Z",
+      "isActive": true
+    },
+    {
+      "id": "b4e3",
+      "name": "Haematology Solutions ",
+      "code": "HS ",
+      "description": "Haematology solutions category ",
+      "parentCategory": "Laboratory Solutions",
+      "createdAt": "2024-03-31T18:34:11.667Z",
+      "updatedAt": "2024-03-31T18:41:35.154Z",
+      "isActive": true
+    },
+    {
+      "id": "33d2",
+      "name": "Biochemistry Solutions ",
+      "code": "BS ",
+      "description": "Biochemistry solutions category ",
+      "parentCategory": "Laboratory Solutions",
+      "createdAt": "2024-03-31T18:38:20.172Z",
+      "updatedAt": "2024-03-31T18:41:35.154Z",
+      "isActive": true
+    },
+    {
+      "id": "172a",
+      "name": "Radiology",
+      "code": "Rd",
+      "description": "Radiology solutions category",
+      "parentCategory": "Imaging Solutions",
+      "createdAt": "2024-03-31T18:41:35.017Z",
+      "updatedAt": "2024-03-31T18:41:35.017Z",
+      "isActive": true
+    },
+    {
+      "id": "12e8",
+      "name": "Fully Automated Chemistry Systems",
+      "code": "FA-CS",
+      "description": "Fully Automated Chemistry Systems",
+      "parentCategory": "Biochemistry Solutions ",
+      "createdAt": "2024-03-31T18:47:00.417Z",
+      "updatedAt": "2024-03-31T18:47:00.417Z",
+      "isActive": true
+    },
+    {
+      "id": "4a29",
+      "name": "Semi-Automated Chemistry Systems",
+      "code": "SA-CS",
+      "description": "Semi-Automated Chemistry Systems",
+      "parentCategory": "Biochemistry Solutions ",
+      "createdAt": "2024-04-01T10:37:57.543Z",
+      "updatedAt": "2024-04-01T10:37:57.543Z",
+      "isActive": true
+    }
+  ],
+  "brands": [
+    {
+      "id": "ac23",
+      "name": "DLAB",
+      "code": "DLAB",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711882475/Prime%20Gene%20Biomedical%20Solutions/ai2el3w5aj1p7ttevvqg.png",
+      "createdAt": "2024-03-31T10:52:25.738Z",
+      "updatedAt": "2024-03-31T10:52:25.738Z",
+      "isActive": true
+    },
+    {
+      "id": "4480",
+      "name": "BIOREX UK",
+      "code": "BK",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711883492/Prime%20Gene%20Biomedical%20Solutions/qpkq47nrxh5feitpqov3.jpg",
+      "createdAt": "2024-03-31T11:10:34.618Z",
+      "updatedAt": "2024-03-31T11:10:34.618Z",
+      "isActive": true
+    },
+    {
+      "id": "d734",
+      "name": "Genrui",
+      "code": "Genrui",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711911176/Prime%20Gene%20Biomedical%20Solutions/cycyqn6konizjf8bo2fg.png",
+      "createdAt": "2024-03-31T18:50:22.644Z",
+      "updatedAt": "2024-03-31T18:50:22.644Z",
+      "isActive": true
+    },
+    {
+      "id": "4c58",
+      "name": "Erba",
+      "code": "Erba",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711911299/Prime%20Gene%20Biomedical%20Solutions/kmrhzkvpknwpbskjud0h.png",
+      "createdAt": "2024-03-31T18:50:22.644Z",
+      "updatedAt": "2024-03-31T18:50:22.644Z",
+      "isActive": true
+    },
+    {
+      "id": "dc76",
+      "name": "Mindray",
+      "code": "Mindray",
+      "image": "https://res.cloudinary.com/dfte2vdd5/image/upload/v1711911386/Prime%20Gene%20Biomedical%20Solutions/siplyr1o28a82da5alf0.jpg",
+      "createdAt": "2024-03-31T18:50:22.644Z",
+      "updatedAt": "2024-03-31T18:50:22.644Z",
+      "isActive": true
+    }
+  ],
+  "types": [
+    {
+      "id": "2d07",
+      "createdAt": "2024-03-31T09:13:30.337Z",
+      "description": "Analyzers ",
+      "name": "Analyzer",
+      "updatedAt": "2024-04-01T09:47:43.439Z",
+      "isActive": true
+    },
+    {
+      "id": "bba5",
+      "name": "Reagent",
+      "description": "Reagents ",
+      "createdAt": "2024-03-31T13:17:07.485Z",
+      "updatedAt": "2024-03-31T13:17:07.485Z",
+      "isActive": true
+    },
+    {
+      "id": "e55a",
+      "name": "Equipment",
+      "description": "Equipments",
+      "createdAt": "2024-03-31T16:37:17.763Z",
+      "updatedAt": "2024-03-31T16:37:17.763Z",
+      "isActive": true
+    },
+    {
+      "id": "b4f2",
+      "name": "Kit",
+      "description": "Kits",
+      "createdAt": "2024-03-31T16:37:17.763Z",
+      "updatedAt": "2024-03-31T16:37:17.763Z",
+      "isActive": true
+    }
+  ],
+  "units": [
+    {
+      "id": "3ecc",
+      "createdAt": "2024-03-31T09:13:30.337Z",
+      "code": "Vol/Pk",
+      "name": "Volume/Pack",
+      "updatedAt": "2024-03-31T09:13:30.337Z",
+      "isActive": true
+    },
+    {
+      "id": "af5a",
+      "name": "Pieces/Pack ",
+      "code": "Pcs/Pk ",
+      "createdAt": "2024-03-31T17:09:17.804Z",
+      "updatedAt": "2024-03-31T17:54:46.941Z",
+      "isActive": true
+    },
+    {
+      "id": "67c4",
+      "name": "Packs",
+      "code": "Pks",
+      "createdAt": "2024-03-31T17:09:17.804Z",
+      "updatedAt": "2024-03-31T17:09:17.804Z",
+      "isActive": true
+    },
+    {
+      "id": "9e33",
+      "name": "Pieces",
+      "code": "Pcs",
+      "createdAt": "2024-03-31T18:57:37.663Z",
+      "updatedAt": "2024-03-31T18:57:37.663Z",
+      "isActive": true
+    }
+  ],
+  "sales": [
+    {
+      "id": "0307",
+      "invoiceNumber": "IVN-00001",
+      "purchaseOrderNumber": "PO-00001",
+      "customer": "Biomedical Link ",
+      "tax": 0,
+      "subTotal": 9250,
+      "total": 9250,
+      "paid": 4500,
+      "paymentStatus": "Pending",
+      "saleStatus": "Pending",
+      "products": [
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 5,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 4000,
+          "availableQuantity": 16
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 12
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 1600,
+          "availableQuantity": 0
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 2
+        }
+      ],
+      "notes": "Part payment",
+      "createdAt": "2024-04-09T16:44:50.393Z",
+      "updatedAt": "2024-04-14T16:15:18.146Z",
+      "isActive": true
+    },
+    {
+      "id": "99c3",
+      "invoiceNumber": "IVN-00002",
+      "purchaseOrderNumber": "PO-00002",
+      "customer": "UROCARE LIBERIA",
+      "tax": 0,
+      "subTotal": 4600,
+      "total": 4600,
+      "paid": 4000,
+      "paymentStatus": "Pending",
+      "saleStatus": "Complete",
+      "products": [
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 2
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        }
+      ],
+      "notes": "Completed successfully, not fully paid",
+      "createdAt": "2024-04-09T16:44:50.393Z",
+      "updatedAt": "2024-04-14T16:19:01.437Z",
+      "isActive": true
+    },
+    {
+      "id": "fbd9",
+      "invoiceNumber": "IVN-00003",
+      "purchaseOrderNumber": "PO-00003",
+      "customer": "Biomedical Link ",
+      "tax": 0,
+      "subTotal": 2349,
+      "total": 2349,
+      "paid": 2349,
+      "paymentStatus": "Paid",
+      "saleStatus": "Complete",
+      "products": [
+        {
+          "id": "82e8",
+          "name": "Genrui WP-21A Semi-Automated Systems",
+          "code": "WP-21A ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "WP-21A",
+          "price": 799,
+          "subTotal": 799,
+          "availableQuantity": 0
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 16
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2
+        }
+      ],
+      "notes": "Payment complete. Sale complete.",
+      "createdAt": "2024-04-09T16:44:50.393Z",
+      "updatedAt": "2024-04-14T16:21:19.681Z",
+      "isActive": true
+    },
+    {
+      "id": "45e3",
+      "invoiceNumber": "IVN-00004",
+      "purchaseOrderNumber": "PO-00004",
+      "customer": "REDEMPTION PHARMACY",
+      "tax": 0,
+      "subTotal": 1550,
+      "total": 1550,
+      "paid": 1550,
+      "paymentStatus": "Paid",
+      "saleStatus": "Complete",
+      "products": [
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        }
+      ],
+      "notes": "Completed sucessfully",
+      "createdAt": "2024-04-09T16:44:50.393Z",
+      "updatedAt": "2024-04-14T16:22:43.206Z",
+      "isActive": true
+    },
+    {
+      "id": "828a",
+      "invoiceNumber": "IVN-00005",
+      "purchaseOrderNumber": "PO-00005",
+      "customer": "REDEMPTION PHARMACY",
+      "tax": 0,
+      "subTotal": 6849,
+      "total": 6849,
+      "paid": 6500,
+      "paymentStatus": "Pending",
+      "saleStatus": "Complete",
+      "products": [
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 16
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 12
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2
+        },
+        {
+          "id": "82e8",
+          "name": "Genrui WP-21A Semi-Automated Systems",
+          "code": "WP-21A ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "WP-21A",
+          "price": 799,
+          "subTotal": 799,
+          "availableQuantity": 0
+        }
+      ],
+      "notes": "Payment not complete. Sale complete.",
+      "createdAt": "2024-04-10T06:51:50.943Z",
+      "updatedAt": "2024-04-14T16:26:37.211Z",
+      "isActive": true
+    }
+  ],
+  "deliveries": [
+    {
+      "id": "6d71",
+      "date": "2024-04-14T16:28:00.758Z",
+      "saleInvoiceNumber": "IVN-00001",
+      "deliveryReferenceNumber": "DRN-00001",
+      "description": "A few remaining products.",
+      "customer": "Biomedical Link ",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 2,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 1600,
+          "availableQuantity": 0,
+          "quantityRequested": 2,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 12,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 5,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 4000,
+          "availableQuantity": 16,
+          "quantityRequested": 5,
+          "quantitySupplied": 3
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        }
+      ],
+      "status": "Delivering",
+      "createdAt": "2024-04-14T16:27:51.079Z",
+      "updatedAt": "2024-04-14T16:27:51.079Z",
+      "isActive": true
+    },
+    {
+      "id": "ffb5",
+      "date": "2024-04-14T16:30:20.440Z",
+      "saleInvoiceNumber": "IVN-00002",
+      "deliveryReferenceNumber": "DRN-00002",
+      "description": "Fully delivered",
+      "customer": "UROCARE LIBERIA",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 2,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        }
+      ],
+      "status": "Delivering",
+      "createdAt": "2024-04-14T16:27:51.079Z",
+      "updatedAt": "2024-04-14T16:27:51.079Z",
+      "isActive": true
+    },
+    {
+      "id": "ad78",
+      "date": "2024-04-14T16:31:32.590Z",
+      "saleInvoiceNumber": "IVN-00003",
+      "deliveryReferenceNumber": "DRN-00003",
+      "description": "Fully delivered",
+      "customer": "Biomedical Link ",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 16,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "82e8",
+          "name": "Genrui WP-21A Semi-Automated Systems",
+          "code": "WP-21A ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "WP-21A",
+          "price": 799,
+          "subTotal": 799,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        }
+      ],
+      "status": "Delivered",
+      "createdAt": "2024-04-14T16:27:51.079Z",
+      "updatedAt": "2024-04-14T16:27:51.079Z",
+      "isActive": true
+    },
+    {
+      "id": "25d7",
+      "date": "2024-04-14T16:32:29.946Z",
+      "saleInvoiceNumber": "IVN-00004",
+      "deliveryReferenceNumber": "DRN-00004",
+      "description": "Fully delivered",
+      "customer": "REDEMPTION PHARMACY",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        }
+      ],
+      "status": "Delivering",
+      "createdAt": "2024-04-14T16:27:51.079Z",
+      "updatedAt": "2024-04-14T16:27:51.079Z",
+      "isActive": true
+    },
+    {
+      "id": "bbaa",
+      "date": "2024-04-14T16:33:09.302Z",
+      "saleInvoiceNumber": "IVN-00005",
+      "deliveryReferenceNumber": "DRN-00005",
+      "description": "Only one GS300 Plus remaining.",
+      "customer": "REDEMPTION PHARMACY",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "82e8",
+          "name": "Genrui WP-21A Semi-Automated Systems",
+          "code": "WP-21A ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "WP-21A",
+          "price": 799,
+          "subTotal": 799,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 12,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 16,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        }
+      ],
+      "status": "Delivered",
+      "createdAt": "2024-04-14T16:27:51.079Z",
+      "updatedAt": "2024-04-14T16:27:51.079Z",
+      "isActive": true
+    }
+  ],
+  "waybills": [
+    {
+      "id": "4bc3",
+      "date": "2024-04-14T16:38:21.248Z",
+      "deliveryReferenceNumber": "DRN-00001",
+      "customer": "Biomedical Link ",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 2,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 1600,
+          "availableQuantity": 0,
+          "quantityRequested": 2,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 12,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 5,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 4000,
+          "availableQuantity": 16,
+          "quantityRequested": 5,
+          "quantitySupplied": 3
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        }
+      ],
+      "description": "Successfully deilivered",
+      "amount": 90,
+      "createdAt": "2024-04-14T16:38:11.712Z",
+      "updatedAt": "2024-04-14T16:38:11.712Z",
+      "isActive": true
+    },
+    {
+      "id": "0195",
+      "date": "2024-04-14T16:39:51.274Z",
+      "deliveryReferenceNumber": "DRN-00002",
+      "customer": "UROCARE LIBERIA",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 2,
+          "quantityRequested": 2,
+          "quantitySupplied": 2
+        }
+      ],
+      "description": "Successfully deilivered",
+      "amount": 60,
+      "createdAt": "2024-04-14T16:38:11.712Z",
+      "updatedAt": "2024-04-14T16:38:11.712Z",
+      "isActive": true
+    },
+    {
+      "id": "e818",
+      "date": "2024-04-14T16:40:14.650Z",
+      "deliveryReferenceNumber": "DRN-00003",
+      "customer": "Biomedical Link ",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 16,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "82e8",
+          "name": "Genrui WP-21A Semi-Automated Systems",
+          "code": "WP-21A ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "WP-21A",
+          "price": 799,
+          "subTotal": 799,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        }
+      ],
+      "description": "Successfully deilivered",
+      "amount": 30,
+      "createdAt": "2024-04-14T16:38:11.712Z",
+      "updatedAt": "2024-04-14T16:38:11.712Z",
+      "isActive": true
+    },
+    {
+      "id": "559c",
+      "date": "2024-04-14T16:40:31.870Z",
+      "deliveryReferenceNumber": "DRN-00004",
+      "customer": "REDEMPTION PHARMACY",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        }
+      ],
+      "description": "Successfully deilivered",
+      "amount": 20,
+      "createdAt": "2024-04-14T16:38:11.712Z",
+      "updatedAt": "2024-04-14T16:38:11.712Z",
+      "isActive": true
+    },
+    {
+      "id": "a315",
+      "date": "2024-04-14T16:40:47.128Z",
+      "deliveryReferenceNumber": "DRN-00005",
+      "customer": "REDEMPTION PHARMACY",
+      "address": "Monrovia, Liberia",
+      "products": [
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "82e8",
+          "name": "Genrui WP-21A Semi-Automated Systems",
+          "code": "WP-21A ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "WP-21A",
+          "price": 799,
+          "subTotal": 799,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 12,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 16,
+          "quantityRequested": 1,
+          "quantitySupplied": 1
+        }
+      ],
+      "description": "Successfully deilivered",
+      "amount": 80,
+      "createdAt": "2024-04-14T16:38:11.712Z",
+      "updatedAt": "2024-04-14T16:38:11.712Z",
+      "isActive": true
+    }
+  ],
+  "sales-returns": [
+    {
+      "id": "a8f2",
+      "date": "2024-04-15T15:55:20.247Z",
+      "saleInvoiceNumber": "IVN-00001",
+      "deliveryReferenceNumber": "DRN-00001",
+      "description": "2 pieces returned",
+      "customer": "Biomedical Link ",
+      "products": [
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 0,
+          "availableQuantity": 2,
+          "quantityRequested": 2,
+          "quantitySupplied": 2,
+          "quantityReturned": 0
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 2,
+          "quantityReturned": 1
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 5,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 16,
+          "quantityRequested": 5,
+          "quantitySupplied": 3,
+          "quantityReturned": 1
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 0,
+          "availableQuantity": 0,
+          "quantityRequested": 2,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 0,
+          "availableQuantity": 12,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        }
+      ],
+      "total": 1550,
+      "createdAt": "2024-04-15T15:55:20.247Z",
+      "updatedAt": "2024-04-15T20:43:32.553Z",
+      "isActive": true
+    },
+    {
+      "id": "9394",
+      "date": "2024-04-15T15:55:20.247Z",
+      "saleInvoiceNumber": "IVN-00002",
+      "deliveryReferenceNumber": "DRN-00002",
+      "description": "One GS300 Plus returned due to faulty power supply unit",
+      "customer": "UROCARE LIBERIA",
+      "products": [
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 2,
+          "quantityReturned": 1
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 0,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 0,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 0,
+          "availableQuantity": 2,
+          "quantityRequested": 2,
+          "quantitySupplied": 2,
+          "quantityReturned": 0
+        }
+      ],
+      "total": 750,
+      "createdAt": "2024-04-15T15:55:20.247Z",
+      "updatedAt": "2024-04-15T15:55:20.247Z",
+      "isActive": true
+    },
+    {
+      "id": "b8bb",
+      "date": "2024-04-15T15:55:20.247Z",
+      "saleInvoiceNumber": "IVN-00005",
+      "deliveryReferenceNumber": "DRN-00005",
+      "description": "One XL-640 and one XL-180 returned. Error in ordering...",
+      "customer": "REDEMPTION PHARMACY",
+      "products": [
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 12,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 1
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 1
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "quantity": 2,
+          "unit": "Pcs",
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 0,
+          "availableQuantity": 21,
+          "quantityRequested": 2,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "82e8",
+          "name": "Genrui WP-21A Semi-Automated Systems",
+          "code": "WP-21A ",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "WP-21A",
+          "price": 799,
+          "subTotal": 0,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 0,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 0,
+          "availableQuantity": 0,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 0,
+          "availableQuantity": 2,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "quantity": 1,
+          "unit": "Pcs",
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 0,
+          "availableQuantity": 16,
+          "quantityRequested": 1,
+          "quantitySupplied": 1,
+          "quantityReturned": 0
+        }
+      ],
+      "total": 1450,
+      "createdAt": "2024-04-15T15:55:20.247Z",
+      "updatedAt": "2024-04-15T20:43:32.553Z",
+      "isActive": true
+    }
+  ],
+  "quotations": [
+    {
+      "id": "ab24",
+      "quotationNumber": "QN-0001",
+      "customer": "Biomedical Link ",
+      "tax": 0,
+      "subTotal": 6250,
+      "total": 6250,
+      "quotationStatus": "Pending",
+      "products": [
+        {
+          "id": "f3d1",
+          "name": "Mindray BA-88A Semi-Automated Systems",
+          "code": "BA-88A",
+          "unit": "Pcs",
+          "quantity": 2,
+          "lotNumber": "BA-88A-001",
+          "price": 850,
+          "subTotal": 1700,
+          "availableQuantity": 0
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 0
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        },
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 650,
+          "availableQuantity": 0
+        },
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 0
+        }
+      ],
+      "notes": "Submitted to client for review.",
+      "createdAt": "2024-04-24T22:29:49.188Z",
+      "updatedAt": "2024-04-24T23:30:02.500Z",
+      "isActive": true
+    },
+    {
+      "id": "1c29",
+      "quotationNumber": "QN-0002",
+      "customer": "UROCARE LIBERIA",
+      "tax": 0,
+      "subTotal": 3700,
+      "total": 3700,
+      "quotationStatus": "Cancelled",
+      "products": [
+        {
+          "id": "501b",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "code": "XL-180",
+          "unit": "Pcs",
+          "quantity": 2,
+          "lotNumber": "2301607",
+          "price": 650,
+          "subTotal": 1300,
+          "availableQuantity": 0
+        },
+        {
+          "id": "f3d1",
+          "name": "Mindray BA-88A Semi-Automated Systems",
+          "code": "BA-88A",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "BA-88A-001",
+          "price": 850,
+          "subTotal": 850,
+          "availableQuantity": 0
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 0
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        }
+      ],
+      "notes": "cancelled",
+      "createdAt": "2024-04-24T20:46:44.909Z",
+      "updatedAt": "2024-04-24T23:26:07.458Z",
+      "isActive": true
+    },
+    {
+      "id": "a580",
+      "quotationNumber": "QN-0003",
+      "customer": "REDEMPTION PHARMACY",
+      "tax": 0,
+      "subTotal": 10200,
+      "total": 10200,
+      "quotationStatus": "Complete",
+      "products": [
+        {
+          "id": "21a7",
+          "name": "Mindray BS-240 Fully Automated Chemistry Analyzer",
+          "code": "BS-240",
+          "unit": "Pcs",
+          "quantity": 4,
+          "lotNumber": "2301609",
+          "price": 800,
+          "subTotal": 3200,
+          "availableQuantity": 0
+        },
+        {
+          "id": "3003",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "code": "XL-200",
+          "unit": "Pcs",
+          "quantity": 2,
+          "lotNumber": "XL-200",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 0
+        },
+        {
+          "id": "cd6d",
+          "name": "Erba XL-640 Full Automated Chemistry Analyzer ",
+          "code": "XL-640 ",
+          "unit": "Pcs",
+          "quantity": 2,
+          "lotNumber": "XL-640",
+          "price": 800,
+          "subTotal": 1600,
+          "availableQuantity": 0
+        },
+        {
+          "id": "f3d1",
+          "name": "Mindray BA-88A Semi-Automated Systems",
+          "code": "BA-88A",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "BA-88A-001",
+          "price": 850,
+          "subTotal": 850,
+          "availableQuantity": 0
+        },
+        {
+          "id": "e396",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS480A",
+          "code": "GS480A",
+          "unit": "Pcs",
+          "quantity": 2,
+          "lotNumber": "GS480A",
+          "price": 750,
+          "subTotal": 1500,
+          "availableQuantity": 0
+        },
+        {
+          "id": "ff32",
+          "name": "Erba XL-1000 Full Automated Chemistry Analyzer",
+          "code": "XL-1000",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "XL-1000",
+          "price": 800,
+          "subTotal": 800,
+          "availableQuantity": 0
+        },
+        {
+          "id": "edd9",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+          "code": "GS300 Plus ",
+          "unit": "Pcs",
+          "quantity": 1,
+          "lotNumber": "2302808",
+          "price": 750,
+          "subTotal": 750,
+          "availableQuantity": 0
+        }
+      ],
+      "notes": "",
+      "createdAt": "2024-04-24T21:36:23.744Z",
+      "updatedAt": "2024-04-24T23:24:09.109Z",
+      "isActive": true
+    }
+  ],
+  "purchases": [
+    {
+      "id": "4bc3",
+      "date": "2024-04-26T20:36:15.177Z",
+      "purchaseOrderNumber": "PON-0002",
+      "supplier": "ERBAHMANHEIM",
+      "total": 12000,
+      "paid": 12000,
+      "paymentStatus": "Paid",
+      "purchaseStatus": "Complete",
+      "products": [
+        {
+          "id": "b67f6495",
+          "lotNumber": "XL-200",
+          "name": "Erba XL-200 Full Automated Chemistry Analyzer",
+          "unit": "Pcs",
+          "quantity": 15,
+          "price": 500,
+          "subTotal": 7500
+        },
+        {
+          "id": "f3379c0c",
+          "lotNumber": "2301607",
+          "name": "Erba XL-180 Full Automated Chemistry Analyzer",
+          "unit": "Pcs",
+          "quantity": 10,
+          "price": 450,
+          "subTotal": 4500
+        }
+      ],
+      "description": "Purchase complete. products recieved as expected.",
+      "createdAt": "2024-04-26T20:22:10.880Z",
+      "updatedAt": "2024-04-26T20:22:10.880Z"
+    },
+    {
+      "id": "18f7",
+      "date": "2024-04-27T09:14:10.171Z",
+      "purchaseOrderNumber": "PON-0001",
+      "supplier": "Gnerui",
+      "total": 17500,
+      "paid": 15000,
+      "paymentStatus": "Pending",
+      "purchaseStatus": "Pending",
+      "products": [
+        {
+          "id": "09a989e8",
+          "lotNumber": "2302809",
+          "name": "Talley Counter",
+          "unit": "Pcs",
+          "quantity": 15,
+          "price": 500,
+          "subTotal": 7500
+        },
+        {
+          "id": "ffaf9699",
+          "lotNumber": "2302808",
+          "name": "Genrui Fully Auto Chemistry Analyzer GS300 Plus",
+          "unit": "Pcs",
+          "quantity": 20,
+          "price": 500,
+          "subTotal": 10000
+        }
+      ],
+      "description": "Partly paid",
+      "createdAt": "2024-04-27T09:14:10.109Z",
+      "updatedAt": "2024-04-27T09:14:10.109Z"
+    }
+  ],
+  "purchase-returns": [],
+  "expenses": [],
+  "expense-categories": [],
+  "users": [
+    {
+      "id": "1",
+      "name": "test"
+    }
+  ],
+  "customers": [
+    {
+      "id": "cd6e",
+      "customerGroup": "General ",
+      "name": "Biomedical Link ",
+      "email": "biomedicallink@yahoo.com",
+      "phone": "0756866400",
+      "address": "20th Street ",
+      "city": "Monrovia ",
+      "state": "Liberia",
+      "country": "Liberia",
+      "contactPerson": {
+        "name": "John Doe",
+        "email": "johndoe@gmail.com",
+        "phone": "0756866400",
+        "isActive": true
+      },
+      "createdAt": "2024-04-05T20:08:15.954Z",
+      "updatedAt": "2024-04-06T09:20:09.199Z",
+      "isActive": true
+    },
+    {
+      "id": "307c",
+      "customerGroup": "General ",
+      "name": "UROCARE LIBERIA",
+      "email": "urocare@gmail.com",
+      "phone": "+231778371515",
+      "address": "Congo Town",
+      "city": "Monrovia",
+      "state": "Liberia",
+      "country": "Liberia",
+      "contactPerson": {
+        "name": "John Doe",
+        "email": "johndoe@gmail.com",
+        "phone": "+231778371515",
+        "isActive": true
+      },
+      "createdAt": "2024-04-09T16:12:03.799Z",
+      "updatedAt": "2024-04-09T16:12:03.799Z",
+      "isActive": true
+    },
+    {
+      "id": "7479",
+      "customerGroup": "Pharmacy",
+      "name": "REDEMPTION PHARMACY",
+      "email": "redemptionpharmacy@gmail.com",
+      "phone": "0775206012",
+      "address": "GARNESVILLE, LPRC ROAD",
+      "city": "GARNESVILLE",
+      "state": "Liberia",
+      "country": "Liberia",
+      "contactPerson": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "isActive": false
+      },
+      "createdAt": "2024-04-09T16:12:03.799Z",
+      "updatedAt": "2024-04-09T16:12:03.799Z",
+      "isActive": true
+    }
+  ],
+  "customer-groups": [
+    {
+      "id": "fd6d",
+      "name": "General ",
+      "createdAt": "2024-04-05T18:56:31.802Z",
+      "percentage": 10,
+      "isActive": true,
+      "updatedAt": "2024-04-05T19:16:48.125Z"
+    },
+    {
+      "id": "4ce8",
+      "name": "Pharmacy",
+      "createdAt": "2024-04-05T18:56:31.802Z",
+      "percentage": 0,
+      "isActive": true,
+      "updatedAt": "2024-04-05T18:56:31.802Z"
+    },
+    {
+      "id": "2bac",
+      "name": "Hospital",
+      "createdAt": "2024-04-05T18:56:31.802Z",
+      "percentage": 0,
+      "isActive": true,
+      "updatedAt": "2024-04-05T18:56:31.802Z"
+    },
+    {
+      "id": "78da",
+      "name": "Clinic",
+      "createdAt": "2024-04-05T18:56:31.802Z",
+      "percentage": 0,
+      "isActive": true,
+      "updatedAt": "2024-04-05T18:56:31.802Z"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "429e6626",
+      "name": "HEMOCUE AB",
+      "email": "Pierre.Costabel@hemocue.co.za",
+      "phone": "+27713859326",
+      "address": "262 23",
+      "city": "ANGELHOLM",
+      "state": "ANGELHOLM",
+      "country": "SWEDEN",
+      "contactPerson": {
+        "name": "John Doe",
+        "email": "john.doe@hemocue.co.za",
+        "phone": "+27713859326",
+        "isActive": true
+      },
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "",
+      "isActive": true
+    },
+    {
+      "id": "e99e",
+      "name": "Biorex Diagnostics Ltd",
+      "email": "info@biorexdiagnostics.com",
+      "phone": "+4402894 468786",
+      "address": "Unit 2C, Antrim Technology Park, Muckamore, BT41 1QS",
+      "city": "Muckamore",
+      "state": "",
+      "country": "United Kingdom",
+      "contactPerson": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "isActive": false
+      },
+      "createdAt": "2024-03-22T12:32:42.776Z",
+      "isActive": true
+    },
+    {
+      "id": "1ec6",
+      "name": "Gnerui",
+      "email": "gnerui@gmail.com",
+      "phone": "0776678621",
+      "address": "China",
+      "city": "China",
+      "state": "China",
+      "country": "China",
+      "contactPerson": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "isActive": false
+      },
+      "createdAt": "2024-04-26T20:08:42.655Z",
+      "updatedAt": "2024-04-26T20:08:42.655Z",
+      "isActive": true
+    },
+    {
+      "id": "0521",
+      "name": "ERBAHMANHEIM",
+      "email": "erba@gmail.com",
+      "phone": "0881845358",
+      "address": "Germany",
+      "city": "Germany",
+      "state": "Germany",
+      "country": "Germany",
+      "contactPerson": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "isActive": false
+      },
+      "createdAt": "2024-04-26T20:08:42.655Z",
+      "updatedAt": "2024-04-26T20:08:42.655Z",
+      "isActive": true
+    }
+  ],
+  "products-stock": [],
+  "inventory-logs": [],
+  "reports": [],
+  "settings": []
+}

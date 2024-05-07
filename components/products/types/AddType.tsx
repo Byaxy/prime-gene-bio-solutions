@@ -7,18 +7,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { Types } from "@/components/Types";
+import { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Types, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<ProductType, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   description: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 type AddTypeProps = {
   open: boolean;
@@ -36,24 +39,12 @@ export default function AddType({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
-      formData.append("json", JSON.stringify(data));
+      const response = await axios.post("http://localhost:5000/types", data);
 
-      const response = await fetch("/api/product-type/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      toast.success("Type added successfully");
-      return result;
+      if (response.status === 201) toast.success("Type added successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong");
     }
   };
 
@@ -61,8 +52,9 @@ export default function AddType({
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
+      handleClose();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -124,7 +116,7 @@ export default function AddType({
             variant="contained"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -133,7 +125,7 @@ export default function AddType({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

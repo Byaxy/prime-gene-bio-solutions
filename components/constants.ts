@@ -28,7 +28,22 @@ export const quotationStatus = [
     value: "Complete",
   },
   {
-    label: "Canceled",
-    value: "Canceled",
+    label: "Cancelled",
+    value: "Cancelled",
   },
 ];
+
+export const deliveryStatus = [
+  {
+    label: "Parking",
+    value: "Parking",
+  },
+  {
+    label: "Delivering",
+    value: "Delivering",
+  },
+  {
+    label: "Delivered",
+    value: "Delivered",
+  },
+]

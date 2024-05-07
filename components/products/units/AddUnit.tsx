@@ -9,16 +9,19 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Unit, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<Unit, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 type AddUnitProps = {
@@ -37,23 +40,11 @@ export default function AddUnit({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
-      formData.append("json", JSON.stringify(data));
-
-      const response = await fetch("/api/unit-of-measure/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-      toast.success("Unit added successfully");
-      return result;
+      const response = await axios.post("http://localhost:5000/units", data);
+      if (response.status === 201) toast.success("Unit added successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong ");
     }
   };
 
@@ -61,8 +52,9 @@ export default function AddUnit({
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
+      handleClose();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -121,7 +113,7 @@ export default function AddUnit({
             variant="contained"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -130,7 +122,7 @@ export default function AddUnit({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

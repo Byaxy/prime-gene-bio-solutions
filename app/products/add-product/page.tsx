@@ -5,16 +5,19 @@ import { Button, TextField, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import type { Product } from "@/components/Types";
+import type {
+  Brand,
+  Option,
+  Product,
+  ProductCategory,
+  ProductType,
+} from "@/components/Types";
 import { useForm } from "react-hook-form";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import { typesData } from "@/data/typesData";
-import { categoriesData } from "@/data/categoriesData";
-import { brandsData } from "@/data/brandsData";
-import { unitsData } from "@/data/unitsData";
+import axios from "axios";
 
-type FormInput = Omit<Product, "id" | "updatedAt" | "isActive" | "stock">;
+type FormInput = Omit<Product, "id">;
 
 const defaultValues: FormInput = {
   code: "",
@@ -24,67 +27,99 @@ const defaultValues: FormInput = {
   type: "",
   unit: "",
   category: "",
+  stock: [],
   cost: 0,
   price: 0,
   description: "",
   alertQuantity: 5,
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
-const typeOptions = typesData.map((type) => ({
-  label: type.name,
-  value: type.name,
-}));
-
-const categoryOptions = categoriesData.map((category) => ({
-  label: category.name,
-  value: category.name,
-}));
-
-const brandOptions = brandsData.map((brand) => ({
-  label: brand.name,
-  value: brand.name,
-}));
-
-const unitOptions = unitsData.map((unit) => ({
-  label: unit.name,
-  value: unit.name,
-}));
 
 const AddProductPage = () => {
-  const router = useRouter();
+  const [imageUrl, setImageUrl] = useState<string>("/placeholder.jpg");
+  const [typeOptions, setTypeOptions] = useState<Option[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
+  const [brandOptions, setBrandOptions] = useState<Option[]>([]);
+  const [unitOptions, setUnitOptions] = useState<Option[]>([]);
 
   const { register, handleSubmit, reset, formState, control, watch } =
     useForm<FormInput>({
       defaultValues: defaultValues,
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
+  const router = useRouter();
   const watchCost = watch("cost");
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
       const newData = { ...data, image: imageUrl };
 
-      formData.append("json", JSON.stringify(newData));
+      const response = await axios.post(
+        "http://localhost:5000/products",
+        newData
+      );
 
-      const response = await fetch("/api/product/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-      toast.success("Product added successfully");
-      return result;
+      if (response.status === 201) {
+        toast.success("Product Added Successfully");
+      }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong");
     }
   };
+
+  useEffect(() => {
+    try {
+      // Fetch product types
+      const fetchTypeOptions = async () => {
+        const { data } = await axios.get("http://localhost:5000/types");
+        const options = data.map((option: ProductType) => ({
+          label: option.name,
+          value: option.name,
+        }));
+        setTypeOptions(options);
+      };
+      fetchTypeOptions();
+
+      // Fetch product categories
+      const fetchCategoryOptions = async () => {
+        const { data } = await axios.get("http://localhost:5000/categories");
+        const options = data.map((option: ProductCategory) => ({
+          label: option.name,
+          value: option.name,
+        }));
+        setCategoryOptions(options);
+      };
+      fetchCategoryOptions();
+
+      // Fetch product brands
+      const fetchBrandOptions = async () => {
+        const { data } = await axios.get("http://localhost:5000/brands");
+        const options = data.map((option: Brand) => ({
+          label: option.name,
+          value: option.name,
+        }));
+        setBrandOptions(options);
+      };
+      fetchBrandOptions();
+
+      // Fetch product units
+      const fetchUnitOptions = async () => {
+        const { data } = await axios.get("http://localhost:5000/units");
+        const options = data.map((option: Brand) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        setUnitOptions(options);
+      };
+      fetchUnitOptions();
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   // Reset form to defaults on Successfull submission of data
   useEffect(() => {
@@ -109,11 +144,11 @@ const AddProductPage = () => {
         </Typography>
         <Button
           onClick={router.back}
-          variant="outlined"
-          className="flex flex-row items-center justify-center gap-1"
+          variant="contained"
+          className="flex flex-row items-center justify-center gap-1 bg-primaryColor/95 text-white hover:bg-primaryColor"
         >
           <ArrowBackIcon />
-          <span className="text-primaryDark font-medium capitalize sm:text-lg">
+          <span className="text-white font-medium capitalize sm:text-lg">
             Back
           </span>
         </Button>
@@ -132,9 +167,9 @@ const AddProductPage = () => {
                 {imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={imageUrl === null ? "/placeholder.jpg" : imageUrl}
+                    src={imageUrl}
                     alt="Preview"
-                    className="object-cover w-full h-full"
+                    className="object-cover w-full h-full rounded-lg"
                   />
                 )}
               </div>
@@ -142,7 +177,7 @@ const AddProductPage = () => {
                 uploadPreset="prime-gene-biomedical-solutions"
                 options={{
                   multiple: false,
-                  clientAllowedFormats: ["jpg", "png", "webp", "svg"],
+                  clientAllowedFormats: ["jpg", "jpeg", "png", "webp", "svg"],
                   sources: ["local", "url", "dropbox", "google_drive"],
                 }}
                 onSuccess={(result) => {
@@ -159,7 +194,7 @@ const AddProductPage = () => {
                       className="capitalize"
                       onClick={() => open()}
                     >
-                      Upload an Image
+                      Upload Image
                     </Button>
                   );
                 }}
@@ -392,32 +427,33 @@ const AddProductPage = () => {
                 type="number"
                 label="Alert Quantity"
                 variant="outlined"
+                inputProps={{ min: 1 }}
                 {...register("alertQuantity", {
                   required: true,
                   valueAsNumber: true,
                   validate: (value) => value > 0,
+                  min: {
+                    value: 1,
+                    message: "Alert Quantity cannot be Zero",
+                  },
                 })}
                 error={!!errors.alertQuantity}
-                helperText={
-                  errors.price
-                    ? "Alert Quantity is required and cannot be Zero"
-                    : ""
-                }
+                helperText={errors.alertQuantity?.message}
               />
             </div>
           </div>
         </div>
         <div className="flex flex-row gap-4 items-center justify-end mt-10 sm:mt-16">
           <Button
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white outline-redColor"
-            variant="outlined"
+            className="cancelBtn"
+            variant="contained"
             size="large"
             onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
           >
             Cancel
           </Button>
           <Button
-            className="font-bold"
+            className="saveBtn"
             type="submit"
             variant="contained"
             onClick={handleSubmit(onSubmit)}

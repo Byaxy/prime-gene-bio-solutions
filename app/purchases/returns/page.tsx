@@ -6,7 +6,7 @@ import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
 import ListComponent from "@/components/ListComponent";
-import AddReturn from "@/components/returns/AddReturn";
+import AddReturn from "@/components/sales/returns/AddReturn";
 
 export default function PurchasesReturnsPage() {
   const [add, setAdd] = useState<boolean>(false);

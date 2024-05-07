@@ -14,9 +14,11 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { Supplier } from "@/components/Types";
+import type { Supplier } from "@/components/Types";
+import toast from "react-hot-toast";
+import axios from "axios";
 
-type FormInput = Omit<Supplier, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<Supplier, "id">;
 
 const defaultValues: FormInput = {
   name: "",
@@ -26,8 +28,10 @@ const defaultValues: FormInput = {
   city: "",
   state: "",
   country: "",
-  contactPerson: { name: "", email: "", phone: "", isActive: true },
+  contactPerson: { name: "", email: "", phone: "", isActive: false },
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 type AddSupplierProps = {
@@ -40,27 +44,50 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
     defaultValues: defaultValues,
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [value, setValue] = useState<boolean>(true);
+  const [contactPersonStatus, setContactPersonStatus] =
+    useState<boolean>(false);
+  const [supplierStatus, setSupplierStatus] = useState<boolean>(true);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value === "true");
+  const handleContactPersonStatusChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setContactPersonStatus(event.target.value === "true");
+  };
+
+  const handleSupplierStatusChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSupplierStatus(event.target.value === "true");
   };
 
   const onSubmit = async (data: FormInput) => {
     try {
       // Handle form data with corresponding API call
-      console.log(data);
+      const newData = {
+        ...data,
+        isActive: supplierStatus,
+        contactPerson: { ...data.contactPerson, isActive: contactPersonStatus },
+      };
+      const response = await axios.post(
+        "http://localhost:5000/suppliers",
+        newData
+      );
+      if (response.status === 201) {
+        toast.success("Supplier Added Successfully");
+      }
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong!");
     }
   };
 
   // Reset form to defaults on Successfull submission of data
   useEffect(() => {
     if (isSubmitSuccessful) {
+      setSupplierStatus(true);
+      setContactPersonStatus(false);
       reset();
     }
-    console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
 
   return (
@@ -78,11 +105,11 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-5 w-full">
@@ -114,7 +141,7 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                   </FormLabel>
                   <TextField
                     id="email"
-                    type="text"
+                    type="email"
                     label="Email"
                     {...register("email", {
                       required: "Email is required",
@@ -132,10 +159,11 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                   <TextField
                     id="phone"
                     type="tel"
-                    label="xxx-xxx-xxxx"
+                    label="Phone Number"
+                    placeholder="(123)4567890"
                     {...register("phone", {
                       required: true,
-                      pattern: /^\d{10}$/,
+                      pattern: /^(\+)?(\()?(\d ?){6,14}\d(\))?$/,
                     })}
                     error={!!errors.phone}
                     helperText={
@@ -210,8 +238,37 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                   />
                 </div>
               </div>
+              <div className="flex flex-col w-full gap-2">
+                <FormLabel
+                  htmlFor="supplierStatus"
+                  className="text-primaryDark font-semibold"
+                >
+                  Supplier Status
+                </FormLabel>
+                <RadioGroup
+                  id="supplierStatus"
+                  row
+                  aria-labelledby="Supplier status"
+                  name="isActive"
+                  value={supplierStatus}
+                  onChange={handleSupplierStatusChange}
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio className="text-primaryDark" />}
+                    label="Active"
+                    className="text-primaryDark"
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio className="text-primaryDark" />}
+                    label="Not Active"
+                    className="text-primaryDark"
+                  />
+                </RadioGroup>
+              </div>
             </div>
-            <span className="text-primaryDark font-semibold text-xl block mt-8 mb-2">
+            <span className="text-primaryDark font-semibold text-xl block mt-16 mb-2">
               Contact Person Details
             </span>
             <div className="flex flex-col gap-5 w-full">
@@ -224,6 +281,7 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                     id="contactPersonName"
                     type="text"
                     label="Name"
+                    aria-label="Contact Person Name"
                     {...register("contactPerson.name")}
                   />
                 </div>
@@ -237,24 +295,25 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                     id="contactPersonEmail"
                     type="email"
                     label="Email"
+                    aria-label="Email"
                     {...register("contactPerson.email")}
                   />
                 </div>
               </div>
               <div className="flex flex-col w-full gap-2">
                 <FormLabel
-                  htmlFor="contact-person-status"
+                  htmlFor="contactPersonStatus"
                   className="text-primaryDark font-semibold"
                 >
                   Status
                 </FormLabel>
                 <RadioGroup
-                  id="contact-person-status"
+                  id="contactPersonStatus"
                   row
-                  aria-labelledby="contact-person-status"
+                  aria-labelledby="Contact person status"
                   name="contactPerson.isActive"
-                  value={value}
-                  onChange={handleChange}
+                  value={contactPersonStatus}
+                  onChange={handleContactPersonStatusChange}
                 >
                   <FormControlLabel
                     value={true}
@@ -280,6 +339,7 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                   id="phone"
                   type="tel"
                   label="xxx-xxx-xxxx"
+                  aria-labelledby="Phone Number"
                   {...register("contactPerson.phone", {
                     pattern: /^\d{10}$/,
                   })}
@@ -299,7 +359,7 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
             variant="outlined"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white border-0 hover:border-0"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -308,6 +368,8 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="saveBtn"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

@@ -5,34 +5,19 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { suppliersData } from "@/data/suppliersData";
-import { Supplier } from "../Types";
+import type { Supplier } from "../Types";
 
 type ViewSupplierDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  supplierID: string;
+  supplier: Supplier;
 };
 
 export default function ViewSupplierDetails({
   open,
   handleClose,
-  supplierID,
+  supplier,
 }: ViewSupplierDetailsProps) {
-  const [supplier, setSupplier] = useState<Supplier | null>(null);
-
-  useEffect(() => {
-    let supplierDetails = suppliersData.find(
-      (supplier) => supplier.id === supplierID
-    );
-    if (supplierDetails) {
-      setSupplier(supplierDetails);
-    }
-  }, [supplierID]);
-
-  if (!supplier) {
-    return null;
-  }
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -47,7 +32,7 @@ export default function ViewSupplierDetails({
           />
         </DialogTitle>
         <DialogContent>
-          <Table size="medium">
+          <Table size="small">
             <TableBody>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
@@ -71,6 +56,14 @@ export default function ViewSupplierDetails({
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
                   {supplier.phone}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Status
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {supplier.isActive ? "Active" : "Not Active"}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -111,7 +104,7 @@ export default function ViewSupplierDetails({
             Contact Person Details
           </h3>
           {supplier.contactPerson ? (
-            <Table size="medium">
+            <Table size="small">
               <TableBody>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
@@ -158,7 +151,7 @@ export default function ViewSupplierDetails({
             variant="contained"
             size="large"
             onClick={handleClose}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white border-0 hover:border-0"
+            className="cancelBtn"
           >
             Close
           </Button>

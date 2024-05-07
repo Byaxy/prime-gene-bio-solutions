@@ -8,20 +8,22 @@ import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
-import Image from "next/image";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Brand, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<Brand, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   image: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 type AddBrandProps = {
@@ -41,24 +43,17 @@ export default function AddBrand({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
       const newData = { ...data, image: imageUrl };
-      formData.append("json", JSON.stringify(newData));
 
-      const response = await fetch("/api/product-brand/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/brands",
+        newData
+      );
 
-      const result = await response.json();
-      toast.success("Brand added successfully");
-      return result;
+      if (response.status === 201) toast.success("Brand added successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong");
     }
   };
 
@@ -67,8 +62,9 @@ export default function AddBrand({
     if (isSubmitSuccessful) {
       reset();
       setImageUrl("/placeholder.jpg");
+      handleClose();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -150,7 +146,7 @@ export default function AddBrand({
                         className="capitalize"
                         onClick={() => open()}
                       >
-                        Upload an Image
+                        Upload Image
                       </Button>
                     );
                   }}
@@ -164,7 +160,7 @@ export default function AddBrand({
             size="large"
             variant="contained"
             onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -173,7 +169,7 @@ export default function AddBrand({
             variant="contained"
             size="large"
             onClick={handleSubmit(onSubmit)}
-            className="font-bold"
+            className="saveBtn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

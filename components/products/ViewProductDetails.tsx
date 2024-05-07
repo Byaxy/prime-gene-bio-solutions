@@ -1,54 +1,28 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import Image from "next/image";
-import { allProductsData } from "@/data/allProductsData";
+import { CldImage } from "next-cloudinary";
 import type { Product } from "@/components/Types";
-
-type ProductType = {
-  date: string;
-  code: string;
-  name: string;
-  image: string;
-  brand: string;
-  type: string;
-  category: string;
-  cost: number;
-  price: number;
-  quantity: number | null;
-  unit: string;
-  alertQuantity: number;
-};
 
 type ViewProductDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  productID: string;
+  product: Product;
 };
 
 export default function ViewProductDetails({
   open,
   handleClose,
-  productID,
+  product,
 }: ViewProductDetailsProps) {
-  const [product, setProduct] = useState<Product | null>(null);
+  const quantity = product.stock?.reduce(
+    (qty: number, obj: { quantity: number }) => qty + obj.quantity,
+    0
+  );
 
-  useEffect(() => {
-    let productDetails = allProductsData.find(
-      (product) => product.id === productID
-    );
-    if (productDetails) {
-      setProduct(productDetails);
-    }
-  }, [productID]);
-
-  if (!product) {
-    return null;
-  }
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -63,77 +37,118 @@ export default function ViewProductDetails({
           />
         </DialogTitle>
         <DialogContent>
-          <div className="flex flex-col sm:flex-row gap-5">
-            <div className="relative object-cover overflow-hidden flex-1 max-h-[220px] min-w-[120px] min-h-[120px]">
-              <Image alt="" src={product.image} fill />
-            </div>
-            <Table size="medium" className="flex-[1.75]">
+          <div className="flex flex-col gap-10">
+            <CldImage
+              alt="Product Image"
+              src={product.image}
+              height={200}
+              width={300}
+              className="rounded-lg"
+            />
+            <Table size="small">
               <TableBody>
                 <TableRow>
-                  <TableCell className="font-semibold w-[150px] text-lg">
+                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Date of Registration
                   </TableCell>
-                  <TableCell className="text-[17px]">
-                    {product.createdAt.toDateString()}
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {new Date(product.createdAt).toDateString()}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold text-lg">Name</TableCell>
-                  <TableCell className="text-[17px]">{product.name}</TableCell>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Name
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.name}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold text-lg">Code</TableCell>
-                  <TableCell className="text-[17px]">{product.code}</TableCell>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Code
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.code}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold text-lg">
+                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Category
                   </TableCell>
-                  <TableCell className="text-[17px]">
+                  <TableCell className="text-[17px] text-primaryDark">
                     {product.category}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold text-lg">Brand</TableCell>
-                  <TableCell className="text-[17px]">{product.brand}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg">Type</TableCell>
-                  <TableCell className="text-[17px]">{product.type}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg">Unit</TableCell>
-                  <TableCell className="text-[17px]">{product.unit}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg">Cost</TableCell>
-                  <TableCell className="text-[17px]">
-                    {product.cost.toFixed(2)}
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Brand
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.brand}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold text-lg">Price</TableCell>
-                  <TableCell className="text-[17px]">
-                    {product.price.toFixed(2)}
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Type
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.type}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold text-lg">
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Unit
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.unit}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Cost
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.cost}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Price
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.price}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Quantity
                   </TableCell>
-                  <TableCell className="text-[17px]">
-                    {product.stock.reduce(
-                      (total, stock) => total + stock.quantity,
-                      0
-                    )}
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {quantity}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="font-semibold text-lg">
+                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Alert Quantity
                   </TableCell>
-                  <TableCell className="text-[17px]">
+                  <TableCell className="text-[17px] text-primaryDark">
                     {product.alertQuantity}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Last Updated
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {new Date(product.updatedAt).toDateString()}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Description
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {product.description}
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -145,7 +160,7 @@ export default function ViewProductDetails({
             variant="contained"
             size="large"
             onClick={handleClose}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Close
           </Button>

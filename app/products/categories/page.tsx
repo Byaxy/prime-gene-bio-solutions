@@ -1,78 +1,114 @@
 "use client";
-import React, { useCallback, useState } from "react";
-import { categoriesData } from "@/data/categoriesData";
+import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import ListComponent from "@/components/ListComponent";
 import AddCategory from "@/components/products/categories/AddCategory";
 import ViewCategoryDetails from "@/components/products/categories/ViewCategoryDetails";
-import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const columns = [
-  {
-    name: "Date",
-    selector: (row: { createdAt: Date }) => row.createdAt.toDateString(),
-    width: "180px",
-  },
-  {
-    name: "Code",
-    selector: (row: { code: string }) => row.code,
-    width: "180px",
-  },
-  {
-    name: "Name",
-    selector: (row: { name: string }) => row.name,
-  },
-  {
-    name: "Description",
-    selector: (row: { description: string }) => row.description,
-  },
-  {
-    name: "Parent Category",
-    cell: (row: { parentCategory: string }) =>
-      row.parentCategory ? row.parentCategory : "None",
-  },
-  {
-    name: "Actions",
-    cell: (row: { id: string }) => [
-      <Link
-        href={`/settings/products-categories/edit-category/${row.id}`}
-        key={row.id}
-      >
-        <EditIcon sx={{ color: "#475BE8" }} />
-      </Link>,
-      <Link key={row.id} href="/settings/products-categories">
-        <DeleteIcon color="error" />
-      </Link>,
-    ],
-    width: "120px",
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      gap: "5px",
-    },
-  },
-];
+import axios from "axios";
+import type { ProductCategory } from "@/components/Types";
+import DeleteCategory from "@/components/products/categories/DeleteCategory";
+import EditCategory from "@/components/products/categories/EditCategory";
 
 export default function ProductCategoriesPage() {
   const [add, setAdd] = useState<boolean>(false);
   const [view, setView] = useState<boolean>(false);
-  const [categoryID, setCategoryID] = useState<string>("1");
+  const [edit, setEdit] = useState<boolean>(false);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [categories, setCategories] = useState<ProductCategory[]>([]);
+  const [selectedRow, setSelectedRow] = useState<ProductCategory>(
+    {} as ProductCategory
+  );
+
+  const columns = [
+    {
+      name: "Date",
+      selector: (row: { createdAt: Date }) =>
+        new Date(row.createdAt).toDateString(),
+      width: "180px",
+    },
+    {
+      name: "Code",
+      selector: (row: { code: string }) => row.code,
+      width: "180px",
+    },
+    {
+      name: "Name",
+      selector: (row: { name: string }) => row.name,
+    },
+    {
+      name: "Description",
+      selector: (row: { description: string }) => row.description,
+    },
+    {
+      name: "Parent Category",
+      cell: (row: { parentCategory: string }) => row.parentCategory,
+    },
+    {
+      name: "Actions",
+      cell: (row: ProductCategory) => [
+        <span
+          key={"edit" + row.id}
+          onClick={() => onEdit(row)}
+          className="text-[#475BE8] py-1 px-2 hover:bg-white hover:rounded-md transition"
+        >
+          <EditIcon />
+        </span>,
+        <span
+          key={"delete" + row.id}
+          onClick={() => onDelete(row)}
+          className="text-redColor py-1 px-2 hover:bg-white hover:rounded-md transition"
+        >
+          <DeleteIcon />
+        </span>,
+      ],
+      width: "90px",
+      style: {
+        display: "flex",
+        justifyContent: "center",
+      },
+    },
+  ];
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
   }, []);
 
+  const onEdit = (row: ProductCategory) => {
+    setSelectedRow(row);
+    setEdit(true);
+  };
+
+  const onDelete = (row: ProductCategory) => {
+    setSelectedRow(row);
+    setConfirmDelete(true);
+  };
+
   const handleClose = useCallback((): void => {
-    setView(false);
     setAdd(false);
+    setView(false);
+    setEdit(false);
+    setConfirmDelete(false);
   }, []);
-  const onRowClicked = (row: { id: string }) => {
-    setCategoryID(row.id);
+  const onRowClicked = (row: ProductCategory) => {
+    setSelectedRow(row);
     setView(true);
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/categories");
+        setCategories(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, [categories]);
 
   return (
     <ListComponent
@@ -82,13 +118,23 @@ export default function ProductCategoriesPage() {
     >
       <>
         <AddCategory open={add} handleClose={handleClose} />
+        <EditCategory
+          open={edit}
+          handleClose={handleClose}
+          category={selectedRow}
+        />
         <ViewCategoryDetails
           open={view}
           handleClose={handleClose}
-          categoryID={categoryID}
+          category={selectedRow}
+        />
+        <DeleteCategory
+          open={confirmDelete}
+          handleClose={handleClose}
+          category={selectedRow}
         />
         <DataTable
-          data={categoriesData}
+          data={categories}
           columns={columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}

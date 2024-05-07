@@ -7,30 +7,20 @@ import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { unitsData } from "@/data/unitsData";
 import type { Unit } from "@/components/Types";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 type ViewUnitDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  unitID: string;
+  unit: Unit;
 };
 
 export default function ViewUnitDetails({
   open,
   handleClose,
-  unitID,
+  unit,
 }: ViewUnitDetailsProps) {
-  const [unit, setUnit] = useState<Unit | null>(null);
-
-  useEffect(() => {
-    let unitDetails = unitsData.find((unit) => unit.id === unitID);
-    if (unitDetails) {
-      setUnit(unitDetails);
-    }
-  }, [unitID]);
-
-  if (!unit) {
-    return null;
-  }
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -45,23 +35,39 @@ export default function ViewUnitDetails({
           />
         </DialogTitle>
         <DialogContent>
-          <Table size="medium">
+          <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Date of Registration
                 </TableCell>
-                <TableCell className="text-[17px]">
-                  {unit.createdAt.toDateString()}
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(unit.createdAt).toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Name</TableCell>
-                <TableCell className="text-[17px]">{unit.name}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Name
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {unit.name}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Code</TableCell>
-                <TableCell className="text-[17px]">{unit.code}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Code
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {unit.code}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last Updated
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(unit.updatedAt).toDateString()}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -71,7 +77,7 @@ export default function ViewUnitDetails({
             variant="contained"
             size="large"
             onClick={handleClose}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Close
           </Button>

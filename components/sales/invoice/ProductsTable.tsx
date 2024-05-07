@@ -12,18 +12,25 @@ const columns = [
     name: "Name",
     selector: (row: { name: string }) => row.name,
   },
-
   {
     name: "Quantity",
-    selector: (row: { quantity: number }) => row.quantity,
+    cell: (row: { quantity: number; unit: string }) => (
+      <span>
+        {row.quantity}
+        {row.unit}{" "}
+      </span>
+    ),
+    width: "100px",
   },
   {
     name: "Unit Price",
-    selector: (row: { price: number }) => row.price,
+    cell: (row: { price: number }) => <span>${row.price}</span>,
+    width: "100px",
   },
   {
     name: "Sub Total",
-    selector: (row: { subTotal: number }) => row.subTotal,
+    cell: (row: { subTotal: number }) => <span>${row.subTotal}</span>,
+    width: "100px",
   },
 ];
 

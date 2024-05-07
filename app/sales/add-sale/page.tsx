@@ -22,13 +22,16 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import type { Sale, SaleProduct } from "@/components/Types";
-import type { Product } from "@/components/Types";
+import type {
+  Customer,
+  Option,
+  Sale,
+  SaleProduct,
+  Product,
+} from "@/components/Types";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import { customersData } from "@/data/customersData";
-import { allProductsData } from "@/data/allProductsData";
 import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
@@ -36,19 +39,30 @@ import {
 import toast from "react-hot-toast";
 import { paymentStatus } from "@/components/constants";
 import { saleStatus } from "@/components/constants";
+import axios from "axios";
 
-type FormInput = Omit<Sale, "id" | "updatedAt" | "isActive">;
-type Options = {
-  label: string;
-  value: string;
-};
+type FormInput = Omit<Sale, "id">;
 
-const tax: number = 10;
+const tax: number = 0;
 
-const customers: Options[] = customersData.map((customer) => ({
-  label: customer.name,
-  value: customer.name,
-}));
+const InvoiceColumns = [
+  "Code",
+  "Name",
+  "Lot No.",
+  "Unit Price",
+  "Quantity",
+  "Sub Total",
+  "Actions",
+];
+const dialogColumns = [
+  "Name",
+  "Lot No.",
+  "Available Qnty",
+  "Unit Price",
+  "Quantity",
+  "Sub Total",
+  "Actions",
+];
 
 const defaultValues: FormInput = {
   invoiceNumber: "",
@@ -63,6 +77,8 @@ const defaultValues: FormInput = {
   products: [],
   notes: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 export default function AddSalePage() {
@@ -72,8 +88,9 @@ export default function AddSalePage() {
   const [lotNumber, setLotNumber] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
   const [availableQuantity, setAvailableQuantity] = useState<number>(0);
+  const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([
-    ...allProductsData,
+    ...products,
   ]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -81,6 +98,7 @@ export default function AddSalePage() {
   const [total, setTotal] = useState<number>(0);
   const [grandTotal, setGrandTotal] = useState<number>(0);
   const [taxAmount, setTaxAmount] = useState<number>(0);
+  const [customerOptions, setCustomerOptions] = useState<Option[]>([]);
 
   const handleCloseModal = () => {
     setSelectedProduct(null);
@@ -118,15 +136,45 @@ export default function AddSalePage() {
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   useEffect(() => {
-    let searchedProducts = allProductsData.filter((product) => {
+    let searchedProducts = products.filter((product) => {
       return (
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.code.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
     setFilteredProducts(searchedProducts);
-  }, [searchTerm]);
+  }, [products, searchTerm]);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/products");
+        setProducts(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProducts();
+
+    const fetchCustomerOptions = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:5000/customers");
+        const options = data.map((option: Customer) => ({
+          label: option.name,
+          value: option.name,
+        }));
+
+        setCustomerOptions(options);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCustomerOptions();
+  }, [products, customerOptions]);
+
+  // add product to list of sold products
   const handleAddProduct = (product: Product) => {
     if (!lotNumber) {
       toast.error("Please select lot number");
@@ -143,6 +191,7 @@ export default function AddSalePage() {
         id: product.id,
         name: product.name,
         code: product.code,
+        unit: product.unit,
         quantity: quantity,
         lotNumber: lotNumber,
         price: product.price,
@@ -163,23 +212,26 @@ export default function AddSalePage() {
     toast.success("Product deleted successfully");
   };
 
+  // calculate total
   const getTotal = (saleProducts: SaleProduct[]): number =>
     saleProducts.reduce(
       (accumulator, currentValue) => accumulator + currentValue.subTotal,
       0
     );
 
+  // calculate grand total
   const getGrandTotal = (total: number, tax: number): number =>
     (total * tax) / 100 + total;
 
+  // calculate tax amount
   const getTaxAmount = (total: number, tax: number): number =>
     (total * tax) / 100;
 
+  // Submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
       if (saleProducts.length === 0) {
-        toast.error("Please add atleast one products");
+        toast.error("Please add atleast one product");
         return;
       }
 
@@ -191,20 +243,13 @@ export default function AddSalePage() {
         total: grandTotal,
       };
 
-      formData.append("json", JSON.stringify(newData));
-      const response = await fetch("/api/sales/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-      const result = await response.json();
-      toast.success("Sale added successfully");
-      return result;
+      const response = await axios.post("http://localhost:5000/sales", newData);
+      if (response.status === 201) {
+        toast.success("Sale added successfully");
+      }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong");
     }
   };
 
@@ -228,16 +273,6 @@ export default function AddSalePage() {
     }
   }, [isSubmitSuccessful, reset]);
 
-  const columns = [
-    "Name",
-    "Lot No.",
-    "Available Quantity",
-    "Unit Price",
-    "Quantity",
-    "Sub Total",
-    "Actions",
-  ];
-
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
       <div className="flex items-center justify-between w-full gap-5">
@@ -253,11 +288,11 @@ export default function AddSalePage() {
         </Typography>
         <Button
           onClick={router.back}
-          variant="outlined"
-          className="flex flex-row items-center justify-center gap-1"
+          variant="contained"
+          className="flex flex-row items-center justify-center gap-1 bg-primaryColor/95 text-white hover:bg-primaryColor"
         >
           <ArrowBackIcon />
-          <span className="text-primaryDark font-medium capitalize sm:text-lg">
+          <span className="text-white font-medium capitalize sm:text-lg">
             Back
           </span>
         </Button>
@@ -312,7 +347,7 @@ export default function AddSalePage() {
                 id="customer"
                 control={control}
                 label="Select Customer"
-                options={customers}
+                options={customerOptions}
                 {...register("customer", { required: "Customer is required" })}
               />
               {errors.customer && (
@@ -344,7 +379,7 @@ export default function AddSalePage() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: "bottom",
+                vertical: "top",
                 horizontal: "left",
               }}
             >
@@ -359,13 +394,13 @@ export default function AddSalePage() {
                 <Table size="small">
                   <TableHead>
                     <TableRow className="bg-primaryColor font-semibold text-lg">
-                      <TableCell className="text-white text-lg w-24">
+                      <TableCell className="text-white text-lg w-32">
                         Code
                       </TableCell>
                       <TableCell className="text-white text-lg">Name</TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
+                  <TableBody className="overflow-y-scroll">
                     {filteredProducts.map((product, index) => (
                       <TableRow
                         key={product.id + index}
@@ -388,7 +423,7 @@ export default function AddSalePage() {
               <Dialog
                 open={openModal}
                 onClose={handleCloseModal}
-                maxWidth="md"
+                maxWidth="lg"
                 fullWidth
               >
                 <DialogTitle className="flex justify-between items-center">
@@ -405,7 +440,7 @@ export default function AddSalePage() {
                   <Table size="small">
                     <TableHead>
                       <TableRow className="bg-primaryColor">
-                        {columns.map((column, index) => (
+                        {dialogColumns.map((column, index) => (
                           <TableCell
                             key={column + index}
                             className="text-white font-semibold last:hidden"
@@ -418,7 +453,7 @@ export default function AddSalePage() {
                     <TableBody>
                       {selectedProduct ? (
                         <TableRow>
-                          <TableCell className="text-primaryDark">
+                          <TableCell className="text-primaryDark font-semibold">
                             {selectedProduct.code} - {selectedProduct.name}
                           </TableCell>
                           <TableCell className="text-primaryDark">
@@ -501,7 +536,7 @@ export default function AddSalePage() {
           <Table size="small">
             <TableHead>
               <TableRow className="bg-primaryColor">
-                {columns.map((column, index) => (
+                {InvoiceColumns.map((column, index) => (
                   <TableCell
                     key={index + column}
                     className="text-white font-semibold text-lg"
@@ -516,21 +551,20 @@ export default function AddSalePage() {
                 <>
                   {saleProducts.map((product, index) => (
                     <TableRow key={index + product.id}>
+                      <TableCell className="text-primaryDark text-lg font-semibold">
+                        {product.code}
+                      </TableCell>
                       <TableCell className="text-primaryDark text-lg">
-                        <span>{product.code}</span> -{" "}
-                        <span>{product.name}</span>
+                        {product.name}
                       </TableCell>
                       <TableCell className="text-primaryDark text-lg">
                         {product.lotNumber}
                       </TableCell>
                       <TableCell className="text-primaryDark text-lg">
-                        {product.availableQuantity}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
                         {product.price}
                       </TableCell>
                       <TableCell className="text-primaryDark text-lg">
-                        {product.quantity}
+                        {product.quantity} {product.unit}
                       </TableCell>
                       <TableCell className="text-primaryDark text-lg">
                         {product.subTotal}
@@ -671,6 +705,7 @@ export default function AddSalePage() {
               id="paid"
               type="number"
               label="Amount Paid"
+              inputProps={{ min: 0 }}
               variant="outlined"
               {...register("paid", {
                 required: "Amount Paid is required",
@@ -703,7 +738,7 @@ export default function AddSalePage() {
             <Button
               variant="contained"
               size="large"
-              className="font-bold bg-redColor/95 hover:bg-redColor"
+              className="cancelBtn"
               onClick={() => reset()}
             >
               Cancel
@@ -711,7 +746,7 @@ export default function AddSalePage() {
             <Button
               variant="contained"
               size="large"
-              className="font-bold"
+              className="saveBtn"
               onClick={handleSubmit(onSubmit)}
               type="submit"
               disabled={isSubmitting}

@@ -45,7 +45,7 @@ export default function ListPage({
           <Button
             onClick={() => router.push(buttonPath)}
             variant="contained"
-            className="flex flex-row items-center  bg-primaryColor text-white hover:bg-primaryColor/95 justify-center gap-1"
+            className="flex flex-row items-center  bg-primaryColor/95 text-white hover:bg-primaryColor justify-center gap-1"
           >
             <AddIcon />
             <span className="text-white font-medium capitalize sm:text-lg">

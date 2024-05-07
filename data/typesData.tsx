@@ -1,7 +1,7 @@
-import type { Types } from "@/components/Types";
+import type { ProductType } from "@/components/Types";
 import { generateId } from "@/components/utils";
 
-export const typesData: Types[] = [
+export const typesData: ProductType[] = [
   {
     id: generateId(),
     createdAt: new Date(),

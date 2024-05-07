@@ -7,17 +7,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { CustomerGroups } from "@/components/Types";
+import type { CustomerGroup } from "@/components/Types";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<CustomerGroups, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<CustomerGroup, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   createdAt: new Date(),
   percentage: 0,
+  isActive: true,
+  updatedAt: new Date(),
 };
 
 type AddCustomerGroupProps = {
@@ -35,15 +39,27 @@ export default function AddCustomerGroup({
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const onSubmit = async (data: FormInput) => {
-    console.log(data);
-    console.log(isSubmitSuccessful);
+    try {
+      // Handle form data with corresponding API call
+      const response = await axios.post(
+        "http://localhost:5000/customer-groups",
+        data
+      );
+      if (response.status === 201) {
+        toast.success("Customer Group Added Successfully");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+    }
   };
 
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
+      handleClose();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -83,13 +99,14 @@ export default function AddCustomerGroup({
               />
               <FormLabel htmlFor="percentage">
                 <span className="text-primaryDark font-semibold">
-                  Peercentage
+                  Discount Percentage
                 </span>
               </FormLabel>
               <TextField
                 id="percentage"
                 type="number"
                 label="Percentage"
+                inputProps={{ min: 0 }}
                 variant="outlined"
                 {...register("percentage", { valueAsNumber: true })}
               />
@@ -101,7 +118,7 @@ export default function AddCustomerGroup({
             size="large"
             variant="contained"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white border-0 hover:border-0"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -110,6 +127,7 @@ export default function AddCustomerGroup({
             variant="contained"
             size="large"
             onClick={handleSubmit(onSubmit)}
+            className="saveBtn"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

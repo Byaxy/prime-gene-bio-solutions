@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -10,8 +10,6 @@ import {
   TableRow,
   TextField,
   Typography,
-  Select,
-  MenuItem,
   Popover,
   Dialog,
   DialogTitle,
@@ -22,32 +20,26 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import type { Quotation, SaleProduct } from "@/components/Types";
+import type { Customer, Quotation, SaleProduct } from "@/components/Types";
 import type { Product } from "@/components/Types";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import { customersData } from "@/data/customersData";
-import { allProductsData } from "@/data/allProductsData";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
 } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import { quotationStatus } from "@/components/constants";
+import type { Option } from "@/components/Types";
+import axios from "axios";
+import DataTable from "react-data-table-component";
+import { viewTableStyles } from "@/styles/TableStyles";
 
-type FormInput = Omit<Quotation, "id" | "updatedAt" | "isActive">;
-type Options = {
-  label: string;
-  value: string;
-};
+type FormInput = Omit<Quotation, "id">;
 
-const tax: number = 10;
-
-const customers: Options[] = customersData.map((customer) => ({
-  label: customer.name,
-  value: customer.name,
-}));
+const tax: number = 0;
 
 const defaultValues: FormInput = {
   quotationNumber: "",
@@ -59,23 +51,83 @@ const defaultValues: FormInput = {
   products: [],
   notes: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 export default function AddQuotationPage() {
+  const [products, setProducts] = useState<Product[]>([]);
   const [quotationDate, setQuotationDate] = useState<Dayjs | null>(dayjs());
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [availableQuantity, setAvailableQuantity] = useState<number>(0);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([
-    ...allProductsData,
-  ]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [quotationProducts, setQuotationProducts] = useState<SaleProduct[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [grandTotal, setGrandTotal] = useState<number>(0);
   const [taxAmount, setTaxAmount] = useState<number>(0);
+  const [customers, setCustomers] = useState<Option[]>([]);
+
+  const dialogColumns = [
+    "Code",
+    "Name",
+    "Unit Price",
+    "Quantity",
+    "Sub Total",
+    "Actions",
+  ];
+
+  const tableColumns = [
+    {
+      name: "Code",
+      selector: (row: { code: string }) => row.code,
+      width: "120px",
+    },
+    {
+      name: "Name",
+      selector: (row: { name: string }) => row.name,
+    },
+    {
+      name: "Unit Price",
+      cell: (row: { price: number }) => <span>${row.price}</span>,
+      width: "180px",
+    },
+    {
+      name: "Quantity",
+      cell: (row: { quantity: number; unit: string }) => (
+        <span>
+          {row.quantity}
+          {row.unit}
+        </span>
+      ),
+      width: "180px",
+    },
+    {
+      name: "Sub Total",
+      cell: (row: { subTotal: number }) => <span>${row.subTotal}</span>,
+      width: "180px",
+    },
+    {
+      name: "Actions",
+      cell: (row: { id: string }) => [
+        <span
+          key={"delete" + row.id}
+          onClick={() => handleDeleteProduct(row.id)}
+          className="text-redColor cursor-pointer py-1 px-2 hover:bg-white hover:rounded-md transition"
+        >
+          <DeleteIcon />
+        </span>,
+      ],
+      width: "90px",
+      style: {
+        display: "flex",
+        justifyContent: "center",
+      },
+    },
+  ];
 
   const handleCloseModal = () => {
     setSelectedProduct(null);
@@ -86,6 +138,7 @@ export default function AddQuotationPage() {
 
   const handleOpenModal = (product: Product) => {
     setSelectedProduct(product);
+    setAnchorEl(null);
     setOpenModal(true);
   };
 
@@ -110,39 +163,80 @@ export default function AddQuotationPage() {
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
+  // search products
   useEffect(() => {
-    let searchedProducts = allProductsData.filter((product) => {
+    let searchedProducts = products.filter((product) => {
       return (
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.code.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
     setFilteredProducts(searchedProducts);
-  }, [searchTerm]);
+  }, [products, searchTerm]);
+
+  // Fetch products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/products");
+        setProducts(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProducts();
+  }, [products]);
+
+  // Fetch customers
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/customers");
+        const data = response.data.map((customer: Customer) => ({
+          label: customer.name,
+          value: customer.name,
+        }));
+        setCustomers(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
 
   const handleAddProduct = (product: Product) => {
+    let exits = quotationProducts.find((item) => item.id === product.id);
+
+    if (exits) {
+      toast.error("Product is already on the list. Delete it to make changes");
+      handleCloseModal();
+      return;
+    }
     setQuotationProducts([
-      ...quotationProducts,
       {
         id: product.id,
         name: product.name,
         code: product.code,
+        unit: product.unit,
         quantity: quantity,
         lotNumber: product.stock[0].lotNumber,
         price: product.price,
         subTotal: product.price * quantity,
         availableQuantity: availableQuantity,
       },
+      ...quotationProducts,
     ]);
 
     toast.success("Product added successfully");
     handleCloseModal();
   };
 
-  const handleDeleteProduct = (index: number) => {
-    let newQuotationProducts = [...quotationProducts];
-    newQuotationProducts.splice(index, 1);
-    setQuotationProducts(newQuotationProducts);
+  const handleDeleteProduct = (id: string) => {
+    let products = [...quotationProducts];
+    let updatedProducts = products.filter((product) => product.id !== id);
+    setQuotationProducts(updatedProducts);
 
     toast.success("Product deleted successfully");
   };
@@ -158,16 +252,15 @@ export default function AddQuotationPage() {
 
   const getTaxAmount = (total: number, tax: number): number =>
     (total * tax) / 100;
-
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
       if (quotationProducts.length === 0) {
         toast.error("Please add atleast one products");
         return;
       }
 
-      const newData = {
+      const formData = {
         ...data,
         products: [...quotationProducts],
         subTotal: total,
@@ -175,20 +268,16 @@ export default function AddQuotationPage() {
         total: grandTotal,
       };
 
-      formData.append("json", JSON.stringify(newData));
-      const response = await fetch("/api/quotation/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-      const result = await response.json();
-      toast.success("Quotation added successfully");
-      return result;
+      const response = await axios.post(
+        "http://localhost:5000/quotations",
+        formData
+      );
+      if (response.status === 201) {
+        toast.success("Quotation added successfully");
+      }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong");
     }
   };
 
@@ -202,7 +291,6 @@ export default function AddQuotationPage() {
   }, [quotationProducts]);
 
   // Reset form to defaults on Successfull submission of data
-
   const handleReset = () => {
     setQuotationProducts([]);
     setTotal(0);
@@ -211,6 +299,7 @@ export default function AddQuotationPage() {
     reset();
   };
 
+  // reset form after successfull submission
   useEffect(() => {
     if (isSubmitSuccessful) {
       setQuotationProducts([]);
@@ -220,15 +309,6 @@ export default function AddQuotationPage() {
       reset();
     }
   }, [isSubmitSuccessful, reset]);
-
-  const columns = [
-    "No.",
-    "Name",
-    "Unit Price",
-    "Quantity",
-    "Sub Total",
-    "Actions",
-  ];
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
@@ -245,11 +325,11 @@ export default function AddQuotationPage() {
         </Typography>
         <Button
           onClick={router.back}
-          variant="outlined"
-          className="flex flex-row items-center justify-center gap-1"
+          variant="contained"
+          className="flex flex-row items-center justify-center gap-1 bg-primaryColor/95 text-white hover:bg-primaryColor"
         >
           <ArrowBackIcon />
-          <span className="text-primaryDark font-medium capitalize sm:text-lg">
+          <span className="text-white font-medium capitalize sm:text-lg">
             Back
           </span>
         </Button>
@@ -336,7 +416,7 @@ export default function AddQuotationPage() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: "bottom",
+                vertical: "top",
                 horizontal: "left",
               }}
             >
@@ -351,7 +431,7 @@ export default function AddQuotationPage() {
                 <Table size="small">
                   <TableHead>
                     <TableRow className="bg-primaryColor font-semibold text-lg">
-                      <TableCell className="text-white text-lg w-24">
+                      <TableCell className="text-white text-lg w-32">
                         Code
                       </TableCell>
                       <TableCell className="text-white text-lg">Name</TableCell>
@@ -397,7 +477,7 @@ export default function AddQuotationPage() {
                   <Table size="small">
                     <TableHead>
                       <TableRow className="bg-primaryColor">
-                        {columns.map((column, index) => (
+                        {dialogColumns.map((column, index) => (
                           <TableCell
                             key={column + index}
                             className="text-white font-semibold last:hidden"
@@ -410,13 +490,13 @@ export default function AddQuotationPage() {
                     <TableBody>
                       {selectedProduct ? (
                         <TableRow>
-                          <TableCell width={40} className="text-primaryDark">
-                            1.
+                          <TableCell className="text-primaryDark text-[17px]">
+                            {selectedProduct.code}
                           </TableCell>
-                          <TableCell className="text-primaryDark">
-                            {selectedProduct.code} - {selectedProduct.name}
+                          <TableCell className="text-primaryDark text-[17px] font-semibold">
+                            {selectedProduct.name}
                           </TableCell>
-                          <TableCell className="text-primaryDark">
+                          <TableCell className="text-primaryDark text-[17px]">
                             {selectedProduct.price}
                           </TableCell>
                           <TableCell className="text-lg">
@@ -441,7 +521,7 @@ export default function AddQuotationPage() {
                         <TableRow>
                           <TableCell
                             colSpan={8}
-                            className="text-center text-lg text-primaryDark"
+                            className="text-center text-lg text-primaryDark font-semibold"
                           >
                             No Items To Display
                           </TableCell>
@@ -453,6 +533,7 @@ export default function AddQuotationPage() {
                 <DialogActions>
                   <Button
                     variant="contained"
+                    size="large"
                     onClick={handleCloseModal}
                     className="font-bold bg-redColor/95 hover:bg-redColor transition text-white capitalize"
                   >
@@ -460,6 +541,7 @@ export default function AddQuotationPage() {
                   </Button>
                   <Button
                     variant="contained"
+                    size="large"
                     onClick={() => handleAddProduct(selectedProduct!)}
                     className="font-bold bg-primaryColor/95 hover:bg-primaryColor transition text-white capitalize"
                   >
@@ -469,102 +551,41 @@ export default function AddQuotationPage() {
               </Dialog>
             </div>
           </div>
-
-          <Table size="small" className="w-full">
-            <TableHead className="bg-primaryColor w-full">
-              <TableRow>
-                {columns.map((column, index) => (
-                  <TableCell
-                    key={index + column}
-                    className="text-white font-semibold text-lg"
-                  >
-                    {column}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {quotationProducts ? (
-                <>
-                  {quotationProducts.map((product, index) => (
-                    <TableRow key={index + product.id}>
-                      <TableCell
-                        className="text-primaryDark text-lg"
-                        width={40}
-                      >
-                        {index + 1}.
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        <span>{product.name}</span>
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.price}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.quantity}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.subTotal}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        <Button
-                          variant="contained"
-                          size="small"
-                          className="bg-redColor/95 hover:bg-redColor text-white font-bold"
-                          onClick={() => handleDeleteProduct(index)}
-                        >
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow>
-                    <TableCell rowSpan={3} colSpan={3}></TableCell>
-                    <TableCell
-                      className="text-primaryDark font-bold text-lg pt-8"
-                      colSpan={2}
-                    >
-                      Total
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg pt-8">
-                      ${total}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      Tax
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      {tax}%
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      ${taxAmount}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      className="text-primaryDark font-bold text-lg"
-                      colSpan={2}
-                    >
-                      Grand Total
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      ${grandTotal}
-                    </TableCell>
-                  </TableRow>
-                </>
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={8}
-                    className="text-center text-lg text-primaryDark"
-                  >
-                    No Items To Display
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <div>
+            <DataTable
+              data={quotationProducts}
+              columns={tableColumns}
+              customStyles={viewTableStyles}
+              className="scrollbar-hide"
+              pagination
+            />
+          </div>
+          {quotationProducts.length !== 0 && (
+            <div className="flex flex-col gap-4 px-5 py-6 border-t-2 border-grayColor">
+              <div className="flex flex-row items-center justify-end gap-14">
+                <span className="text-primaryDark font-bold text-xl">
+                  Total
+                </span>
+                <span className="text-primaryDark font-bold text-xl">
+                  ${total}
+                </span>
+              </div>
+              <div className="flex flex-row items-center justify-end gap-24">
+                <span className="text-primaryDark font-bold text-xl">Tax</span>
+                <span className="text-primaryDark font-bold text-xl">
+                  ${taxAmount}
+                </span>
+              </div>
+              <div className="flex flex-row items-center justify-end gap-14">
+                <span className="text-primaryDark font-bold text-xl">
+                  Grand Total
+                </span>
+                <span className="text-primaryDark font-bold text-xl">
+                  ${grandTotal}
+                </span>
+              </div>
+            </div>
+          )}
           <div className="flex flex-col gap-2 w-full md:max-w-sm mt-5">
             <label>
               <span className="text-primaryDark font-semibold">
@@ -604,7 +625,7 @@ export default function AddQuotationPage() {
             <Button
               variant="contained"
               size="large"
-              className="font-bold bg-redColor/95 hover:bg-redColor"
+              className="cancelBtn"
               onClick={() => handleReset()}
             >
               Cancel
@@ -612,7 +633,7 @@ export default function AddQuotationPage() {
             <Button
               variant="contained"
               size="large"
-              className="font-bold"
+              className="saveBtn"
               onClick={handleSubmit(onSubmit)}
               type="submit"
               disabled={isSubmitting}

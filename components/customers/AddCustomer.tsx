@@ -14,11 +14,12 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { Customer } from "@/components/Types";
+import type { Customer, CustomerGroup, Option } from "@/components/Types";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import toast from "react-hot-toast";
+import axios from "axios";
 
-type FormInput = Omit<Customer, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<Customer, "id">;
 
 const defaultValues: FormInput = {
   customerGroup: "General",
@@ -29,8 +30,10 @@ const defaultValues: FormInput = {
   city: "",
   state: "",
   country: "",
-  contactPerson: { name: "", email: "", phone: "", isActive: true },
+  contactPerson: { name: "", email: "", phone: "", isActive: false },
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 type AddCustomerProps = {
@@ -38,27 +41,13 @@ type AddCustomerProps = {
   handleClose: () => void;
 };
 
-const customerGroups = [
-  {
-    label: "General",
-    value: "General",
-  },
-  {
-    label: "Reseller",
-    value: "Reseller",
-  },
-  {
-    label: "Hospital/End User",
-    value: "Hospital/End User",
-  },
-  {
-    label: "Clinic/End User",
-    value: "Clinic/End User",
-  },
-];
-
 export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
-  const [value, setValue] = useState<boolean>(true);
+  const [contactPersonStatus, setContactPersonStatus] =
+    useState<boolean>(false);
+  const [customerStatus, setCustomerStatus] = useState<boolean>(true);
+  const [customerGroupOptions, setCustomerGroupOptions] = useState<Option[]>(
+    []
+  );
 
   const { handleSubmit, reset, register, formState, control } =
     useForm<FormInput>({
@@ -66,28 +55,41 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value === "true");
+  const handleContactPersonStatusChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setContactPersonStatus(event.target.value === "true");
+  };
+
+  const handleCustomerStatusChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomerStatus(event.target.value === "true");
   };
 
   const onSubmit = async (data: FormInput) => {
     try {
       // Handle form data with corresponding API call
-      const formData = new FormData();
       const newData = {
         ...data,
+        isActive: customerStatus,
         contactPerson: {
           ...data.contactPerson,
-          isActive: value,
+          isActive: contactPersonStatus,
         },
       };
-      formData.append("json", JSON.stringify(newData));
 
-      console.log(newData);
-      toast.success("Customer added successfully");
+      const response = await axios.post(
+        "http://localhost:5000/customers",
+        newData
+      );
+
+      if (response.status === 201) {
+        toast.success("Customer Added successfully");
+      }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong");
     }
   };
 
@@ -95,9 +97,29 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
+      handleClose();
     }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
+
+  useEffect(() => {
+    async function fetchCustomerGroupOptions() {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:5000/customer-groups`
+        );
+        const options = data.map((option: CustomerGroup) => ({
+          label: option.name,
+          value: option.name,
+        }));
+
+        setCustomerGroupOptions(options);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchCustomerGroupOptions();
+  }, []);
 
   return (
     <div>
@@ -154,7 +176,7 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                     name="customerGroup"
                     control={control}
                     label="Customer Group"
-                    options={customerGroups}
+                    options={customerGroupOptions}
                   />
                 </div>
               </div>
@@ -183,7 +205,7 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                   label="xxx-xxx-xxxx"
                   {...register("phone", {
                     required: true,
-                    pattern: /^\d{10}$/,
+                    pattern: /^(\+)?(\()?(\d ?){6,14}\d(\))?$/,
                   })}
                   error={!!errors.phone}
                   helperText={
@@ -257,8 +279,37 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                   />
                 </div>
               </div>
+              <div className="flex flex-col w-full gap-2">
+                <FormLabel
+                  htmlFor="customerStatus"
+                  className="text-primaryDark font-semibold"
+                >
+                  Customer Status
+                </FormLabel>
+                <RadioGroup
+                  id="customerStatus"
+                  row
+                  aria-labelledby="Customer status"
+                  name="isActive"
+                  value={customerStatus}
+                  onChange={handleCustomerStatusChange}
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio className="text-primaryDark" />}
+                    label="Active"
+                    className="text-primaryDark"
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio className="text-primaryDark" />}
+                    label="Not Active"
+                    className="text-primaryDark"
+                  />
+                </RadioGroup>
+              </div>
             </div>
-            <span className="text-primaryDark font-semibold text-xl block mt-8 mb-2">
+            <span className="text-primaryDark font-semibold text-xl block mt-16 mb-2">
               Contact Person Details
             </span>
             <div className="flex flex-col gap-5 w-full">
@@ -300,8 +351,8 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                   row
                   aria-labelledby="contact-person-status"
                   name="contactPerson.isActive"
-                  value={value}
-                  onChange={handleChange}
+                  value={contactPersonStatus}
+                  onChange={handleContactPersonStatusChange}
                 >
                   <FormControlLabel
                     value={true}
@@ -328,7 +379,7 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                   type="tel"
                   label="xxx-xxx-xxxx"
                   {...register("contactPerson.phone", {
-                    pattern: /^\d{10}$/,
+                    pattern: /^(\+)?(\()?(\d ?){6,14}\d(\))?$/,
                   })}
                   error={!!errors.contactPerson?.phone}
                   helperText={
@@ -346,7 +397,7 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
             variant="outlined"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white border-0 hover:border-0"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -355,6 +406,7 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="saveBtn"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

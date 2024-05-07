@@ -7,23 +7,24 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import { ProductCategory } from "@/components/Types";
-import Image from "next/image";
+import type { Option, ProductCategory } from "@/components/Types";
 import toast from "react-hot-toast";
-import { CldUploadWidget } from "next-cloudinary";
+import axios from "axios";
+import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ProductCategory, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<ProductCategory, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   description: "",
-  image: "",
+  parentCategory: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 type AddCategoryProps = {
@@ -31,24 +32,6 @@ type AddCategoryProps = {
   handleClose: () => void;
 };
 
-const options = [
-  {
-    label: "Clinical Laboratory Solutions",
-    value: "Clinical Laboratory Solutions",
-  },
-  {
-    label: "Imaging Solutions",
-    value: "Imaging Solutions",
-  },
-  {
-    label: "Dental Solutions",
-    value: "Dental Solutions",
-  },
-  {
-    label: "Medical Solutions",
-    value: "Medical Solutions",
-  },
-];
 export default function AddCategory({
   open,
   handleClose,
@@ -58,29 +41,20 @@ export default function AddCategory({
       defaultValues: defaultValues,
     });
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
-  const [imageUrl, setImageUrl] = useState<string | null>("/placeholder.jpg");
+  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = new FormData();
-      const newData = { ...data, image: imageUrl };
-
-      formData.append("json", JSON.stringify(newData));
-
-      const response = await fetch("/api/product-category/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-      toast.success("Category added successfully");
-      return result;
+      // Handle form data with corresponding API call
+      const response = await axios.post(
+        "http://localhost:5000/categories",
+        data
+      );
+      if (response.status === 201)
+        toast.success("Product Category Added Successfully");
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error("Something went wrong!");
     }
   };
 
@@ -88,9 +62,27 @@ export default function AddCategory({
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setImageUrl("/placeholder.jpg");
+      handleClose();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/categories");
+        const options = response.data.map((category: ProductCategory) => ({
+          label: category.name,
+          value: category.name,
+        }));
+        options.unshift({ label: "None", value: "None" });
+        setCategoryOptions(options);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div>
@@ -143,6 +135,26 @@ export default function AddCategory({
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
+              <label htmlFor="parentCategory">
+                <span className="text-primaryDark font-semibold">
+                  Parent Category
+                </span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <FormInputDropdown
+                id="category"
+                control={control}
+                label="Select Category"
+                options={categoryOptions}
+                {...register("parentCategory", {
+                  required: "Product Category is required",
+                })}
+              />
+              {errors.parentCategory && (
+                <span className="text-redColor text-sm">
+                  {errors.parentCategory?.message}
+                </span>
+              )}
               <label htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description
@@ -160,43 +172,6 @@ export default function AddCategory({
                 error={!!errors.description}
                 helperText={errors.description?.message}
               />
-              <label htmlFor="image">
-                <span className="text-primaryDark font-semibold">Image</span>
-              </label>
-              <div className="flex flex-row gap-4 items-center">
-                <div>
-                  {imageUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imageUrl} alt="Preview" className="w-40 h-40" />
-                  )}
-                </div>
-                <CldUploadWidget
-                  uploadPreset="prime-gene-biomedical-solutions"
-                  options={{
-                    multiple: false,
-                    clientAllowedFormats: ["jpg", "png", "webp", "svg"],
-                    sources: ["local", "url", "dropbox", "google_drive"],
-                  }}
-                  onSuccess={(result) => {
-                    if (result.info && typeof result.info !== "string") {
-                      const url: string = result.info.secure_url;
-                      setImageUrl(url);
-                    }
-                  }}
-                >
-                  {({ open }) => {
-                    return (
-                      <Button
-                        variant="contained"
-                        className="capitalize"
-                        onClick={() => open()}
-                      >
-                        Upload an Image
-                      </Button>
-                    );
-                  }}
-                </CldUploadWidget>
-              </div>
             </div>
           </form>
         </DialogContent>
@@ -204,8 +179,8 @@ export default function AddCategory({
           <Button
             variant="contained"
             size="large"
-            onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            onClick={() => reset()}
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -214,7 +189,7 @@ export default function AddCategory({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

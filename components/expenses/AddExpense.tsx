@@ -258,7 +258,7 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
             variant="outlined"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -267,7 +267,8 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

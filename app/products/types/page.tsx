@@ -1,68 +1,108 @@
 "use client";
-import React, { useCallback, useState } from "react";
-import { typesData } from "@/data/typesData";
+import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useRouter } from "next/navigation";
 import AddType from "@/components/products/types/AddType";
 import ListComponent from "@/components/ListComponent";
 import ViewTypeDetails from "@/components/products/types/ViewTypeDetails";
-import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const columns = [
-  {
-    name: "Date",
-    selector: (row: { createdAt: Date }) => row.createdAt.toDateString(),
-    width: "180px",
-  },
-  {
-    name: "Name",
-    selector: (row: { name: string }) => row.name,
-  },
-  {
-    name: "Description",
-    selector: (row: { description: string }) => row.description,
-  },
-
-  {
-    name: "Actions",
-    cell: (row: { id: string }) => [
-      <Link href={`/settings/products-types/edit-type/${row.id}`} key={row.id}>
-        <EditIcon sx={{ color: "#475BE8" }} />
-      </Link>,
-      <Link key={row.id} href="/settings/products-types">
-        <DeleteIcon color="error" />
-      </Link>,
-    ],
-    width: "120px",
-    style: {
-      display: "flex",
-      justifyContent: "center",
-      gap: "5px",
-    },
-  },
-];
+import EditType from "@/components/products/types/EditType";
+import DeleteType from "@/components/products/types/DeleteType";
+import axios from "axios";
+import type { ProductType } from "@/components/Types";
 
 export default function ProductTypesPage() {
   const [add, setAdd] = useState<boolean>(false);
   const [view, setView] = useState<boolean>(false);
-  const [typeID, setTypeID] = useState<string>("1");
+  const [edit, setEdit] = useState<boolean>(false);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+  const [typeID, setTypeID] = useState<string>("");
+  const [types, setTypes] = useState<ProductType[]>([]);
+  const [selectedRow, setSelectedRow] = useState<ProductType>(
+    {} as ProductType
+  );
+
+  const columns = [
+    {
+      name: "Date",
+      selector: (row: { createdAt: Date }) =>
+        new Date(row.createdAt).toDateString(),
+      width: "180px",
+    },
+    {
+      name: "Name",
+      selector: (row: { name: string }) => row.name,
+    },
+    {
+      name: "Description",
+      selector: (row: { description: string }) => row.description,
+    },
+    {
+      name: "Actions",
+      cell: (row: ProductType) => [
+        <span
+          key={"edit" + row.id}
+          onClick={() => onEdit(row)}
+          className="text-[#475BE8] py-1 px-2 hover:bg-white hover:rounded-md transition"
+        >
+          <EditIcon />
+        </span>,
+        <span
+          key={"delete" + row.id}
+          onClick={() => onDelete(row)}
+          className="text-redColor py-1 px-2 hover:bg-white hover:rounded-md transition"
+        >
+          <DeleteIcon />
+        </span>,
+      ],
+      width: "90px",
+      style: {
+        display: "flex",
+        justifyContent: "center",
+      },
+    },
+  ];
 
   const onAddClicked = useCallback((): void => {
     setAdd(true);
   }, []);
 
+  const onEdit = (row: ProductType) => {
+    setSelectedRow(row);
+    setEdit(true);
+  };
+
+  const onDelete = (row: ProductType) => {
+    setSelectedRow(row);
+    setConfirmDelete(true);
+  };
+
   const handleClose = useCallback((): void => {
-    setView(false);
     setAdd(false);
+    setView(false);
+    setEdit(false);
+    setConfirmDelete(false);
   }, []);
-  const router = useRouter();
-  const onRowClicked = (row: { id: string }) => {
-    setTypeID(row.id);
+  const onRowClicked = (row: ProductType) => {
+    setSelectedRow(row);
     setView(true);
   };
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:5000/types");
+        setTypes(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchTypes();
+  }, [types]);
+
   return (
     <ListComponent
       title="Product Types"
@@ -71,13 +111,19 @@ export default function ProductTypesPage() {
     >
       <>
         <AddType open={add} handleClose={handleClose} />
+        <EditType open={edit} handleClose={handleClose} type={selectedRow} />
         <ViewTypeDetails
           open={view}
           handleClose={handleClose}
-          typeID={typeID}
+          type={selectedRow}
+        />
+        <DeleteType
+          open={confirmDelete}
+          handleClose={handleClose}
+          type={selectedRow}
         />
         <DataTable
-          data={typesData}
+          data={types}
           columns={columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}

@@ -336,7 +336,7 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
             variant="outlined"
             size="large"
             onClick={() => (reset(), setUserImage(null))}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white border-0 hover:border-0"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -345,6 +345,7 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="saveBtn"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

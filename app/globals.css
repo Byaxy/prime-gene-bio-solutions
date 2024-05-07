@@ -62,3 +62,9 @@
     );
   background-blend-mode: multiply;
 }
+.cancelBtn {
+  @apply font-bold bg-redColor/95 hover:bg-redColor transition text-white border-0 hover:border-0;
+}
+.saveBtn {
+  @apply font-bold bg-primaryColor/95 text-white hover:bg-primaryColor;
+}
