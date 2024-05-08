@@ -4,14 +4,11 @@ import PersonIcon from "@mui/icons-material/Person";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
   const router = useRouter();
-  const session = useSession();
 
   const [show, setShow] = useState(false);
-  const [userInitials, setUserInitials] = useState("");
 
   const userId = 1;
 
@@ -20,7 +17,6 @@ export default function Header() {
   };
   const handleLogout = () => {
     handleShow();
-    signOut();
     // router.push("/");
   };
   const handleProfileClick = () => {
@@ -31,33 +27,19 @@ export default function Header() {
     handleShow();
     router.push(`/profile/${userId}`);
   };
-  useEffect(() => {
-    let initials = "";
-    const getInitials = () => {
-      const fullName = session.data?.user?.name;
-      const splitNames = fullName?.split(" ");
 
-      splitNames?.map((name) => {
-        initials += name[0].toUpperCase();
-      });
-      setUserInitials(initials);
-    };
-    getInitials();
-  }, [session.data?.user?.name, userInitials]);
   return (
     <Box className="relative w-full flex flex-row items-center justify-end gap-3">
       <Typography className="hidden sm:flex flex-col justify-center text-white">
-        <span className="text-xl capitalize">{session.data?.user?.name}</span>
-        <span className="text-sm text-grayColor/60">
-          {session.data?.user?.email}
-        </span>
+        <span className="text-xl capitalize">Jane Doe</span>
+        <span className="text-sm text-grayColor/60">jane.doe@gmail.com</span>
       </Typography>
       <Avatar
         onClick={handleShow}
         className="shadow-lg cursor-pointer flex items-center justify-center"
       >
         <span className="flex items-center cursor-pointer justify-center text-primaryColor w-full h-full text-xl font-bold bg-white">
-          {userInitials}
+          JD
         </span>
       </Avatar>
       {show && (

@@ -10,7 +10,9 @@ import ViewCustomerDetails from "../customers/ViewCustomerDetails";
 export default function Customers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [view, setView] = useState<boolean>(false);
-  const [customerID, setCustomerID] = useState<string>("");
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer>(
+    {} as Customer
+  );
 
   const columns = [
     {
@@ -44,8 +46,8 @@ export default function Customers() {
     setView(false);
   }, []);
 
-  const onRowClicked = (row: { id: string }) => {
-    setCustomerID(row.id);
+  const onRowClicked = (row: Customer) => {
+    setSelectedCustomer(row);
     setView(true);
   };
 
@@ -72,7 +74,7 @@ export default function Customers() {
         <ViewCustomerDetails
           open={view}
           handleClose={handleClose}
-          customerID={customerID}
+          customer={selectedCustomer}
         />
         <DataTable
           data={customers}
