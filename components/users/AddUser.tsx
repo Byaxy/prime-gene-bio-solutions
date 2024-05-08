@@ -35,21 +35,6 @@ const userOptions = [
   },
 ];
 
-const genderOptions = [
-  {
-    label: "Male",
-    value: "Male",
-  },
-  {
-    label: "Female",
-    value: "Female",
-  },
-  {
-    label: "Other",
-    value: "Other",
-  },
-];
-
 const defaultValues: FormInput = {
   createdAt: new Date(),
   firstName: "",
@@ -346,6 +331,7 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
             onClick={handleSubmit(onSubmit)}
             size="large"
             className="saveBtn"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>
