@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { config } from "@/config/config";
 
 type FormInput = Omit<Product, "id">;
 
@@ -174,7 +175,7 @@ const AddProductPage = () => {
                 )}
               </div>
               <CldUploadWidget
-                uploadPreset="prime-gene-biomedical-solutions"
+                uploadPreset={config.cloudinaryUploadPreset}
                 options={{
                   multiple: false,
                   clientAllowedFormats: ["jpg", "jpeg", "png", "webp", "svg"],
