@@ -18,5 +18,3 @@ export let statusMessages: { [key: number]: string } = {
   503: "Service Unavailable",
   504: "Gateway Timeout",
 };
-
-

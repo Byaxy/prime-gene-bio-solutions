@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { returnsData } from "@/data/returnsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
-import { useRouter } from "next/navigation";
 import ListComponent from "@/components/ListComponent";
 import AddReturn from "@/components/sales/returns/AddReturn";
 import EditIcon from "@mui/icons-material/Edit";
