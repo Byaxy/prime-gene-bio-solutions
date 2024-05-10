@@ -4,28 +4,30 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { User, Gender, UserRole } from "@/components/Types";
 import Image from "next/image";
-import axios from "axios";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import { FormInputRadio } from "@/components/form-components/FormInputRadio";
+import { CldUploadWidget } from "next-cloudinary";
+import toast from "react-hot-toast";
+import appwriteService from "@/appwrite/appwriteConfig";
+import { clear } from "console";
 
-type FormInput = Omit<User, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<User, "id" | "role" | "phone">;
 
 const defaultValues: FormInput = {
-  createdAt: new Date(),
-  firstName: "",
-  lastName: "",
+  name: "",
   email: "",
   password: "",
-  confirmPassword: "",
-  image: "",
-  role: UserRole.USER,
-  phone: "",
-  gender: Gender.MALE,
 };
 
 type AddUserProps = {
@@ -33,65 +35,28 @@ type AddUserProps = {
   handleClose: () => void;
 };
 
-const userOptions = [
-  {
-    label: "User",
-    value: "User",
-  },
-  {
-    label: "Admin",
-    value: "Admin",
-  },
-];
-
 export default function AddUser({ open, handleClose }: AddUserProps) {
-  const { handleSubmit, reset, control, register, formState, watch } =
-    useForm<FormInput>({
-      defaultValues: defaultValues,
-    });
+  const { handleSubmit, reset, control, register, formState } = useForm<User>({
+    defaultValues: defaultValues,
+  });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [userImage, setUserImage] = useState<string | null>(null);
+  const [gender, setGender] = useState<Gender>(Gender.MALE);
 
-  const onSubmit = async (data: FormInput) => {
-    if (data.image.length > 0) {
-      const imageFile = data.image[0];
-
-      const formData = new FormData();
-      formData.append("file", imageFile);
-
-      formData.append("upload_preset", "prime-gene-bio-solutions");
-
-      try {
-        const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dykyxconb/image/upload",
-          formData
-        );
-        setImageUrl(response.data.secure_url);
-        console.log(imageUrl);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      setImageUrl(null);
-      console.log(imageUrl);
-    }
-
-    // Handle form data and cloudinary image url with corresponding API call
-    console.log({ ...data, image: imageUrl });
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGender(event.target.value as Gender);
   };
 
-  // Set selected Image for preview
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage(null);
+  const onSubmit = async (data: User) => {
+    try {
+      const userAccount = await appwriteService.createUserAccount(data);
+      if (userAccount) {
+        toast.success("User Account Added successfully");
+        return userAccount;
+      }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message);
     }
   };
 
@@ -99,13 +64,13 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setPreviewImage(null);
+      setUserImage(null);
+      setGender(Gender.MALE);
     }
-    console.log(isSubmitSuccessful);
   }, [isSubmitSuccessful, reset]);
   return (
     <div>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle className="flex justify-between items-center">
           <span className="text-2xl text-primaryDark font-bold">Add User</span>
           <CancelIcon
@@ -115,169 +80,67 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
           />
         </DialogTitle>
         <DialogContent>
-          <DialogContentText className="mb-5">
-            <p>
+          <DialogContentText>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-4 w-full">
-              <label htmlFor="image">
-                <span className="text-primaryDark font-semibold">
-                  Profile Image
-                </span>
-              </label>
-              <div className="flex flex-row gap-4 items-center">
-                <div className="flex items-center justify-center rounded-full overflow-hidden">
-                  <Image
-                    src={previewImage === null ? "/user.png" : previewImage}
-                    alt="User"
-                    width={150}
-                    height={150}
-                  />
-                </div>
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
+            <div className="flex flex-col gap-5 w-full">
+              <div className="flex flex-col gap-4 w-full">
+                <FormLabel htmlFor="name">
+                  <span className="text-primaryDark font-semibold">Name</span>
+                  <span className="text-redColor"> *</span>
+                </FormLabel>
                 <TextField
-                  id="image"
-                  type="file"
-                  variant="outlined"
-                  {...register("image")}
-                  onChange={handleImageChange}
-                  inputProps={{ accept: "image/*", multiple: false }}
+                  id="name"
+                  type="text"
+                  label="Name"
+                  {...register("name", {
+                    required: "First Name is required",
+                  })}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
                 />
               </div>
-              <label htmlFor="firstName">
-                <span className="text-primaryDark font-semibold">
-                  First Name
-                </span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="firstName"
-                type="text"
-                label="First Name"
-                {...register("firstName", {
-                  required: "First Name is required",
-                })}
-                error={!!errors.firstName}
-                helperText={errors.firstName?.message}
-              />
 
-              <label htmlFor="lastName">
-                <span className="text-primaryDark font-semibold">
-                  Last Name
-                </span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="lastName"
-                type="text"
-                label="First Name"
-                {...register("lastName", {
-                  required: "Last Name is required",
-                })}
-                error={!!errors.lastName}
-                helperText={errors.lastName?.message}
-              />
-
-              <label htmlFor="gender">
-                <span className="text-primaryDark font-semibold">
-                  Select Gender
-                </span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <FormInputRadio name="gender" control={control} label="Gender" />
-
-              <div className="flex flex-col w-full gap-2">
-                <label htmlFor="role">
+              <div className="flex flex-col gap-4 w-full">
+                <FormLabel htmlFor="email">
+                  <span className="text-primaryDark font-semibold">Email</span>
+                  <span className="text-redColor"> *</span>
+                </FormLabel>
+                <TextField
+                  id="email"
+                  type="email"
+                  label="Email"
+                  {...register("email", {
+                    required: "Email is required and must be valid",
+                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  })}
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                />
+              </div>
+              <div className="flex flex-col gap-4 w-full">
+                <FormLabel htmlFor="password">
                   <span className="text-primaryDark font-semibold">
-                    Select Role
+                    Password
                   </span>
                   <span className="text-redColor"> *</span>
-                </label>
-                <FormInputDropdown
-                  id="role"
-                  name="role"
-                  control={control}
-                  label="Role"
-                  options={userOptions}
+                </FormLabel>
+                <TextField
+                  id="password"
+                  type="password"
+                  label="Password"
+                  {...register("password", {
+                    required: "Password must contain at least 8 characters",
+                  })}
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
                 />
               </div>
-
-              <label htmlFor="email">
-                <span className="text-primaryDark font-semibold">Email</span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="email"
-                type="text"
-                label="Email"
-                {...register("email", {
-                  required: "Email is required",
-                })}
-                error={!!errors.email}
-                helperText={errors.email?.message}
-              />
-
-              <label htmlFor="phone">
-                <span className="text-primaryDark font-semibold">
-                  Phone Number
-                </span>
-              </label>
-              <TextField
-                id="phone"
-                type="tel"
-                label="xxx-xxx-xxxx"
-                {...register("phone", {
-                  required: true,
-                  pattern: /^\d{10}$/,
-                })}
-                error={!!errors.phone}
-                helperText={
-                  errors.phone ? "Phone Number is must be 10 digits" : ""
-                }
-              />
-
-              <label htmlFor="password">
-                <span className="text-primaryDark font-semibold">Password</span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="password"
-                type="password"
-                label="Password"
-                {...register("password", {
-                  required: true,
-                  pattern:
-                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                })}
-                error={!!errors.password}
-                helperText={
-                  errors.password
-                    ? "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character (@, $, !, %, *, ?, and &.)"
-                    : ""
-                }
-              />
-              <label htmlFor="confirmPassword">
-                <span className="text-primaryDark font-semibold">
-                  Confirm Password
-                </span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <TextField
-                id="confirmPassword"
-                type="password"
-                label="Confirm Password"
-                {...register("confirmPassword", {
-                  required: true,
-                  validate: (value) => value === watch("password"),
-                })}
-                error={!!errors.confirmPassword}
-                helperText={
-                  errors.confirmPassword ? "Passwords do not match" : ""
-                }
-              />
             </div>
           </form>
         </DialogContent>
@@ -285,7 +148,8 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
           <Button
             variant="outlined"
             size="large"
-            onClick={() => (reset(), setPreviewImage(null))}
+            onClick={() => (reset(), setUserImage(null))}
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -294,6 +158,8 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
+            className="saveBtn"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

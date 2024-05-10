@@ -7,17 +7,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { Types } from "@/components/Types";
+import { ProductType } from "@/components/Types";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Types, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<ProductType, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   description: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 type AddTypeProps = {
   open: boolean;
@@ -35,22 +39,22 @@ export default function AddType({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      console.log(data);
+      const response = await axios.post("http://localhost:5000/types", data);
 
-      const response = await fetch("/api/product-type/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      reset();
+      if (response.status === 201) toast.success("Type added successfully");
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong");
     }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      handleClose();
+    }
+  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -65,11 +69,11 @@ export default function AddType({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
@@ -112,7 +116,7 @@ export default function AddType({
             variant="contained"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -121,7 +125,7 @@ export default function AddType({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

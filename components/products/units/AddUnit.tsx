@@ -8,16 +8,18 @@ import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Unit } from "@/components/Types";
+import toast from "react-hot-toast";
+import { DB, ID } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Unit, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<Unit, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
-  createdAt: new Date(),
 };
 
 type AddUnitProps = {
@@ -32,26 +34,30 @@ export default function AddUnit({
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitting } = formState;
+  const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      console.log(data);
-
-      const response = await fetch("/api/unit-of-measure/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      reset();
+      const response = await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductUnitsCollectionId,
+        ID.unique(),
+        data
+      );
+      if (response) toast.success("Unit Added successfully");
     } catch (error) {
       console.error(error);
+      toast.error("Something went wrong ");
     }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      handleClose();
+    }
+  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -66,11 +72,11 @@ export default function AddUnit({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
@@ -110,7 +116,7 @@ export default function AddUnit({
             variant="contained"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -119,7 +125,7 @@ export default function AddUnit({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

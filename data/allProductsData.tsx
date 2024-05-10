@@ -1,117 +1,64 @@
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Link from "next/link";
-import Image from "next/image";
 import type { Product } from "@/components/Types";
-import type { Stock } from "@/components/Types";
+import { generateId } from "@/components/utils";
 
-type HeaderCells = {
-  name: string;
-  selector?: (row: Product) => any;
-  width?: string;
-  cell?: any;
-  style?: {
-    display?: string;
-    justifyContent?: string;
-    alignItems?: string;
-    gap?: string;
-    color?: string;
-    fontWeight?: string;
-    fontSize?: string;
-  };
-  conditionalCellStyles?: {
-    when: (row: Product) => boolean;
-    style: {
-      color?: string;
-      fontWeight?: string;
-      fontSize?: string;
-    };
-  }[];
-};
-
-export type DataType = {
-  columns: HeaderCells[];
-  data: Product[];
-};
-
-export const allProductsData: DataType = {
-  columns: [
-    {
-      name: "Image",
-      selector: (row: { image: string }) => row.image,
-      width: "80px",
-      cell: (row: { image: string }) => (
-        <Image
-          className="rounded-full"
-          src={row.image}
-          alt="Product Image"
-          height={40}
-          width={40}
-        />
-      ),
-      style: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+export const allProductsData: Product[] = [
+  {
+    id: generateId(),
+    createdAt: new Date(),
+    image: "/product.jpg",
+    code: "0085",
+    name: "Talley Counter",
+    brand: "Allele Diagnostic",
+    type: "Sample Type",
+    category: "General Lab Equipment",
+    stock: [
+      {
+        id: "c9376388",
+        lotNumber: "2302808",
+        manufactureDate: new Date("2020-04-06T00:00:00.000Z"),
+        expiryDate: new Date("2020-04-06T00:00:00.000Z"),
+        quantity: 21,
+        createdAt: new Date("2024-04-06T17:16:59.032Z"),
+        updatedAt: new Date("2024-04-09T16:07:07.331Z"),
       },
-    },
-    {
-      name: "Code",
-      selector: (row: { code: string }) => row.code,
-      style: {
-        fontWeight: "600",
+      {
+        id: "c8ce6da1",
+        lotNumber: "2301608",
+        manufactureDate: new Date("2020-04-06T00:00:00.000Z"),
+        expiryDate: new Date("2020-04-06T00:00:00.000Z"),
+        quantity: 17,
+        createdAt: new Date("2024-04-06T17:16:59.032Z"),
+        updatedAt: new Date("2024-04-09T16:07:07.331Z"),
       },
-    },
-    {
-      name: "Name",
-      selector: (row: { name: string }) => row.name,
-    },
-    {
-      name: "Brand",
-      selector: (row: { brand: string }) => row.brand,
-    },
-    {
-      name: "Category",
-      selector: (row: { category: string }) => row.category,
-    },
-    {
-      name: "Cost ($)",
-      selector: (row: { cost: number }) => row.cost,
-    },
-    {
-      name: "Price ($)",
-      selector: (row: { price: number }) => row.price,
-    },
-    {
-      name: "Quantity",
-      cell: (row: { stock: Stock[] }) => (
-        <div>{row.stock.reduce((qty, obj) => qty + obj.quantity, 0)}</div>
-      ),
-    },
-    {
-      name: "Unit",
-      selector: (row: { unit: string }) => row.unit,
-    },
-    {
-      name: "Alert Quantity",
-      selector: (row: { alertQuantity: number }) => row.alertQuantity,
-    },
-    {
-      name: "Actions",
-      cell: (row: { id: string }) => [
-        <Link href={`/products/edit-product/${row.id}`} key={row.id}>
-          <EditIcon sx={{ color: "#475BE8" }} />
-        </Link>,
-        <Link key={row.id} href="/products">
-          <DeleteIcon color="error" />
-        </Link>,
-      ],
-      width: "90px",
-      style: {
-        display: "flex",
-        justifyContent: "center",
-        gap: "4px",
+    ],
+    cost: 33.5,
+    price: 200.0,
+    unit: "Pcs/Pk",
+    alertQuantity: 5,
+    description: "",
+    updatedAt: new Date(),
+    isActive: true,
+  },
+  {
+    id: generateId(),
+    createdAt: new Date(),
+    image: "/product.jpg",
+    code: "00857",
+    name: "Sealent",
+    brand: "Allele Diagnostic",
+    type: "Sample type",
+    category: "General Lab Equipment",
+    stock: [
+      {
+        id: "c9376388",
+        lotNumber: "2302808",
+        manufactureDate: new Date("2020-04-06T00:00:00.000Z"),
+        expiryDate: new Date("2020-04-06T00:00:00.000Z"),
+        quantity: 21,
+        createdAt: new Date("2024-04-06T17:16:59.032Z"),
+        updatedAt: new Date("2024-04-09T16:07:07.331Z"),
       },
+<<<<<<< HEAD
     },
   ],
   data: [
@@ -180,3 +127,15 @@ export const allProductsData: DataType = {
     },
   ],
 };
+=======
+    ],
+    cost: 33.0,
+    price: 50.5,
+    unit: "Pcs/Pk",
+    alertQuantity: 5,
+    description: "",
+    updatedAt: new Date(),
+    isActive: true,
+  },
+];
+>>>>>>> restructure

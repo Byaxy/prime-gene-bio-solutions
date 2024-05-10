@@ -1,174 +1,133 @@
-import Link from "next/link";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import type { Delivery } from "@/components/Types";
 
-type HeaderCells = {
-  name: string;
-  selector?: (row: Delivery) => any;
-  width?: string;
-  cell?: any;
-  style?: {
-    display?: string;
-    justifyContent?: string;
-    gap?: string;
-    color?: string;
-    fontWeight?: string;
-    fontSize?: string;
-  };
-  conditionalCellStyles?: {
-    when: (row: Delivery) => boolean;
-    style: {
-      color?: string;
-      fontWeight?: string;
-      fontSize?: string;
-    };
-  }[];
-};
-
-export type DataType = {
-  columns: HeaderCells[];
-  data: Delivery[];
-};
-
-export const allDeliveriesData: DataType = {
-  columns: [
-    {
-      name: "Date",
-      selector: (row: { date: Date }) => row.date.toDateString(),
-      width: "110px",
-    },
-    {
-      name: "Delivery Ref No.",
-      selector: (row: { deliveryReferenceNumber: string }) =>
-        row.deliveryReferenceNumber,
-      width: "160px",
-    },
-    {
-      name: "Item Description",
-      selector: (row: { description: string }) => row.description,
-    },
-    {
-      name: "Customer",
-      selector: (row: { customer: string }) => row.customer,
-      width: "220px",
-    },
-    {
-      name: "Address",
-      selector: (row: { address: string }) => row.address,
-      width: "120px",
-    },
-    {
-      name: "Status",
-      selector: (row: { status: string }) => row.status,
-      width: "120px",
-      conditionalCellStyles: [
-        {
-          when: (row: { status: string }) => row.status === "Pending",
-          style: {
-            color: "#FD8539",
-            fontWeight: "700",
-          },
-        },
-        {
-          when: (row: { status: string }) => row.status === "Recieved",
-          style: {
-            color: "#2ED480",
-            fontWeight: "700",
-          },
-        },
-        {
-          when: (row: { status: string }) => row.status === "Rejected",
-          style: {
-            color: "#dc4545",
-            fontWeight: "700",
-          },
-        },
-      ],
-    },
-    {
-      name: "Actions",
-      cell: (row: { id: string }) => [
-        <Link href={`/sales/deliveries/edit-delivery/${row.id}`} key={row.id}>
-          <EditIcon sx={{ color: "#475BE8" }} />
-        </Link>,
-        <Link key={row.id} href="/sales/deliveries">
-          <DeleteIcon color="error" />
-        </Link>,
-      ],
-      width: "90px",
-      style: {
-        display: "flex",
-        justifyContent: "center",
-        gap: "4px",
+export const allDeliveriesData: Delivery[] = [
+  {
+    id: "6d71",
+    date: new Date("2024-04-14T16:30:20.440Z"),
+    saleInvoiceNumber: "IVN-00001",
+    deliveryReferenceNumber: "DRN-00001",
+    description: "A few remaining products.",
+    customer: "Biomedical Link ",
+    address: "Monrovia, Liberia",
+    products: [
+      {
+        id: "e396",
+        name: "Genrui Fully Auto Chemistry Analyzer GS480A",
+        code: "GS480A",
+        unit: "Pcs",
+        lotNumber: "GS480A",
+        price: 750,
+        subTotal: 1500,
+        quantityRequested: 2,
+        quantitySupplied: 2,
       },
-    },
-  ],
-  data: [
-    {
-      id: "1",
-      date: new Date(),
-      saleInvoiceNumber: "Inv.2023/06/001",
-      deliveryReferenceNumber: "DO2023/06/0345",
-      description: "P04-03-101139-00 - GENRUI KT03A Lyse Solution",
-      customer: "PARTNERS IN HEALTH",
-      address: "Congo Town",
-      status: "Recieved",
-      products: [
-        {
-          id: "1",
-          lotNumber: "P04-03-101139-00",
-          name: "KT03A Lyse Solution",
-          quantityRequested: 10,
-          quantitySupplied: 8,
-        },
-        {
-          id: "2",
-          lotNumber: "P04-03-101139-00",
-          name: "GENRUI KT03A Lyse Solution",
-          quantityRequested: 8,
-          quantitySupplied: 8,
-        },
-        {
-          id: "3",
-          lotNumber: "P04-03-101139-00",
-          name: "GENRUI Solution",
-          quantityRequested: 8,
-          quantitySupplied: 8,
-        },
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isActive: true,
-    },
-    {
-      id: "2",
-      date: new Date(),
-      saleInvoiceNumber: "Inv.2023/06/001",
-      deliveryReferenceNumber: "DO2023/06/0344",
-      description: "P04-03-101139-00 - GENRUI KT03A Lyse Solution",
-      customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
-      address: "Congo Town",
-      status: "Recieved",
-      products: [
-        {
-          id: "1",
-          lotNumber: "P04-03-101139-00",
-          name: "P04-03-101139-00 - GENRUI KT03A Lyse Solution",
-          quantityRequested: 10,
-          quantitySupplied: 8,
-        },
-        {
-          id: "2",
-          lotNumber: "P04-03-101139-00",
-          name: "GENRUI KT03A Lyse Solution",
-          quantityRequested: 8,
-          quantitySupplied: 8,
-        },
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isActive: true,
-    },
-  ],
-};
+      {
+        id: "ff32",
+        name: "Erba XL-1000 Full Automated Chemistry Analyzer",
+        code: "XL-1000",
+        unit: "Pcs",
+        lotNumber: "XL-1000",
+        price: 800,
+        subTotal: 1600,
+        quantityRequested: 2,
+        quantitySupplied: 1,
+      },
+      {
+        id: "501b",
+        name: "Erba XL-180 Full Automated Chemistry Analyzer",
+        code: "XL-180",
+        unit: "Pcs",
+        lotNumber: "2301607",
+        price: 650,
+        subTotal: 650,
+        quantityRequested: 1,
+        quantitySupplied: 1,
+      },
+      {
+        id: "21a7",
+        name: "Mindray BS-240 Fully Automated Chemistry Analyzer",
+        code: "BS-240",
+        unit: "Pcs",
+        lotNumber: "2301609",
+        price: 800,
+        subTotal: 4000,
+        quantityRequested: 5,
+        quantitySupplied: 3,
+      },
+      {
+        id: "edd9",
+        name: "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+        code: "GS300 Plus ",
+        unit: "Pcs",
+        lotNumber: "2302808",
+        price: 750,
+        subTotal: 1500,
+        quantityRequested: 2,
+        quantitySupplied: 2,
+      },
+    ],
+    status: "Delivering",
+    createdAt: new Date("2024-04-14T16:30:20.440Z"),
+    updatedAt: new Date("2024-04-14T16:30:20.440Z"),
+    isActive: true,
+  },
+  {
+    id: "ffb5",
+    date: new Date("2024-04-14T16:30:20.440Z"),
+    saleInvoiceNumber: "IVN-00002",
+    deliveryReferenceNumber: "DRN-00002",
+    description: "Fully delivered",
+    customer: "UROCARE LIBERIA",
+    address: "Monrovia, Liberia",
+    products: [
+      {
+        id: "cd6d",
+        name: "Erba XL-640 Full Automated Chemistry Analyzer ",
+        code: "XL-640 ",
+        unit: "Pcs",
+        lotNumber: "XL-640",
+        price: 800,
+        subTotal: 800,
+        quantityRequested: 1,
+        quantitySupplied: 1,
+      },
+      {
+        id: "edd9",
+        name: "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+        code: "GS300 Plus ",
+        unit: "Pcs",
+        lotNumber: "2302808",
+        price: 750,
+        subTotal: 1500,
+        quantityRequested: 2,
+        quantitySupplied: 2,
+      },
+      {
+        id: "ff32",
+        name: "Erba XL-1000 Full Automated Chemistry Analyzer",
+        code: "XL-1000",
+        unit: "Pcs",
+        lotNumber: "XL-1000",
+        price: 800,
+        subTotal: 800,
+        quantityRequested: 1,
+        quantitySupplied: 1,
+      },
+      {
+        id: "3003",
+        name: "Erba XL-200 Full Automated Chemistry Analyzer",
+        code: "XL-200",
+        unit: "Pcs",
+        lotNumber: "XL-200",
+        price: 750,
+        subTotal: 1500,
+        quantityRequested: 2,
+        quantitySupplied: 2,
+      },
+    ],
+    status: "Delivering",
+    createdAt: new Date("2024-04-14T16:27:51.079Z"),
+    updatedAt: new Date("2024-04-14T16:27:51.079Z"),
+    isActive: true,
+  },
+];

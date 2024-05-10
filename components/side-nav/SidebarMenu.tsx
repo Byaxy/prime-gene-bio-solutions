@@ -16,10 +16,7 @@ export default function SidebarMenu({
 
   const handleItemClick = (index: number, path: string) => {
     setOpenIndex(openIndex === index ? null : index);
-
-    if (path) {
-      router.push(path);
-    }
+    router.push(path);
   };
 
   return (

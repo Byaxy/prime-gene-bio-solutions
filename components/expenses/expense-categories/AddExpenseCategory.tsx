@@ -122,7 +122,7 @@ export default function AddExpenseCategory({
             variant="outlined"
             size="large"
             onClick={() => reset()}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -131,7 +131,7 @@ export default function AddExpenseCategory({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

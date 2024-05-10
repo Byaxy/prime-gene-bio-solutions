@@ -3,5 +3,5 @@ export interface FormInputProps {
   control: any;
   label: string;
   setValue?: any;
-  options?: object[]
+  options?: {label: string, value: string | boolean}[]
 }

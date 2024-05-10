@@ -105,7 +105,9 @@ export default function AddSalePage() {
   const [products, setProducts] = useState<Product[]>([
     ...allProductsData.data,
   ]);
-  const [snackbarMessage, setSnackbarMessage] = useState(<p>There is an issue with the submitted form</p>);
+  const [snackbarMessage, setSnackbarMessage] = useState(
+    <p>There is an issue with the submitted form</p>
+  );
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const router = useRouter();
@@ -132,7 +134,7 @@ export default function AddSalePage() {
       ...field,
       // Watch quantity field for changes so as to update the sub-total
       stock: watchFieldArray[index].stock,
-      productQuantity: watchFieldArray[index].productQuantity
+      productQuantity: watchFieldArray[index].productQuantity,
     };
   });
 
@@ -149,11 +151,14 @@ export default function AddSalePage() {
     setProducts(searchedProducts);
   }, [products, searchTerm]);
 
-  const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === 'clickaway') return;
+  const handleSnackbarClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") return;
 
     setOpenSnackbar(false);
-  }
+  };
 
   const handleAddProduct = (product: Product) => {
     append({ ...product });
@@ -173,7 +178,7 @@ export default function AddSalePage() {
     const subTotal = getValues("subTotal") - diff;
     setValue("subTotal", subTotal);
     setValue("total", getTotal(subTotal, getValues("tax")));
-  }
+  };
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const subTotal = getValues("products").reduce(
@@ -185,7 +190,10 @@ export default function AddSalePage() {
     setValue("total", getTotal(subTotal, getValues("tax")));
   };
 
-  const handleLotNumberChange = (e: SelectChangeEvent<Stock[]>, child: ReactNode) => {
+  const handleLotNumberChange = (
+    e: SelectChangeEvent<Stock[]>,
+    child: ReactNode
+  ) => {
     const key = e.target.name as `products.${number}.stock`;
     // Get products from react-hook-form
     const currentValues: Stock[] = getValues(key) as Stock[];
@@ -195,19 +203,19 @@ export default function AddSalePage() {
       return rest;
     });
     setValue(key, updatedValues);
-  }
+  };
 
-  // Ensure requested qty per product does not exceed in-stock qty 
+  // Ensure requested qty per product does not exceed in-stock qty
   const handleRequestedProductQtyValidation = () => {
     const products = getValues("products");
 
     const result = products.reduce((accum, current) => {
-      let stock = current.stock.filter(el => el.selected)[0];
-      // Append lotNumber to object key for differentiation purposes e.g. 
+      let stock = current.stock.filter((el) => el.selected)[0];
+      // Append lotNumber to object key for differentiation purposes e.g.
       // productA-lotNumber0 should have different entry to productA-lotNumber1
       let key = current.name + "-" + stock.lotNumber;
       // Keep track of each product's requested and available stock.
-      if (!accum[key]) accum[key] = {"requested": 0, "available": 0}
+      if (!accum[key]) accum[key] = { requested: 0, available: 0 };
       accum[key].requested += current.productQuantity;
       accum[key].available = stock.quantity;
       return accum;
@@ -215,34 +223,42 @@ export default function AddSalePage() {
 
     const errors: string[] = [];
 
-    for (const [ key, { requested, available } ] of Object.entries(result)) {
+    for (const [key, { requested, available }] of Object.entries(result)) {
       if (available < requested) {
         let [name, lotNumber] = key.split("-");
-        errors.push(`Requested ${requested} ${name} of lot number ${lotNumber} but only ${available} available`);
+        errors.push(
+          `Requested ${requested} ${name} of lot number ${lotNumber} but only ${available} available`
+        );
       }
-    }    
+    }
 
     return errors;
-  }
+  };
 
+  const getTax = (subTotal: number, tax: number): number =>
+    (subTotal * tax) / 100;
 
-  const getTax = (subTotal: number, tax: number): number => (subTotal * tax) / 100;
-
-  const getTotal = (subTotal: number, tax: number): number => getTax(subTotal, tax) + subTotal;
+  const getTotal = (subTotal: number, tax: number): number =>
+    getTax(subTotal, tax) + subTotal;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const requestedQtyValidationResult = handleRequestedProductQtyValidation();
-      
+      const requestedQtyValidationResult =
+        handleRequestedProductQtyValidation();
+
       if (!requestedQtyValidationResult.length) {
         const newData = { ...data };
-        console.log(newData);      
+        console.log(newData);
         reset();
       } else {
         setSnackbarMessage(
           <div>
             <p className="m-0 text-lg">Form has errors</p>
-            {requestedQtyValidationResult.map((msg, idx) => <p key={idx} className="m-0 text-sm">{msg}</p>)}
+            {requestedQtyValidationResult.map((msg, idx) => (
+              <p key={idx} className="m-0 text-sm">
+                {msg}
+              </p>
+            ))}
           </div>
         );
         setOpenSnackbar(true);
@@ -272,11 +288,16 @@ export default function AddSalePage() {
 
   return (
     <div className="bg-white w-full rounded-lg shadow-md px-5 pt-5 pb-8">
-      <Snackbar open={openSnackbar} anchorOrigin={{ vertical: "bottom", horizontal: "center" }} onClose={handleSnackbarClose} autoHideDuration={5000}>
-        <Alert 
-        severity="error" 
-        onClose={handleSnackbarClose} 
-        // sx={{ backgroundColor: "#DC4545", color: "white" }}
+      <Snackbar
+        open={openSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        onClose={handleSnackbarClose}
+        autoHideDuration={5000}
+      >
+        <Alert
+          severity="error"
+          onClose={handleSnackbarClose}
+          // sx={{ backgroundColor: "#DC4545", color: "white" }}
         >
           {snackbarMessage}
         </Alert>
@@ -406,15 +427,24 @@ export default function AddSalePage() {
                         <span>{field.code}</span> - <span>{field.name}</span>
                       </TableCell>
                       <TableCell className="text-lg">
-                        <Controller control={control} name={`products.${index}.stock`}
-                          rules={{ validate: (value, formValues) => value.filter(el => el.selected).length === 1 }}
+                        <Controller
+                          control={control}
+                          name={`products.${index}.stock`}
+                          rules={{
+                            validate: (value, formValues) =>
+                              value.filter((el) => el.selected).length === 1,
+                          }}
                           render={({ field: { onBlur, value, ref } }) => (
                             <Select
-                            size="small" 
-                            label="Lot No."
-                            name={`products.${index}.stock`}
-                            onChange={handleLotNumberChange}
-                            error={isSubmitted && field.stock.filter(el => el.selected).length !== 1}
+                              size="small"
+                              label="Lot No."
+                              name={`products.${index}.stock`}
+                              onChange={handleLotNumberChange}
+                              error={
+                                isSubmitted &&
+                                field.stock.filter((el) => el.selected)
+                                  .length !== 1
+                              }
                             >
                               {field.stock.map((item, idx) => (
                                 <MenuItem
@@ -429,7 +459,12 @@ export default function AddSalePage() {
                         />
                       </TableCell>
                       <TableCell className="text-lg">
-                        <p>{(field.stock.filter(el => el.selected).length && field.stock.filter(el => el.selected)[0].quantity) || "-"}</p>
+                        <p>
+                          {(field.stock.filter((el) => el.selected).length &&
+                            field.stock.filter((el) => el.selected)[0]
+                              .quantity) ||
+                            "-"}
+                        </p>
                       </TableCell>
                       <TableCell className="text-lg">
                         <p>{field.price}</p>

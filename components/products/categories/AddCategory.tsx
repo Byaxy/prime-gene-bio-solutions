@@ -7,21 +7,24 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
+import type { Option, ProductCategory } from "@/components/Types";
+import toast from "react-hot-toast";
+import axios from "axios";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import { ProductCategory } from "@/components/Types";
-import Image from "next/image";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ProductCategory, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<ProductCategory, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   description: "",
-  image: "",
+  parentCategory: "",
   createdAt: new Date(),
+  updatedAt: new Date(),
+  isActive: true,
 };
 
 type AddCategoryProps = {
@@ -29,24 +32,6 @@ type AddCategoryProps = {
   handleClose: () => void;
 };
 
-const options = [
-  {
-    label: "Clinical Laboratory Solutions",
-    value: "Clinical Laboratory Solutions",
-  },
-  {
-    label: "Imaging Solutions",
-    value: "Imaging Solutions",
-  },
-  {
-    label: "Dental Solutions",
-    value: "Dental Solutions",
-  },
-  {
-    label: "Medical Solutions",
-    value: "Medical Solutions",
-  },
-];
 export default function AddCategory({
   open,
   handleClose,
@@ -55,41 +40,49 @@ export default function AddCategory({
     useForm<FormInput>({
       defaultValues: defaultValues,
     });
-  const { errors, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    "/placeholder.jpg"
-  );
+  const { errors, isSubmitting, isSubmitSuccessful } = formState;
+  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
 
   const onSubmit = async (data: FormInput) => {
-    const { image, ...rest } = data;
-    const formData = new FormData();
-
-    formData.append("json", JSON.stringify(rest));
-    if (image) formData.append("image", image[0]);
-
-    const response = await fetch("/api/product-category/add", {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log(response);
-    reset();
-    setPreviewImage("/placeholder.jpg");
-  };
-
-  // Set selected Image for preview
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage("/placeholder.jpg");
+    try {
+      // Handle form data with corresponding API call
+      const response = await axios.post(
+        "http://localhost:5000/categories",
+        data
+      );
+      if (response.status === 201)
+        toast.success("Product Category Added Successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
     }
   };
+
+  // Reset form to defaults on Successfull submission of data
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      handleClose();
+    }
+  }, [handleClose, isSubmitSuccessful, reset]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/categories");
+        const options = response.data.map((category: ProductCategory) => ({
+          label: category.name,
+          value: category.name,
+        }));
+        options.unshift({ label: "None", value: "None" });
+        setCategoryOptions(options);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div>
@@ -142,6 +135,26 @@ export default function AddCategory({
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
+              <label htmlFor="parentCategory">
+                <span className="text-primaryDark font-semibold">
+                  Parent Category
+                </span>
+                <span className="text-redColor"> *</span>
+              </label>
+              <FormInputDropdown
+                id="category"
+                control={control}
+                label="Select Category"
+                options={categoryOptions}
+                {...register("parentCategory", {
+                  required: "Product Category is required",
+                })}
+              />
+              {errors.parentCategory && (
+                <span className="text-redColor text-sm">
+                  {errors.parentCategory?.message}
+                </span>
+              )}
               <label htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description
@@ -159,29 +172,6 @@ export default function AddCategory({
                 error={!!errors.description}
                 helperText={errors.description?.message}
               />
-              <label htmlFor="image">
-                <span className="text-primaryDark font-semibold">Image</span>
-              </label>
-              <div className="flex flex-row gap-4 items-center">
-                <div>
-                  {previewImage && (
-                    <Image
-                      src={previewImage}
-                      alt="Preview"
-                      width={100}
-                      height={80}
-                    />
-                  )}
-                </div>
-                <TextField
-                  id="image"
-                  type="file"
-                  variant="outlined"
-                  {...register("image")}
-                  onChange={handleImageChange}
-                  inputProps={{ accept: "image/*", multiple: false }}
-                />
-              </div>
             </div>
           </form>
         </DialogContent>
@@ -189,8 +179,8 @@ export default function AddCategory({
           <Button
             variant="contained"
             size="large"
-            onClick={() => (reset(), setPreviewImage("/placeholder.jpg"))}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            onClick={() => reset()}
+            className="cancelBtn"
           >
             Cancel
           </Button>
@@ -199,7 +189,7 @@ export default function AddCategory({
             variant="contained"
             onClick={handleSubmit(onSubmit)}
             size="large"
-            className="font-bold"
+            className="saveBtn"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

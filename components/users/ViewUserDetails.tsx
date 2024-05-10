@@ -7,14 +7,7 @@ import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { usersData } from "@/data/usersData";
 import Image from "next/image";
-
-type UserType = {
-  image: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: string;
-};
+import { User } from "../Types";
 
 type ViewUserDetailsProps = {
   open: boolean;
@@ -27,12 +20,12 @@ export default function ViewUserDetails({
   handleClose,
   userID,
 }: ViewUserDetailsProps) {
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    let userDetails = usersData.data.filter((user) => user.id === userID);
+    let userDetails = usersData.find((user) => user.id === userID);
     if (userDetails) {
-      setUser(userDetails[0]);
+      setUser(userDetails);
     }
   }, [userID]);
 
@@ -53,28 +46,39 @@ export default function ViewUserDetails({
           />
         </DialogTitle>
         <DialogContent>
-          <Image alt="User" src={user.image} height={200} width={200} />
           <Table size="medium">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
-                  First Name
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Role
                 </TableCell>
-                <TableCell className="text-[17px]">{user.firstName}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg">
-                  Last Name
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.role}
                 </TableCell>
-                <TableCell className="text-[17px]">{user.lastName}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Email</TableCell>
-                <TableCell className="text-[17px]">{user.email}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Name
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.name}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Phone</TableCell>
-                <TableCell className="text-[17px]">{user.role}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Email
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user.email}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Phone Number
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {user?.phone}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
@@ -84,7 +88,7 @@ export default function ViewUserDetails({
             variant="contained"
             size="large"
             onClick={handleClose}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Close
           </Button>

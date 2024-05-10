@@ -1,95 +1,140 @@
-import Link from "next/link";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { SaleReturn } from "@/components/Types";
 
-type HeaderCells = {
-  name: string;
-  selector?: (row: DataCells) => any;
-  width?: string;
-  cell?: any;
-  style?: {
-    display?: string;
-    justifyContent?: string;
-    gap?: string;
-    color?: string;
-    fontWeight?: string;
-    fontSize?: string;
-  };
-  conditionalCellStyles?: {
-    when: (row: DataCells) => boolean;
-    style: {
-      color?: string;
-      fontWeight?: string;
-      fontSize?: string;
-    };
-  }[];
-};
-export type DataCells = {
-  id: number;
-  date: string;
-  invoiceNumber: string;
-  customer: string;
-  total: string;
-};
-
-export type DataType = {
-  columns: HeaderCells[];
-  data: DataCells[];
-};
-
-export const returnsData: DataType = {
-  columns: [
-    {
-      name: "Date",
-      selector: (row: { date: string }) => row.date,
-      width: "110px",
-    },
-    {
-      name: "Invoice No.",
-      selector: (row: { invoiceNumber: string }) => row.invoiceNumber,
-      width: "160px",
-    },
-    {
-      name: "Customer",
-      selector: (row: { customer: string }) => row.customer,
-    },
-    {
-      name: "Total",
-      selector: (row: { total: string }) => row.total,
-      width: "90px",
-    },
-    {
-      name: "Actions",
-      cell: (row: { id: string }) => [
-        <Link href={`/sales/edit-sale/${row.id}`} key={row.id}>
-          <EditIcon sx={{ color: "#475BE8" }} />
-        </Link>,
-        <Link key={row.id} href="/sales">
-          <DeleteIcon color="error" />
-        </Link>,
-      ],
-      width: "90px",
-      style: {
-        display: "flex",
-        justifyContent: "center",
-        gap: "4px",
+export const returnsData: SaleReturn[] = [
+  {
+    id: "a8f2",
+    date: new Date("2024-04-15T15:55:20.247Z"),
+    saleInvoiceNumber: "IVN-00001",
+    deliveryReferenceNumber: "DRN-00001",
+    description: "3 pieces returned",
+    customer: "Biomedical Link ",
+    products: [
+      {
+        id: "edd9",
+        name: "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+        code: "GS300 Plus ",
+        unit: "Pcs",
+        lotNumber: "2302808",
+        price: 750,
+        subTotal: 750,
+        quantityRequested: 2,
+        quantitySupplied: 2,
+        quantityReturned: 1,
       },
-    },
-  ],
-  data: [
-    {
-      id: 1,
-      date: "15/06/2023",
-      invoiceNumber: "Inv.2023/06/001",
-      customer: "PARTNERS IN HEALTH",
-      total: "$12000",
-    },
-    {
-      id: 2,
-      date: "15/06/2023",
-      invoiceNumber: "Inv.2023/06/001",
-      customer: "CLINILAB MEDICAL & DIAGNOSTIC CENTER",
-      total: "$12000",
-    },
-  ],
-};
+      {
+        id: "21a7",
+        name: "Mindray BS-240 Fully Automated Chemistry Analyzer",
+        code: "BS-240",
+        unit: "Pcs",
+        lotNumber: "2301609",
+        price: 800,
+        subTotal: 800,
+        quantityRequested: 5,
+        quantitySupplied: 3,
+        quantityReturned: 1,
+      },
+      {
+        id: "e396",
+        name: "Genrui Fully Auto Chemistry Analyzer GS480A",
+        code: "GS480A",
+        unit: "Pcs",
+        lotNumber: "GS480A",
+        price: 750,
+        subTotal: 750,
+        quantityRequested: 2,
+        quantitySupplied: 2,
+        quantityReturned: 1,
+      },
+      {
+        id: "ff32",
+        name: "Erba XL-1000 Full Automated Chemistry Analyzer",
+        code: "XL-1000",
+        unit: "Pcs",
+        lotNumber: "XL-1000",
+        price: 800,
+        subTotal: 0,
+        quantityRequested: 2,
+        quantitySupplied: 1,
+        quantityReturned: 0,
+      },
+      {
+        id: "501b",
+        name: "Erba XL-180 Full Automated Chemistry Analyzer",
+        code: "XL-180",
+        unit: "Pcs",
+        lotNumber: "2301607",
+        price: 650,
+        subTotal: 0,
+        quantityRequested: 1,
+        quantitySupplied: 1,
+        quantityReturned: 0,
+      },
+    ],
+    total: 2300,
+    createdAt: new Date("2024-04-15T15:55:20.247Z"),
+    updatedAt: new Date("2024-04-15T15:55:20.247Z"),
+    isActive: true,
+  },
+  {
+    id: "9394",
+    date: new Date("2024-04-15T15:55:20.247Z"),
+    saleInvoiceNumber: "IVN-00002",
+    deliveryReferenceNumber: "DRN-00002",
+    description: "One GS300 Plus returned due to faulty power supply unit",
+    customer: "UROCARE LIBERIA",
+    products: [
+      {
+        id: "edd9",
+        name: "Genrui Fully Auto Chemistry Analyzer GS300 Plus ",
+        code: "GS300 Plus ",
+        unit: "Pcs",
+        lotNumber: "2302808",
+        price: 750,
+        subTotal: 750,
+        quantityRequested: 2,
+        quantitySupplied: 2,
+        quantityReturned: 1,
+      },
+      {
+        id: "cd6d",
+        name: "Erba XL-640 Full Automated Chemistry Analyzer ",
+        code: "XL-640 ",
+        unit: "Pcs",
+        lotNumber: "XL-640",
+        price: 800,
+        subTotal: 0,
+        quantityRequested: 1,
+        quantitySupplied: 1,
+        quantityReturned: 0,
+      },
+      {
+        id: "ff32",
+        name: "Erba XL-1000 Full Automated Chemistry Analyzer",
+        code: "XL-1000",
+        unit: "Pcs",
+        lotNumber: "XL-1000",
+        price: 800,
+        subTotal: 0,
+        quantityRequested: 1,
+        quantitySupplied: 1,
+        quantityReturned: 0,
+      },
+      {
+        id: "3003",
+        name: "Erba XL-200 Full Automated Chemistry Analyzer",
+        code: "XL-200",
+        unit: "Pcs",
+        lotNumber: "XL-200",
+        price: 750,
+        subTotal: 0,
+        quantityRequested: 2,
+        quantitySupplied: 2,
+        quantityReturned: 0,
+      },
+    ],
+    total: 750,
+    createdAt: new Date("2024-04-15T15:55:20.247Z"),
+    updatedAt: new Date("2024-04-15T15:55:20.247Z"),
+    isActive: true,
+  },
+];

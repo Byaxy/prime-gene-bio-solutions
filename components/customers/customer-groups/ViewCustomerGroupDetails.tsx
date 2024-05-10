@@ -1,39 +1,22 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { customerGroupsData } from "@/data/customerGroupsData";
-import { CustomerGroups } from "@/components/Types";
+import type { CustomerGroup } from "@/components/Types";
 
 type ViewCustomerGroupsDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  groupID: string;
+  group: CustomerGroup;
 };
-type DataCells = Omit<CustomerGroups, "updatedAt" | "isActive">;
 
 export default function ViewCustomerGroupDetails({
   open,
   handleClose,
-  groupID,
+  group,
 }: ViewCustomerGroupsDetailsProps) {
-  const [group, setGroup] = useState<DataCells | null>(null);
-
-  useEffect(() => {
-    let groupDetails = customerGroupsData.data.filter(
-      (group) => group.id === groupID
-    );
-    if (groupDetails) {
-      setGroup(groupDetails[0]);
-    }
-  }, [groupID]);
-
-  if (!group) {
-    return null;
-  }
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -48,39 +31,50 @@ export default function ViewCustomerGroupDetails({
           />
         </DialogTitle>
         <DialogContent>
-          <Table size="medium">
+          <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
-                  Group ID
-                </TableCell>
-                <TableCell className="text-[17px]">{group.id}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Date of Registration
                 </TableCell>
-                <TableCell className="text-[17px]">
-                  {group.createdAt.toISOString()}
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(group.createdAt).toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Name</TableCell>
-                <TableCell className="text-[17px]">{group.name}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Name
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {group.name}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Percentage
                 </TableCell>
-                <TableCell className="text-[17px]">
+                <TableCell className="text-[17px] text-primaryDark">
                   {group.percentage}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last Updated
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(group.updatedAt).toDateString()}
                 </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </DialogContent>
         <DialogActions>
-          <Button size="large" variant="contained" onClick={handleClose}>
+          <Button
+            size="large"
+            variant="contained"
+            onClick={handleClose}
+            className="cancelBtn"
+          >
             Close
           </Button>
         </DialogActions>

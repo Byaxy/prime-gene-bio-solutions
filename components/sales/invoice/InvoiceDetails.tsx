@@ -1,11 +1,9 @@
-import React from "react";
-
 type InvoiceDetailsProps = {
-  invoiceDate?: Date;
-  invoiceRefNo?: string;
-  purchaseOrderNo?: string;
-  paymentStatus?: string;
-  dueDate?: Date;
+  invoiceDate: Date;
+  invoiceRefNo: string;
+  purchaseOrderNo: string;
+  paymentStatus: string;
+  dueDate: Date;
 };
 
 export default function InvoiceDetails({
@@ -20,7 +18,7 @@ export default function InvoiceDetails({
       <ul className="list-none p-0 m-0 text-primaryColor text-xs">
         <li>
           <span className="font-semibold">Invoice Date:</span>{" "}
-          {invoiceDate?.toDateString()}
+          {new Date(invoiceDate).toDateString()}
         </li>
         <li>
           <span className="font-semibold">Invoice Ref No:</span> {invoiceRefNo}
@@ -34,7 +32,7 @@ export default function InvoiceDetails({
         </li>
         <li>
           <span className="font-semibold">Due Date:</span>{" "}
-          {dueDate?.toDateString()}
+          {new Date(dueDate).toDateString()}
         </li>
       </ul>
     </div>

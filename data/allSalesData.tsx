@@ -2,11 +2,11 @@ import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Sale } from "@/components/Types";
-import { Product, InvoiceProduct } from "@/components/Types";
+import { Product } from "@/components/Types";
 
 type HeaderCells = {
   name: string;
-  selector?: (row: Sale<InvoiceProduct>) => any;
+  selector?: (row: Sale) => any;
   width?: string;
   cell?: any;
   style?: {
@@ -18,7 +18,7 @@ type HeaderCells = {
     fontSize?: string;
   };
   conditionalCellStyles?: {
-    when: (row: Sale<InvoiceProduct>) => boolean;
+    when: (row: Sale) => boolean;
     style: {
       color?: string;
       fontWeight?: string;
@@ -39,7 +39,7 @@ export type DataCells = {
 
 export type DataType = {
   columns: HeaderCells[];
-  data: Sale<InvoiceProduct>[];
+  data: Sale[];
 };
 
 export const allSalesData: DataType = {
@@ -150,26 +150,7 @@ export const allSalesData: DataType = {
       tax: 0,
       purchaseOrderNumber: "PO2023/06/001",
       subTotal: 12000,
-      products: [
-        {
-          id: "1",
-          lotNumber: "Lot.2023/06/001",
-          name: "Talley Counter",
-          description: "Talley Counter description",
-          quantity: 1,
-          price: 200,
-          subTotal: 200,
-        },
-        {
-          id: "2",
-          lotNumber: "Lot.2023/06/002",
-          name: "Sealent",
-          description: "Sealent tube description",
-          quantity: 2,
-          price: 50.5,
-          subTotal: 110,
-        },
-      ],
+      products: [],
       notes: "",
       updatedAt: new Date(),
       isActive: true,
@@ -186,36 +167,7 @@ export const allSalesData: DataType = {
       tax: 0,
       purchaseOrderNumber: "PO2023/06/001",
       subTotal: 12000,
-      products: [
-        {
-          id: "67",
-          lotNumber: "Lot.2023/06/007",
-          name: "Sealent",
-          description: "Sealent tube description",
-          quantity: 2,
-          price: 50.5,
-          subTotal: 110,
-        },
-        {
-          id: "989",
-          lotNumber: "Lot.2023/06/009",
-          name: "Talley Counter",
-          description: "Talley Counter description",
-          quantity: 1,
-          price: 200,
-          subTotal: 200,
-        },
-        {
-          id: "46",
-          lotNumber: "Lot.2023/06/005",
-          name: "Talley Counter",
-          description: "Talley Counter description",
-          quantity: 1,
-          price: 200,
-          subTotal: 200,
-        },
-      ],
-
+      products: [],
       notes: "",
       updatedAt: new Date(),
       isActive: true,

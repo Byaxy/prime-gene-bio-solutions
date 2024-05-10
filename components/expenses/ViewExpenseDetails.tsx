@@ -56,32 +56,42 @@ export default function ViewExpenseDetails({
           <Table size="medium">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Date</TableCell>
-                <TableCell className="text-[17px]">
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Date
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
                   {expense.date.toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Receipt Number
                 </TableCell>
-                <TableCell className="text-[17px]">
+                <TableCell className="text-[17px] text-primaryDark">
                   {expense.reference}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Title</TableCell>
-                <TableCell className="text-[17px]">{expense.title}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Title
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {expense.title}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Amount</TableCell>
-                <TableCell className="text-[17px]">{expense.amount}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Amount
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {expense.amount}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Description
                 </TableCell>
-                <TableCell className="text-[17px]">
+                <TableCell className="text-[17px] text-primaryDark">
                   {expense.description}
                 </TableCell>
               </TableRow>
@@ -93,7 +103,7 @@ export default function ViewExpenseDetails({
             variant="contained"
             size="large"
             onClick={handleClose}
-            className="font-bold bg-redColor/95 hover:bg-redColor text-white"
+            className="cancelBtn"
           >
             Close
           </Button>

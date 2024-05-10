@@ -24,7 +24,7 @@ export default function Header() {
           <p className="my-0">
             +231(0)775508118 / +233 (0)244364439 (whatsapp)
           </p>
-          <p className="my-0">primegenebiosolutions.com</p>
+          <p className="my-0">www.primegenebiomedicalsolutions.com</p>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Button, Dialog, DialogContent } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -9,33 +9,23 @@ import ProductsTable from "./ProductsTable";
 import Total from "./Total";
 import Bank from "./Bank";
 import { useReactToPrint } from "react-to-print";
-import { InvoiceProduct, Sale } from "@/components/Types";
-import { allSalesData } from "@/data/allSalesData";
+import type { Sale } from "@/components/Types";
 
 type ViewSaleDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  saleID: string;
+  sale: Sale;
 };
 
 export default function ViewSaleDetails({
   open,
   handleClose,
-  saleID,
+  sale,
 }: ViewSaleDetailsProps) {
-  const [saleDetails, setSaleDetails] = useState<Sale<InvoiceProduct> | null>(null);
-
   const componentRef = useRef(null);
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-
-  useEffect(() => {
-    let sale = allSalesData.data.filter((item) => item.id === saleID);
-    if (sale) {
-      setSaleDetails(sale[0]);
-    }
-  }, [saleID]);
 
   return (
     <div>
@@ -47,7 +37,7 @@ export default function ViewSaleDetails({
           >
             Print
           </Button>
-          <div ref={componentRef} className="max-w-3xl mx-auto bg-white p-8">
+          <div ref={componentRef} className="max-w-4xl mx-auto bg-white p-8">
             <Header />
             <div className="w-full bg-primaryColor text-mainColor flex items-center justify-center text-center my-2">
               <span className="font-semibold py-1 text-lg">
@@ -55,22 +45,18 @@ export default function ViewSaleDetails({
               </span>
             </div>
             <InvoiceDetails
-              invoiceDate={saleDetails?.createdAt}
-              invoiceRefNo={saleDetails?.invoiceNumber}
-              purchaseOrderNo={saleDetails?.purchaseOrderNumber}
-              paymentStatus={saleDetails?.paymentStatus}
+              invoiceDate={sale.createdAt}
+              invoiceRefNo={sale.invoiceNumber}
+              purchaseOrderNo={sale.purchaseOrderNumber}
+              paymentStatus={sale.paymentStatus}
               dueDate={new Date()}
-            /> 
+            />
             <div className="w-full mt-3 flex flex-row items-start justify-between">
               <Seller />
-              <Buyer customer={saleDetails?.customer} />
+              <Buyer customer={sale.customer} />
             </div>
-            <ProductsTable products={saleDetails?.products} />
-            <Total
-              subTotal={saleDetails?.subTotal}
-              tax={saleDetails?.tax}
-              total={saleDetails?.total}
-            />
+            <ProductsTable products={sale.products} />
+            <Total subTotal={sale.subTotal} tax={sale.tax} total={sale.total} />
             <div className="w-full flex justify-between mt-3 pt-5 text-xs pl-5 break-inside-avoid">
               <div className="flex flex-col gap-8 text-primaryColor flex-[2]">
                 <span className="font-semibold">Stamp & Signature</span>

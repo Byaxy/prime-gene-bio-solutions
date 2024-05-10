@@ -4,20 +4,24 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { CustomerGroups } from "@/components/Types";
+import type { CustomerGroup } from "@/components/Types";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<CustomerGroups, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<CustomerGroup, "id">;
 
 const defaultValues: FormInput = {
   name: "",
   createdAt: new Date(),
   percentage: 0,
+  isActive: true,
+  updatedAt: new Date(),
 };
 
 type AddCustomerGroupProps = {
@@ -35,15 +39,27 @@ export default function AddCustomerGroup({
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const onSubmit = async (data: FormInput) => {
-    console.log(data);
-    console.log(isSubmitSuccessful);
+    try {
+      // Handle form data with corresponding API call
+      const response = await axios.post(
+        "http://localhost:5000/customer-groups",
+        data
+      );
+      if (response.status === 201) {
+        toast.success("Customer Group Added Successfully");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+    }
   };
 
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
+      handleClose();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -60,18 +76,18 @@ export default function AddCustomerGroup({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -81,15 +97,16 @@ export default function AddCustomerGroup({
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="percentage">
+              <FormLabel htmlFor="percentage">
                 <span className="text-primaryDark font-semibold">
-                  Peercentage
+                  Discount Percentage
                 </span>
-              </label>
+              </FormLabel>
               <TextField
                 id="percentage"
                 type="number"
                 label="Percentage"
+                inputProps={{ min: 0 }}
                 variant="outlined"
                 {...register("percentage", { valueAsNumber: true })}
               />
@@ -97,7 +114,12 @@ export default function AddCustomerGroup({
           </form>
         </DialogContent>
         <DialogActions>
-          <Button size="large" variant="outlined" onClick={() => reset()}>
+          <Button
+            size="large"
+            variant="contained"
+            onClick={() => reset()}
+            className="cancelBtn"
+          >
             Cancel
           </Button>
           <Button
@@ -105,6 +127,7 @@ export default function AddCustomerGroup({
             variant="contained"
             size="large"
             onClick={handleSubmit(onSubmit)}
+            className="saveBtn"
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

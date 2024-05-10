@@ -1,7 +1,6 @@
 import {
   FormControl,
   FormControlLabel,
-  FormLabel,
   Radio,
   RadioGroup,
 } from "@mui/material";
@@ -9,31 +8,19 @@ import { Controller } from "react-hook-form";
 import { FormInputProps } from "./FormInputProps";
 import ErrorWrapper from "./ErrorWrapper";
 
-const genderOptions = [
-  {
-    label: "MALE",
-    value: "MALE",
-  },
-  {
-    label: "FEMALE",
-    value: "FEMALE",
-  },
-  {
-    label: "OTHER",
-    value: "OTHER",
-  },
-];
-
-export const FormInputRadio: React.FC<FormInputProps> = ({ name, control }) => {
+export const FormInputRadio: React.FC<FormInputProps> = ({
+  name,
+  control,
+  options,
+}) => {
   const generateRadioOptions = () => {
-    return genderOptions.map((singleOption) => {
+    return options?.map((singleOption) => {
       return (
         <FormControlLabel
-          key={singleOption.label}
-          value={singleOption.value}
-          label={singleOption.label}
-          control={<Radio />}
-          required
+          key={singleOption?.label}
+          value={singleOption?.value}
+          label={singleOption?.label}
+          control={<Radio className="text-primaryDark" />}
         />
       );
     });
@@ -48,7 +35,7 @@ export const FormInputRadio: React.FC<FormInputProps> = ({ name, control }) => {
             <RadioGroup
               value={value}
               onChange={onChange}
-              className="flex flex-row gap-4"
+              className="flex flex-row gap-4 text-primaryDark"
             >
               {generateRadioOptions()}
             </RadioGroup>
