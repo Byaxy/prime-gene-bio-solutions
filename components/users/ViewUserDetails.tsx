@@ -46,7 +46,6 @@ export default function ViewUserDetails({
           />
         </DialogTitle>
         <DialogContent>
-          <Image alt="User" src={user.image} height={200} width={200} />
           <Table size="medium">
             <TableBody>
               <TableRow>
@@ -59,18 +58,10 @@ export default function ViewUserDetails({
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  First Name
+                  Name
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {user.firstName}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Last Name
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {user.lastName}
+                  {user.name}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -86,23 +77,7 @@ export default function ViewUserDetails({
                   Phone Number
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {user.phone}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Gender
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {user.gender}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Status
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {user.isActive ? "Active" : "Not Active"}
+                  {user?.phone}
                 </TableCell>
               </TableRow>
             </TableBody>

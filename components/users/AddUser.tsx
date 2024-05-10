@@ -19,7 +19,8 @@ import Image from "next/image";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import appwriteService from "@/appwrite/config";
+import appwriteService from "@/appwrite/appwriteConfig";
+import { clear } from "console";
 
 type FormInput = Omit<User, "id" | "role" | "phone">;
 

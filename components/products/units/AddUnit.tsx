@@ -21,7 +21,6 @@ const defaultValues: FormInput = {
   code: "",
   createdAt: new Date(),
   updatedAt: new Date(),
-  isActive: true,
 };
 
 type AddUnitProps = {

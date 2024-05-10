@@ -8,7 +8,6 @@ export const unitsData: Unit[] = [
     code: "Vol/Pk",
     name: "Volume/Pack",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -16,7 +15,6 @@ export const unitsData: Unit[] = [
     code: "Pcs/Pk",
     name: "Pieces/Pack",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -24,7 +22,6 @@ export const unitsData: Unit[] = [
     code: "Pks",
     name: "Packs",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -32,6 +29,5 @@ export const unitsData: Unit[] = [
     code: "Rolls",
     name: "Rolls",
     updatedAt: new Date(),
-    isActive: true,
   },
 ];
