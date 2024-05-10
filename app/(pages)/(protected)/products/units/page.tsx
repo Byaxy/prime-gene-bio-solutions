@@ -8,10 +8,9 @@ import ViewUnitDetails from "@/components/products/units/ViewUnitDetails";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Unit } from "@/components/Types";
-import axios from "axios";
 import DeleteUnit from "@/components/products/units/DeleteUnit";
 import EditUnit from "@/components/products/units/EditUnit";
-import { DB } from "@/appwrite/appwriteConfig";
+import { DB, Query } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
 
 export default function ProductsUnitsPage(): JSX.Element {
@@ -94,7 +93,8 @@ export default function ProductsUnitsPage(): JSX.Element {
       try {
         const { documents } = await DB.listDocuments(
           config.appwriteDatabaseId,
-          config.appwriteProductUnitsCollectionId
+          config.appwriteProductUnitsCollectionId,
+          [Query.orderDesc("$createdAt"), Query.limit(1000)]
         );
         const units = documents.map((doc: any) => ({
           id: doc.$id,

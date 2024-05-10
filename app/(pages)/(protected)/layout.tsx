@@ -12,13 +12,7 @@ import {
   Toolbar,
   useMediaQuery,
 } from "@mui/material";
-import {
-  CSSObject,
-  Theme,
-  ThemeProvider,
-  createTheme,
-  styled,
-} from "@mui/material/styles";
+import { CSSObject, Theme, styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -29,8 +23,6 @@ import Header from "@/components/Header";
 import Link from "next/link";
 import Image from "next/image";
 import { data } from "@/data/sidenavData";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SidebarMenu from "@/components/side-nav/SidebarMenu";
 import { theme } from "@/utils/theme";
 
@@ -185,9 +177,14 @@ export default function RootLayout({
             {/** logo */}
             <Link
               href={"/"}
-              className="no-underline flex items-center justify-center"
+              className="no-underline flex items-center justify-center bg-primaryColor p-1 rounded shadow"
             >
-              <Image src={"/Logo.png"} alt="Logo" width={160} height={40} />
+              <Image
+                src={"/logoWhite.png"}
+                alt="Logo"
+                width={160}
+                height={40}
+              />
             </Link>
             <IconButton
               onClick={handleDrawerClose}

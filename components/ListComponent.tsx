@@ -44,7 +44,7 @@ export default function ListComponent({
           <Button
             onClick={buttonAction}
             variant="contained"
-            className="flex flex-row items-center bg-primaryColor text-white hover:bg-primaryColor/95 justify-center gap-1"
+            className="flex flex-row items-center saveBtn justify-center gap-1"
           >
             <AddIcon />
             <span className="text-white font-medium capitalize sm:text-lg">

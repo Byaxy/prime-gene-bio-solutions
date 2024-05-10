@@ -1,6 +1,24 @@
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  body {
+    @apply text-primaryDark;
+  }
+  .cancelBtn {
+    @apply font-bold !bg-redColor/95 hover:!bg-redColor transition !text-white !border-0 hover:!border-0;
+  }
+  .saveBtn {
+    @apply font-bold !bg-primaryColor/95 !text-white hover:!bg-primaryColor;
+  }
+  .tableTitle {
+    @apply !font-semibold !text-lg !text-primaryDark;
+  }
+  .tableValue {
+    @apply !text-[17px] !text-lg !text-primaryDark;
+  }
+}
 /* For Webkit-based browsers (Chrome, Safari and Opera) */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -61,10 +79,4 @@
       transparent 39px
     );
   background-blend-mode: multiply;
-}
-.cancelBtn {
-  @apply font-bold bg-redColor/95 hover:bg-redColor transition text-white border-0 hover:border-0;
-}
-.saveBtn {
-  @apply font-bold bg-primaryColor/95 text-white hover:bg-primaryColor;
 }

@@ -6,7 +6,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type DeleteUnitProps = {
   open: boolean;
@@ -16,12 +17,13 @@ type DeleteUnitProps = {
 const DeleteUnit = ({ open, handleClose, unit }: DeleteUnitProps) => {
   const deleteUnit = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/units/${unit.id}`
-      );
-      if (response.status === 200) {
-        toast.success("Unit Deleted Successfully");
-      }
+      await DB.deleteDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductUnitsCollectionId,
+        unit.id
+      ).then(() => {
+        toast.success("Unit Deleted successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");
@@ -63,7 +65,7 @@ const DeleteUnit = ({ open, handleClose, unit }: DeleteUnitProps) => {
               deleteUnit();
               handleClose();
             }}
-            className="cancelBtn"
+            className="cancelBtn text-white"
           >
             Delete
           </Button>

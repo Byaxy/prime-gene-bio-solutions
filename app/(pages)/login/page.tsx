@@ -51,14 +51,14 @@ const Login = () => {
 
   return (
     <section className="flex items-center justify-center h-screen w-full">
-      <div className="flex items-center justify-center w-full h-full bg-primaryLight">
+      <div className="flex items-center justify-center w-full h-full bg-primaryLight px-4">
         <div
-          className={`mx-auto w-full max-w-lg bg-white rounded-xl p-10 shadow-lg`}
+          className={`mx-auto w-full max-w-lg bg-white rounded-xl px-5 py-10 sm:py-16 sm:px-10 shadow-lg`}
         >
-          <div className="mb-2 flex justify-center items-center">
-            <Image src={"/Logo.png"} alt="Logo" width={280} height={80} />
+          <div className="mb-4 flex justify-center items-center bg-primaryColor p-2 rounded-lg ">
+            <Image src={"/logoWhite.png"} alt="Logo" width={280} height={80} />
           </div>
-          <h2 className="text-center text-2xl font-bold leading-tight text-primaryDark">
+          <h2 className="text-center text-2xl font-bold leading-tight text-primaryColor">
             Sign in to your account
           </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
@@ -66,12 +66,12 @@ const Login = () => {
               <div className="flex flex-col w-full">
                 <FormLabel
                   htmlFor="email"
-                  className="text-base font-semibold text-primaryDark"
+                  className="!font-semibold !text-primaryDark"
                 >
                   Email address
                 </FormLabel>
                 <TextField
-                  className="flex w-full rounded-md border border-grayColor bg-transparent text-sm placeholder:text-gray-500 focus:outline-none outline-none focus:ring-0 focus:ring-offset-0"
+                  className="flex w-full text-primaryDark bg-white rounded-md border border-white placeholder:text-gray-500 focus:outline-none outline-none focus:ring-white focus:ring-0 focus:ring-offset-0"
                   type="email"
                   placeholder="Email"
                   id="email"
@@ -85,12 +85,12 @@ const Login = () => {
               <div className="flex flex-col w-full">
                 <FormLabel
                   htmlFor="password"
-                  className="text-base font-semibold text-primaryDark"
+                  className="!font-semibold !text-primaryDark"
                 >
                   Password
                 </FormLabel>
                 <TextField
-                  className="flex w-full rounded-md border border-grayColor bg-transparent text-sm placeholder:text-gray-500 focus:outline-none outline-none focus:ring-0 focus:ring-gray-500 focus:ring-offset-0"
+                  className="flex w-full text-primaryDark rounded-md border border-white bg-white placeholder:text-gray-500 focus:outline-none outline-none focus:ring-0 focus:ring-white focus:ring-offset-0"
                   type="password"
                   placeholder="Password"
                   id="password"
@@ -104,7 +104,7 @@ const Login = () => {
               <div>
                 <button
                   type="submit"
-                  className="inline-flex w-full text-xl items-center justify-center rounded-md bg-primaryDark px-3.5 py-3 mt-5 font-semibold leading-7 cursor-pointer text-white hover:bg-primaryDark/95 capitalize"
+                  className="inline-flex w-full text-xl items-center justify-center rounded-md px-3.5 py-3 mt-5 font-semibold leading-7 cursor-pointer saveBtn capitalize"
                   onClick={handleSubmit(onSubmit)}
                   disabled={isSubmitting}
                 >

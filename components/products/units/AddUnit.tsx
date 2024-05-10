@@ -9,18 +9,17 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB, ID } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Unit, "id">;
+type FormInput = Omit<Unit, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
 };
 
 type AddUnitProps = {
@@ -39,8 +38,13 @@ export default function AddUnit({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const response = await axios.post("http://localhost:5000/units", data);
-      if (response.status === 201) toast.success("Unit added successfully");
+      const response = await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductUnitsCollectionId,
+        ID.unique(),
+        data
+      );
+      if (response) toast.success("Unit Added successfully");
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong ");
@@ -68,11 +72,11 @@ export default function AddUnit({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">

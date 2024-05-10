@@ -10,11 +10,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { DB, ID } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Unit, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<Unit, "id" | "createdAt" | "updatedAt">;
 
 type EditUnitProps = {
   open: boolean;
@@ -27,18 +29,20 @@ const EditUnit = ({ open, handleClose, unit }: EditUnitProps) => {
     defaultValues: {
       name: unit.name,
       code: unit.code,
-      updatedAt: new Date(),
     },
   });
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const response = await axios.patch(
-        `http://localhost:5000/units/${unit.id}`,
+      await DB.updateDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductUnitsCollectionId,
+        unit.id,
         data
-      );
-      if (response.status === 200) toast.success("Unit editted successfully");
+      ).then(() => {
+        toast.success("Unit Editted successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -66,11 +70,11 @@ const EditUnit = ({ open, handleClose, unit }: EditUnitProps) => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import { SxProps } from "@mui/system";
 import useAuth from "@/context/useAuth";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -40,7 +39,6 @@ export default function CurrentUser() {
     const getCurrentUser = async () => {
       const currentUser = await appwriteService.getCurrentUser();
       setUser(currentUser);
-      console.log(currentUser);
     };
 
     getCurrentUser();
@@ -63,16 +61,16 @@ export default function CurrentUser() {
           </span>
         </Avatar>
         {open ? (
-          <Box className="absolute top-12 py-5 px-8 right-0 z-10 rounded-md shadow-md bg-white">
+          <Box className="absolute top-12 py-5 px-6 right-0 z-10 rounded-md shadow-md bg-white">
             <ul className="flex flex-col items-start justify-center gap-2 list-none max-w-[200px] m-0 p-0">
               <li
                 onClick={handleLogout}
-                className="flex flex-row items-center justify-center text-white cursor-pointer gap-2 bg-redColor rounded-md py-2 px-8 w-full"
+                className="flex flex-row items-center justify-center text-white cursor-pointer gap-2 bg-redColor rounded-md py-1 px-6 w-full"
               >
                 <span className="text-2xl flex items-center justify-center">
                   <PowerSettingsNewIcon fontSize="inherit" />
                 </span>
-                <span className="text-lg font-bold">Log Out</span>
+                <span className="text-lg font-semibold">Log Out</span>
               </li>
             </ul>
           </Box>

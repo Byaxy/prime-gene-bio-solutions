@@ -1,9 +1,11 @@
 import { config } from "@/config/config";
-import { Client, Account, ID, Databases } from "appwrite";
+import { Client, Account, ID, Databases, Query } from "appwrite";
 
 const appwriteClient = new Client();
 
-export const DB = new Databases(appwriteClient);
+const DB = new Databases(appwriteClient);
+
+
 
 type CreateUserAccount = {
   name: string;
@@ -81,5 +83,7 @@ export class AppwriteService {
 }
 
 const appwriteService = new AppwriteService();
+
+export { DB, Query, ID };
 
 export default appwriteService;

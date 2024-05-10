@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { unitsData } from "@/data/unitsData";
 import type { Unit } from "@/components/Types";
-import axios from "axios";
-import toast from "react-hot-toast";
 
 type ViewUnitDetailsProps = {
   open: boolean;
@@ -38,34 +34,24 @@ export default function ViewUnitDetails({
           <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
+                <TableCell className="tableTitle">
                   Date of Registration
                 </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
+                <TableCell className="tableValue">
                   {new Date(unit.createdAt).toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Name
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {unit.name}
-                </TableCell>
+                <TableCell className="tableTitle">Name</TableCell>
+                <TableCell className="tableValue">{unit.name}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Code
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {unit.code}
-                </TableCell>
+                <TableCell className="tableTitle">Code</TableCell>
+                <TableCell className="tableValue">{unit.code}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Last Updated
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
+                <TableCell className="tableTitle">Last Updated On</TableCell>
+                <TableCell className="tableValue">
                   {new Date(unit.updatedAt).toDateString()}
                 </TableCell>
               </TableRow>
