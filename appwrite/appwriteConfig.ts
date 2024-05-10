@@ -5,8 +5,6 @@ const appwriteClient = new Client();
 
 const DB = new Databases(appwriteClient);
 
-
-
 type CreateUserAccount = {
   name: string;
   email: string;
