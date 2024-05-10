@@ -18,33 +18,8 @@ export default function UsersPage() {
 
   const columns = [
     {
-      name: "Image",
-      width: "80px",
-      selector: (row: { image: string }) => row.image,
-      cell: (row: { image: string }) => (
-        <div className="flex items-center justify-center p-1">
-          <Image
-            className="object-cover"
-            src={row.image}
-            alt="Product Image"
-            height={60}
-            width={60}
-          />
-        </div>
-      ),
-      style: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      },
-    },
-    {
       name: "Name",
-      cell: (row: { firstName: string; lastName: string }) => (
-        <span>
-          {row.firstName} {row.lastName}
-        </span>
-      ),
+      selector: (row: { name: string }) => row.name,
     },
     {
       name: "Role",

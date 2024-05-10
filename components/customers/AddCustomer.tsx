@@ -204,15 +204,12 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                   type="tel"
                   label="xxx-xxx-xxxx"
                   {...register("phone", {
-                    required: true,
+                    required:
+                      "Phone Number is Required and must be atleast 10 digits",
                     pattern: /^(\+)?(\()?(\d ?){6,14}\d(\))?$/,
                   })}
                   error={!!errors.phone}
-                  helperText={
-                    errors.phone
-                      ? "Phone Number is Required and must be 10 digits"
-                      : ""
-                  }
+                  helperText={errors.phone?.message}
                 />
               </div>
               <div className="w-full flex flex-col md:flex-row gap-5">

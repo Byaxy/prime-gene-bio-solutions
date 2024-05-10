@@ -16,35 +16,17 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { User, Gender, UserRole } from "@/components/Types";
 import Image from "next/image";
-import axios from "axios";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import { FormInputRadio } from "@/components/form-components/FormInputRadio";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
+import appwriteService from "@/appwrite/config";
 
-type FormInput = Omit<User, "id" | "updatedAt" | "isActive">;
-
-const userOptions = [
-  {
-    label: "User",
-    value: "USER",
-  },
-  {
-    label: "Admin",
-    value: "ADMIN",
-  },
-];
+type FormInput = Omit<User, "id" | "role" | "phone">;
 
 const defaultValues: FormInput = {
-  createdAt: new Date(),
-  firstName: "",
-  lastName: "",
+  name: "",
   email: "",
   password: "",
-  image: "",
-  role: UserRole.USER,
-  phone: "",
-  gender: Gender.MALE,
 };
 
 type AddUserProps = {
@@ -53,10 +35,9 @@ type AddUserProps = {
 };
 
 export default function AddUser({ open, handleClose }: AddUserProps) {
-  const { handleSubmit, reset, control, register, formState } =
-    useForm<FormInput>({
-      defaultValues: defaultValues,
-    });
+  const { handleSubmit, reset, control, register, formState } = useForm<User>({
+    defaultValues: defaultValues,
+  });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
   const [userImage, setUserImage] = useState<string | null>(null);
   const [gender, setGender] = useState<Gender>(Gender.MALE);
@@ -65,18 +46,16 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
     setGender(event.target.value as Gender);
   };
 
-  const onSubmit = async (data: FormInput) => {
+  const onSubmit = async (data: User) => {
     try {
-      // Handle form data with corresponding API call
-      const formData = new FormData();
-      const newData = { ...data, image: userImage, gender };
-      formData.append("json", JSON.stringify(newData));
-
-      console.log(JSON.stringify(newData));
-      toast.success("User added successfully");
-    } catch (error) {
+      const userAccount = await appwriteService.createUserAccount(data);
+      if (userAccount) {
+        toast.success("User Account Added successfully");
+        return userAccount;
+      }
+    } catch (error: any) {
       console.error(error);
-      toast.error("Something went wrong try again later");
+      toast.error(error.message);
     }
   };
 
@@ -100,95 +79,32 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
           />
         </DialogTitle>
         <DialogContent>
-          <DialogContentText className="mb-5">
+          <DialogContentText>
             <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
             </span>
           </DialogContentText>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
             <div className="flex flex-col gap-5 w-full">
-              <FormLabel htmlFor="image">
-                <span className="text-primaryDark font-semibold">
-                  Profile Image
-                </span>
-              </FormLabel>
-              <div className="flex flex-row gap-4 items-center">
-                <div className="flex items-center justify-center rounded-full overflow-hidden">
-                  <Image
-                    src={userImage === null ? "/user.png" : userImage}
-                    alt="User"
-                    width={200}
-                    height={200}
-                  />
-                </div>
-                <CldUploadWidget
-                  uploadPreset="prime-gene-biomedical-solutions"
-                  options={{
-                    multiple: false,
-                    clientAllowedFormats: ["jpg", "png", "webp", "svg"],
-                    sources: ["local", "url", "dropbox", "google_drive"],
-                  }}
-                  onSuccess={(result) => {
-                    if (result.info && typeof result.info !== "string") {
-                      const url: string = result.info.secure_url;
-                      setUserImage(url);
-                    }
-                  }}
-                >
-                  {({ open }) => {
-                    return (
-                      <Button
-                        variant="contained"
-                        size="large"
-                        className="capitalize"
-                        onClick={() => open()}
-                      >
-                        Upload an Image
-                      </Button>
-                    );
-                  }}
-                </CldUploadWidget>
+              <div className="flex flex-col gap-4 w-full">
+                <FormLabel htmlFor="name">
+                  <span className="text-primaryDark font-semibold">Name</span>
+                  <span className="text-redColor"> *</span>
+                </FormLabel>
+                <TextField
+                  id="name"
+                  type="text"
+                  label="Name"
+                  {...register("name", {
+                    required: "First Name is required",
+                  })}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                />
               </div>
-              <div className="w-full flex flex-col md:flex-row gap-5 items-center">
-                <div className="flex flex-col gap-4 w-full">
-                  <FormLabel htmlFor="firstName">
-                    <span className="text-primaryDark font-semibold">
-                      First Name
-                    </span>
-                    <span className="text-redColor"> *</span>
-                  </FormLabel>
-                  <TextField
-                    id="firstName"
-                    type="text"
-                    label="First Name"
-                    {...register("firstName", {
-                      required: "First Name is required",
-                    })}
-                    error={!!errors.firstName}
-                    helperText={errors.firstName?.message}
-                  />
-                </div>
-                <div className="flex flex-col gap-4 w-full">
-                  <FormLabel htmlFor="lastName">
-                    <span className="text-primaryDark font-semibold">
-                      Last Name
-                    </span>
-                    <span className="text-redColor"> *</span>
-                  </FormLabel>
-                  <TextField
-                    id="lastName"
-                    type="text"
-                    label="First Name"
-                    {...register("lastName", {
-                      required: "Last Name is required",
-                    })}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName?.message}
-                  />
-                </div>
-              </div>
+
               <div className="flex flex-col gap-4 w-full">
                 <FormLabel htmlFor="email">
                   <span className="text-primaryDark font-semibold">Email</span>
@@ -196,10 +112,11 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
                 </FormLabel>
                 <TextField
                   id="email"
-                  type="text"
+                  type="email"
                   label="Email"
                   {...register("email", {
-                    required: "Email is required",
+                    required: "Email is required and must be valid",
+                    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   })}
                   error={!!errors.email}
                   helperText={errors.email?.message}
@@ -217,101 +134,11 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
                   type="password"
                   label="Password"
                   {...register("password", {
-                    required: true,
-                    pattern:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    required: "Password must contain at least 8 characters",
                   })}
                   error={!!errors.password}
-                  helperText={
-                    errors.password
-                      ? "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character (@, $, !, %, *, ?, and &.)"
-                      : ""
-                  }
+                  helperText={errors.password?.message}
                 />
-              </div>
-              <div className="flex flex-col gap-2 w-full">
-                <FormLabel htmlFor="gender">
-                  <span className="text-primaryDark font-semibold">
-                    Select Gender
-                  </span>
-                  <span className="text-redColor"> *</span>
-                </FormLabel>
-                <RadioGroup
-                  id="gender"
-                  row
-                  aria-labelledby="Gender"
-                  name="gender"
-                  value={gender}
-                  onChange={handleChange}
-                >
-                  <FormControlLabel
-                    value={Gender.MALE}
-                    control={<Radio className="text-primaryDark" />}
-                    label="Male"
-                    className="text-primaryDark"
-                  />
-                  <FormControlLabel
-                    value={Gender.FEMALE}
-                    control={<Radio className="text-primaryDark" />}
-                    label="Female"
-                    className="text-primaryDark"
-                  />
-                  <FormControlLabel
-                    value={Gender.OTHER}
-                    control={<Radio className="text-primaryDark" />}
-                    label="Other"
-                    className="text-primaryDark"
-                  />
-                </RadioGroup>
-                {errors.gender && (
-                  <span className="text-redColor text-sm">
-                    {errors?.gender.message}
-                  </span>
-                )}
-              </div>
-              <div className="w-full flex flex-col md:flex-row gap-5 items-center">
-                <div className="flex flex-col gap-4 w-full">
-                  <FormLabel htmlFor="phone">
-                    <span className="text-primaryDark font-semibold">
-                      Phone Number
-                    </span>
-                  </FormLabel>
-                  <TextField
-                    id="phone"
-                    type="tel"
-                    label="xxx-xxx-xxxx"
-                    {...register("phone", {
-                      required: true,
-                      pattern: /^\d{10}$/,
-                    })}
-                    error={!!errors.phone}
-                    helperText={
-                      errors.phone ? "Phone Number is must be 10 digits" : ""
-                    }
-                  />
-                </div>
-                <div className="flex flex-col w-full gap-4">
-                  <FormLabel htmlFor="role">
-                    <span className="text-primaryDark font-semibold">
-                      Select Role
-                    </span>
-                    <span className="text-redColor"> *</span>
-                  </FormLabel>
-                  <FormInputDropdown
-                    id="role"
-                    control={control}
-                    label="Role"
-                    {...register("role", {
-                      required: "Role is required",
-                    })}
-                    options={userOptions}
-                  />
-                  {errors.role && (
-                    <span className="text-redColor text-sm">
-                      {errors?.role.message}
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
           </form>

@@ -11,6 +11,8 @@ import type { Unit } from "@/components/Types";
 import axios from "axios";
 import DeleteUnit from "@/components/products/units/DeleteUnit";
 import EditUnit from "@/components/products/units/EditUnit";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 export default function ProductsUnitsPage(): JSX.Element {
   const [add, setAdd] = useState<boolean>(false);
@@ -90,8 +92,18 @@ export default function ProductsUnitsPage(): JSX.Element {
   useEffect(() => {
     const fetchUnits = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/units");
-        setUnits(data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductUnitsCollectionId
+        );
+        const units = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          code: doc.code,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+        setUnits(units);
       } catch (error) {
         console.error(error);
       }

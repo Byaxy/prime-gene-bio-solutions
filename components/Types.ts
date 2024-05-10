@@ -33,7 +33,6 @@ export type Unit = {
   code: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type ProductCategory = {
   id: string;
@@ -66,17 +65,11 @@ export enum UserRole {
 }
 export type User = {
   id: string;
-  image: string;
   role: UserRole;
-  firstName: string;
-  lastName: string;
-  gender: Gender;
+  name: string;
   email: string;
   phone: string;
   password: string;
-  createdAt: Date;
-  updatedAt: Date;
-  isActive: boolean;
 };
 export type Supplier = {
   id: string;

@@ -1,22 +1,38 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
+"use client";
 
-export const metadata = {
-  title: "Prime Gene Biomedical Solutions App",
-  description:
-    "Inventory managemnet application for Prime Gene Biomedical Solutions",
-};
+import "../globals.css";
+import appwriteService from "@/appwrite/appwriteConfig";
+import { AuthProvider } from "@/context/authContext";
+import { useEffect, useState } from "react";
+import { ThemeProvider } from "@mui/material/styles";
+import { theme } from "@/utils/theme";
+import { Toaster } from "react-hot-toast";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const inter = Inter({ subsets: ["latin"] });
-
-export default function RootLayout({
+export default function PagesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [authStatus, setAuthStatus] = useState(false);
+  const [loader, setLoader] = useState(true);
+
+  useEffect(() => {
+    appwriteService
+      .isLoggedIn()
+      .then(setAuthStatus)
+      .finally(() => setLoader(false));
+  }, []);
+
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
+    <ThemeProvider theme={theme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <AuthProvider value={{ authStatus, setAuthStatus }}>
+          <Toaster />
+          {!loader && <main>{children}</main>}
+        </AuthProvider>
+      </LocalizationProvider>
+    </ThemeProvider>
   );
 }

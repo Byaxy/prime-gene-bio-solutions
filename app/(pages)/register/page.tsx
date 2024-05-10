@@ -1,25 +1,27 @@
 "use client";
-import React, { FormEvent, useEffect } from "react";
-import Link from "next/link";
+import React, { useEffect } from "react";
+
 import appwriteService from "@/appwrite/appwriteConfig";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { Button, FormLabel, TextField } from "@mui/material";
+import { FormLabel, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import useAuth from "@/context/useAuth";
 import toast from "react-hot-toast";
 
 type FormInput = {
+  name: string;
   email: string;
   password: string;
 };
 
 const defaultValues: FormInput = {
+  name: "",
   email: "",
   password: "",
 };
 
-const Login = () => {
+const RegisterUser = () => {
   const router = useRouter();
   const { setAuthStatus } = useAuth();
 
@@ -30,11 +32,11 @@ const Login = () => {
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const session = await appwriteService.login(data);
-      if (session) {
+      const userAccount = await appwriteService.createUserAccount(data);
+      if (userAccount) {
+        toast.success("User Account Added successfully");
         setAuthStatus(true);
         router.push("/");
-        toast.success("Login Successful");
       }
     } catch (error: any) {
       console.error(error);
@@ -59,10 +61,29 @@ const Login = () => {
             <Image src={"/Logo.png"} alt="Logo" width={280} height={80} />
           </div>
           <h2 className="text-center text-2xl font-bold leading-tight text-primaryDark">
-            Sign in to your account
+            Register for your account
           </h2>
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
             <div className="flex flex-col gap-4">
+              <div className="flex flex-col w-full">
+                <FormLabel
+                  htmlFor="name"
+                  className="text-base font-semibold text-primaryDark"
+                >
+                  Name
+                </FormLabel>
+                <TextField
+                  className="flex w-full rounded-md border border-grayColor bg-transparent text-sm placeholder:text-gray-500 focus:outline-none outline-none focus:ring-0 focus:ring-offset-0"
+                  type="text"
+                  placeholder="Name"
+                  id="name"
+                  {...register("name", {
+                    required: "Name is required",
+                  })}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                />
+              </div>
               <div className="flex flex-col w-full">
                 <FormLabel
                   htmlFor="email"
@@ -119,4 +140,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default RegisterUser;

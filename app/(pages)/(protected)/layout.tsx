@@ -1,6 +1,8 @@
 "use client";
 
-import "../globals.css";
+import "../../globals.css";
+import useAuth from "@/context/useAuth";
+import { useRouter } from "next/navigation";
 import { Inter } from "next/font/google";
 import {
   Box,
@@ -30,28 +32,11 @@ import { data } from "@/data/sidenavData";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SidebarMenu from "@/components/side-nav/SidebarMenu";
-import { Toaster } from "react-hot-toast";
+import { theme } from "@/utils/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
 const drawerWidth = 270;
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#2D3663",
-    },
-    secondary: {
-      light: "#47ccc880",
-      main: "#47ccc8",
-      dark: "#29aeaa",
-      contrastText: "#72D9D6",
-    },
-    error: {
-      main: "#dc4545",
-    },
-  },
-});
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -125,6 +110,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { authStatus } = useAuth();
+
   const [open, setOpen] = useState(false);
   const matchesMidium = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -144,97 +132,94 @@ export default function RootLayout({
     }
   }, [matchesMidium]);
 
+  // If user is not logged in, redirect to login page
+  if (!authStatus) {
+    router.replace("/login");
+    return <></>;
+  }
+
   return (
     <section className={inter.className}>
-      <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box className="flex">
-            <CssBaseline />
-            <Toaster />
-
-            <AppBar
-              className="fixed shadow-md"
-              open={open}
+      <Box className="flex">
+        <CssBaseline />
+        <AppBar
+          className="fixed shadow-md"
+          open={open}
+          sx={{
+            backgroundColor: "#002060",
+            color: "white",
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              className="shadow-md"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
               sx={{
-                backgroundColor: "#002060",
-                color: "white",
+                marginRight: 5,
+                color: "#002060",
+                backgroundColor: "white",
+                ...(open && { display: "none" }),
+                "&:hover": {
+                  backgroundColor: "white",
+                  color: "#00fdff",
+                },
               }}
             >
-              <Toolbar>
-                <IconButton
-                  className="shadow-md"
-                  aria-label="open drawer"
-                  onClick={handleDrawerOpen}
-                  edge="start"
-                  sx={{
-                    marginRight: 5,
-                    color: "#002060",
-                    backgroundColor: "white",
-                    ...(open && { display: "none" }),
-                    "&:hover": {
-                      backgroundColor: "white",
-                      color: "#00fdff",
-                    },
-                  }}
-                >
-                  <MenuIcon titleAccess="Open Side Menu" />
-                </IconButton>
+              <MenuIcon titleAccess="Open Side Menu" />
+            </IconButton>
 
-                {/** Header */}
-                <Header />
-              </Toolbar>
-            </AppBar>
-            {/** Sidebar Navigation */}
-            <Drawer
-              variant="permanent"
-              open={open}
-              className="bg-white scrollbar-hide"
+            {/** Header */}
+            <Header />
+          </Toolbar>
+        </AppBar>
+        {/** Sidebar Navigation */}
+        <Drawer
+          variant="permanent"
+          open={open}
+          className="bg-white scrollbar-hide"
+        >
+          {/** Drawer Header */}
+          <DrawerHeader className="w-full flex flex-row justify-between items-center">
+            {/** logo */}
+            <Link
+              href={"/"}
+              className="no-underline flex items-center justify-center"
             >
-              {/** Drawer Header */}
-              <DrawerHeader className="w-full flex flex-row justify-between items-center">
-                {/** logo */}
-                <Link
-                  href={"/"}
-                  className="no-underline flex items-center justify-center"
-                >
-                  <Image src={"/Logo.png"} alt="Logo" width={160} height={40} />
-                </Link>
-                <IconButton
-                  onClick={handleDrawerClose}
-                  className="shadow-md"
-                  sx={{
-                    color: "white",
-                    backgroundColor: "#002060",
-                    "&:hover": {
-                      color: "#00fdff",
-                      backgroundColor: "#002060",
-                    },
-                  }}
-                >
-                  {theme.direction === "rtl" ? (
-                    <ChevronRightIcon titleAccess="Open Side Menu" />
-                  ) : (
-                    <ChevronLeftIcon titleAccess="Close Side Menu" />
-                  )}
-                </IconButton>
-              </DrawerHeader>
-              <Divider />
-
-              {/** Side bar */}
-              <SidebarMenu data={data} open={open} />
-            </Drawer>
-
-            {/** Main Content */}
-            <Box
-              className="min-h-screen w-full p-5 bg-grayColor"
-              component="main"
+              <Image src={"/Logo.png"} alt="Logo" width={160} height={40} />
+            </Link>
+            <IconButton
+              onClick={handleDrawerClose}
+              className="shadow-md"
+              sx={{
+                color: "white",
+                backgroundColor: "#002060",
+                "&:hover": {
+                  color: "#00fdff",
+                  backgroundColor: "#002060",
+                },
+              }}
             >
-              <DrawerHeader />
-              {children}
-            </Box>
-          </Box>
-        </LocalizationProvider>
-      </ThemeProvider>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon titleAccess="Open Side Menu" />
+              ) : (
+                <ChevronLeftIcon titleAccess="Close Side Menu" />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+
+          {/** Side bar */}
+          <SidebarMenu data={data} open={open} />
+        </Drawer>
+
+        {/** Main Content */}
+        <Box className="min-h-screen w-full p-5 bg-grayColor" component="main">
+          <DrawerHeader />
+          {children}
+        </Box>
+      </Box>
     </section>
   );
 }
