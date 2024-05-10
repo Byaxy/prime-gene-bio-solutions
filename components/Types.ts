@@ -121,35 +121,6 @@ export type Expense = {
   isActive: boolean;
 };
 export type Product = {
-<<<<<<< HEAD
-     id: string;
-     code: string;
-     name: string;
-     image: string;
-     gallery: string[];
-     brand: string;
-     type: string;
-     unit: string;
-     category: string;
-     productQuantity: number;
-     stock: Stock[];
-     cost: number;
-     price: number;
-     description: string;
-     alertQuantity: number;
-     createdAt: Date;
-     updatedAt: Date;
-     isActive: boolean;
-}
-export type Stock = {
-     id: string;
-     lotNumber: string;
-     manufactureDate: Date;
-     expiryDate: Date;
-     quantity: number;
-     selected?: boolean;
-}
-=======
   id: string;
   code: string;
   name: string;
@@ -176,7 +147,6 @@ export type Stock = {
   createdAt: Date;
   updatedAt: Date;
 };
->>>>>>> restructure
 export type ProductStock = {
   id: string;
   name: string;

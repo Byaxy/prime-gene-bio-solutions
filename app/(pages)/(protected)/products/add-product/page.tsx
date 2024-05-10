@@ -33,10 +33,6 @@ const defaultValues: FormInput = {
   price: 0,
   description: "",
   alertQuantity: 5,
-<<<<<<< HEAD:app/products/add-product/page.tsx
-  productQuantity: 0,
-=======
->>>>>>> restructure:app/(pages)/(protected)/products/add-product/page.tsx
   createdAt: new Date(),
   updatedAt: new Date(),
   isActive: true,
