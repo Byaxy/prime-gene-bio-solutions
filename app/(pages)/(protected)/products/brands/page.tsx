@@ -1,6 +1,5 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
-import { brandsData } from "@/data/brandsData";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import AddBrand from "@/components/products/brands/AddBrand";
@@ -13,6 +12,8 @@ import type { Brand } from "@/components/Types";
 import axios from "axios";
 import DeleteBrand from "@/components/products/brands/DeleteBrand";
 import EditBrand from "@/components/products/brands/EditBrand";
+import { DB, Query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 export default function ProductBrandsPage() {
   const [add, setAdd] = useState<boolean>(false);
@@ -26,14 +27,14 @@ export default function ProductBrandsPage() {
     {
       name: "Image",
       selector: (row: { image: string }) => row.image,
-      width: "80px",
+      width: "160px",
       cell: (row: { image: string }) => (
         <CldImage
-          className="rounded-lg"
+          className="rounded"
           src={row.image}
-          alt="Product Image"
-          height={40}
-          width={80}
+          alt="Brand Image"
+          height={50}
+          width={100}
         />
       ),
       style: {
@@ -110,8 +111,22 @@ export default function ProductBrandsPage() {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/brands");
-        setBrands(response.data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductBrandsCollectionId,
+          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+        );
+
+        const brands = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          code: doc.code,
+          image: doc.image,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        setBrands(brands);
       } catch (error) {
         console.error(error);
       }

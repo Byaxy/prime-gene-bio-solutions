@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { DB } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
 

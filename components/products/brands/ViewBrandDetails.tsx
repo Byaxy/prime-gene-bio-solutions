@@ -47,14 +47,6 @@ export default function ViewBrandDetails({
               <TableBody>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Date of Registration
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {new Date(brand.createdAt).toDateString()}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Name
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
@@ -71,7 +63,15 @@ export default function ViewBrandDetails({
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Last Updated At
+                    Created On
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {new Date(brand.createdAt).toDateString()}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Last Updated On
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
                     {new Date(brand.updatedAt).toDateString()}

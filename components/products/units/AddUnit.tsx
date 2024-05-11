@@ -38,13 +38,14 @@ export default function AddUnit({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const response = await DB.createDocument(
+      await DB.createDocument(
         config.appwriteDatabaseId,
         config.appwriteProductUnitsCollectionId,
         ID.unique(),
         data
-      );
-      if (response) toast.success("Unit Added successfully");
+      ).then(() => {
+        toast.success("Unit Added successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong ");

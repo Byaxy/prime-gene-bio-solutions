@@ -9,7 +9,6 @@ export const brandsData: Brand[] = [
     code: "BK",
     name: "BIOREX UK",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -18,7 +17,6 @@ export const brandsData: Brand[] = [
     code: "CITOTEST",
     name: "Citotest Scientific Co Ltd",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -27,7 +25,6 @@ export const brandsData: Brand[] = [
     code: "DLAB",
     name: "DLAB",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -36,7 +33,6 @@ export const brandsData: Brand[] = [
     code: "Tulip 011",
     name: "Tulip Diagnostics",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -45,6 +41,5 @@ export const brandsData: Brand[] = [
     code: "HEMOCUE",
     name: "HEMOCUE AB",
     updatedAt: new Date(),
-    isActive: true,
   },
 ];

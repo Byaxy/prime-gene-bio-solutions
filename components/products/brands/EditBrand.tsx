@@ -10,12 +10,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Brand, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<Brand, "id" | "createdAt" | "updatedAt">;
 
 type EditBrandProps = {
   open: boolean;
@@ -31,23 +32,22 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
       name: brand.name,
       code: brand.code,
       image: brand.image,
-      updatedAt: new Date(),
     },
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data, image: imageUrl };
+      const formData = { ...data, image: imageUrl };
 
-      const response = await axios.patch(
-        `http://localhost:5000/brands/${brand.id}`,
-        newData
-      );
-
-      if (response.status === 200) {
+      await DB.updateDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductBrandsCollectionId,
+        brand.id,
+        formData
+      ).then(() => {
         toast.success("Brand Editted successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -144,7 +144,7 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
                     return (
                       <Button
                         variant="contained"
-                        className="capitalize"
+                        className="capitalize saveBtn"
                         onClick={() => open()}
                       >
                         Upload New Image
@@ -163,7 +163,7 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
             onClick={() => (reset(), setImageUrl(brand.image))}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

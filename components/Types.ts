@@ -17,7 +17,6 @@ export type Brand = {
   image: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type ProductType = {
   id: string;

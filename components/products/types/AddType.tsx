@@ -37,13 +37,14 @@ export default function AddType({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const response = await DB.createDocument(
+      await DB.createDocument(
         config.appwriteDatabaseId,
         config.appwriteProductTypesCollectionId,
         ID.unique(),
         data
-      );
-      if (response) toast.success("Type Added successfully");
+      ).then(() => {
+        toast.success("Type Added Successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");

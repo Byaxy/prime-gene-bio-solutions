@@ -39,14 +39,6 @@ export default function ViewTypeDetails({
             <TableBody>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Created On
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {new Date(type.createdAt).toDateString()}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
                   Name
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
@@ -59,6 +51,14 @@ export default function ViewTypeDetails({
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
                   {type.description}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Created On
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(type.createdAt).toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>

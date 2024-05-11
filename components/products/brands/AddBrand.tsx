@@ -10,20 +10,18 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB, ID } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Brand, "id">;
+type FormInput = Omit<Brand, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   image: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 
 type AddBrandProps = {
@@ -43,14 +41,16 @@ export default function AddBrand({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data, image: imageUrl };
+      const formData = { ...data, image: imageUrl };
 
-      const response = await axios.post(
-        "http://localhost:5000/brands",
-        newData
-      );
-
-      if (response.status === 201) toast.success("Brand added successfully");
+      await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductBrandsCollectionId,
+        ID.unique(),
+        formData
+      ).then(() => {
+        toast.success("Brand Added Successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -143,7 +143,7 @@ export default function AddBrand({
                     return (
                       <Button
                         variant="contained"
-                        className="capitalize"
+                        className="capitalize saveBtn"
                         onClick={() => open()}
                       >
                         Upload Image

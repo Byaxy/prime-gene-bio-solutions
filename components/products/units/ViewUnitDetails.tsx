@@ -34,18 +34,18 @@ export default function ViewUnitDetails({
           <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell className="tableTitle">Created On</TableCell>
-                <TableCell className="tableValue">
-                  {new Date(unit.createdAt).toDateString()}
-                </TableCell>
-              </TableRow>
-              <TableRow>
                 <TableCell className="tableTitle">Name</TableCell>
                 <TableCell className="tableValue">{unit.name}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="tableTitle">Code</TableCell>
                 <TableCell className="tableValue">{unit.code}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="tableTitle">Created On</TableCell>
+                <TableCell className="tableValue">
+                  {new Date(unit.createdAt).toDateString()}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="tableTitle">Last Updated On</TableCell>
