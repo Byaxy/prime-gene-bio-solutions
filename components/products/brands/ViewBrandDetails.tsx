@@ -63,7 +63,7 @@ export default function ViewBrandDetails({
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Created On
+                    Created on
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
                     {new Date(brand.createdAt).toDateString()}
@@ -71,7 +71,7 @@ export default function ViewBrandDetails({
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Last Updated On
+                    Last updated on
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
                     {new Date(brand.updatedAt).toDateString()}

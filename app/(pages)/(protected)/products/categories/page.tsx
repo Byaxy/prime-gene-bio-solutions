@@ -7,7 +7,8 @@ import AddCategory from "@/components/products/categories/AddCategory";
 import ViewCategoryDetails from "@/components/products/categories/ViewCategoryDetails";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
+import { DB, Query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 import type { ProductCategory } from "@/components/Types";
 import DeleteCategory from "@/components/products/categories/DeleteCategory";
 import EditCategory from "@/components/products/categories/EditCategory";
@@ -22,6 +23,7 @@ export default function ProductCategoriesPage() {
     {} as ProductCategory
   );
 
+  // table columns
   const columns = [
     {
       name: "Date",
@@ -44,7 +46,9 @@ export default function ProductCategoriesPage() {
     },
     {
       name: "Parent Category",
-      cell: (row: { parentCategory: string }) => row.parentCategory,
+      cell: (row: { parentCategory: string }) => (
+        <span>{row.parentCategory ? row.parentCategory : "Null"}</span>
+      ),
     },
     {
       name: "Actions",
@@ -97,11 +101,27 @@ export default function ProductCategoriesPage() {
     setView(true);
   };
 
+  // fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/categories");
-        setCategories(response.data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductCategoriesCollectionId,
+          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+        );
+
+        const categories = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          code: doc.code,
+          parentCategory: doc.parentCategory,
+          description: doc.description,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        setCategories(categories);
       } catch (error) {
         console.error(error);
       }

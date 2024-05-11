@@ -9,22 +9,20 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { Option, ProductCategory } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB, ID, Query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ProductCategory, "id">;
+type FormInput = Omit<ProductCategory, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   description: "",
   parentCategory: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 
 type AddCategoryProps = {
@@ -45,13 +43,14 @@ export default function AddCategory({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const response = await axios.post(
-        "http://localhost:5000/categories",
+      await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductCategoriesCollectionId,
+        ID.unique(),
         data
-      );
-      if (response.status === 201)
+      ).then(() => {
         toast.success("Product Category Added Successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");
@@ -66,15 +65,22 @@ export default function AddCategory({
     }
   }, [handleClose, isSubmitSuccessful, reset]);
 
+  // fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/categories");
-        const options = response.data.map((category: ProductCategory) => ({
-          label: category.name,
-          value: category.name,
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductCategoriesCollectionId,
+          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+        );
+
+        const options = documents.map((doc: any) => ({
+          label: doc.name,
+          value: doc.name,
         }));
-        options.unshift({ label: "None", value: "None" });
+
+        options.unshift({ label: "None", value: null });
         setCategoryOptions(options);
       } catch (error) {
         console.error(error);
@@ -139,16 +145,13 @@ export default function AddCategory({
                 <span className="text-primaryDark font-semibold">
                   Parent Category
                 </span>
-                <span className="text-redColor"> *</span>
               </label>
               <FormInputDropdown
                 id="category"
                 control={control}
                 label="Select Category"
                 options={categoryOptions}
-                {...register("parentCategory", {
-                  required: "Product Category is required",
-                })}
+                {...register("parentCategory")}
               />
               {errors.parentCategory && (
                 <span className="text-redColor text-sm">
@@ -159,16 +162,13 @@ export default function AddCategory({
                 <span className="text-primaryDark font-semibold">
                   Description
                 </span>
-                <span className="text-redColor"> *</span>
               </label>
               <TextField
                 id="description"
                 label="Description"
                 multiline
                 rows={3}
-                {...register("description", {
-                  required: "Description is required",
-                })}
+                {...register("description")}
                 error={!!errors.description}
                 helperText={errors.description?.message}
               />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +6,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { ProductCategory } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type DeleteCategoryProps = {
   open: boolean;
@@ -21,15 +22,16 @@ const DeleteCategory = ({
 }: DeleteCategoryProps) => {
   const deleteCategory = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/categories/${category.id}`
-      );
-      if (response.status === 200) {
-        toast.success("Supplier Deleted Successfully");
-      }
-    } catch (error) {
+      await DB.deleteDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductCategoriesCollectionId,
+        category.id
+      ).then(() => {
+        toast.success("Product Category Deleted Successfully");
+      });
+    } catch (error: any) {
       console.error(error);
-      toast.error("Something went wrong!");
+      toast.error("Something went wrong");
     }
   };
 

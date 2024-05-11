@@ -8,11 +8,12 @@ import { Button, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB, Query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 import type { Option, ProductCategory } from "@/components/Types";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 
-type FormInput = Omit<ProductCategory, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<ProductCategory, "id" | "createdAt" | "updatedAt">;
 type EditCategoryProps = {
   open: boolean;
   handleClose: () => void;
@@ -28,20 +29,20 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
         code: category.code,
         parentCategory: category.parentCategory,
         description: category.description,
-        updatedAt: new Date(),
       },
     });
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const response = await axios.patch(
-        `http://localhost:5000/categories/${category.id}`,
+      await DB.updateDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductCategoriesCollectionId,
+        category.id,
         data
-      );
-      if (response.status === 200)
+      ).then(() => {
         toast.success("Product Category Edited Successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");
@@ -56,15 +57,22 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
     }
   }, [handleClose, isSubmitSuccessful, reset]);
 
+  // fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/categories");
-        const options = data.map((category: ProductCategory) => ({
-          label: category.name,
-          value: category.name,
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductCategoriesCollectionId,
+          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+        );
+
+        const options = documents.map((doc: any) => ({
+          label: doc.name,
+          value: doc.name,
         }));
-        options.unshift({ label: "None", value: "None" });
+
+        options.unshift({ label: "None", value: null });
         setCategoryOptions(options);
       } catch (error) {
         console.error(error);
@@ -131,7 +139,6 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
                 <span className="text-primaryDark font-semibold">
                   Parent Category
                 </span>
-                <span className="text-redColor"> *</span>
               </label>
               <FormInputDropdown
                 id="category"
@@ -139,9 +146,7 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
                 label="Select Category"
                 defaultValue={category.parentCategory}
                 options={categoryOptions}
-                {...register("parentCategory", {
-                  required: "Product Category is required",
-                })}
+                {...register("parentCategory")}
               />
               {errors.parentCategory && (
                 <span className="text-redColor text-sm">
@@ -152,7 +157,6 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
                 <span className="text-primaryDark font-semibold">
                   Description
                 </span>
-                <span className="text-redColor"> *</span>
               </label>
               <TextField
                 id="description"
@@ -160,9 +164,7 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
                 defaultValue={category.description}
                 multiline
                 rows={3}
-                {...register("description", {
-                  required: "Description is required",
-                })}
+                {...register("description")}
                 error={!!errors.description}
                 helperText={errors.description?.message}
               />
@@ -176,7 +178,7 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
             onClick={() => reset()}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

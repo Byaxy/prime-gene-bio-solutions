@@ -42,13 +42,13 @@ export default function ViewUnitDetails({
                 <TableCell className="tableValue">{unit.code}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="tableTitle">Created On</TableCell>
+                <TableCell className="tableTitle">Created on</TableCell>
                 <TableCell className="tableValue">
                   {new Date(unit.createdAt).toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="tableTitle">Last Updated On</TableCell>
+                <TableCell className="tableTitle">Last updated on</TableCell>
                 <TableCell className="tableValue">
                   {new Date(unit.updatedAt).toDateString()}
                 </TableCell>

@@ -40,7 +40,6 @@ export type ProductCategory = {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 
 export type ExpenseCategory = {

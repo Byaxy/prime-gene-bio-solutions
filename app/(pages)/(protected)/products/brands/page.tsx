@@ -9,7 +9,6 @@ import { CldImage } from "next-cloudinary";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Brand } from "@/components/Types";
-import axios from "axios";
 import DeleteBrand from "@/components/products/brands/DeleteBrand";
 import EditBrand from "@/components/products/brands/EditBrand";
 import { DB, Query } from "@/appwrite/appwriteConfig";
@@ -23,6 +22,7 @@ export default function ProductBrandsPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedRow, setSelectedRow] = useState<Brand>({} as Brand);
 
+  // table columns
   const columns = [
     {
       name: "Image",
@@ -108,6 +108,7 @@ export default function ProductBrandsPage() {
     setView(true);
   };
 
+  // fetch brands
   useEffect(() => {
     const fetchBrands = async () => {
       try {

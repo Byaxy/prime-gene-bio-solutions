@@ -8,7 +8,6 @@ export const categoriesData: ProductCategory[] = [
     name: "Clinical Laboratory Solutions",
     parentCategory: "",
     description: "Clinical laboratory solutions products",
-    isActive: true,
     updatedAt: new Date(),
   },
   {
@@ -18,7 +17,6 @@ export const categoriesData: ProductCategory[] = [
     name: "Medical Solutions",
     parentCategory: "",
     description: "Medical solutions products",
-    isActive: true,
     updatedAt: new Date(),
   },
   {
@@ -28,7 +26,6 @@ export const categoriesData: ProductCategory[] = [
     name: "Imaging Solutions",
     parentCategory: "",
     description: "Imaging solutions products",
-    isActive: true,
     updatedAt: new Date(),
   },
   {
@@ -38,7 +35,6 @@ export const categoriesData: ProductCategory[] = [
     name: "Dental Solutions",
     parentCategory: "",
     description: "Dental solutions products",
-    isActive: true,
     updatedAt: new Date(),
   },
 ];
