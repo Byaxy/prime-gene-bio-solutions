@@ -102,6 +102,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // auth status
   const router = useRouter();
   const { authStatus } = useAuth();
 
@@ -177,7 +178,7 @@ export default function RootLayout({
             {/** logo */}
             <Link
               href={"/"}
-              className="no-underline flex items-center justify-center bg-primaryColor p-1 rounded shadow"
+              className="no-underline flex items-center justify-center bg-primaryColor/95 p-1 rounded shadow"
             >
               <Image
                 src={"/logoWhite.png"}

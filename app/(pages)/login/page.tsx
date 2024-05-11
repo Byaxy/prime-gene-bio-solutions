@@ -1,10 +1,9 @@
 "use client";
-import React, { FormEvent, useEffect } from "react";
-import Link from "next/link";
+import React, { useEffect } from "react";
 import appwriteService from "@/appwrite/appwriteConfig";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { Button, FormLabel, TextField } from "@mui/material";
+import { FormLabel, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import useAuth from "@/context/useAuth";
 import toast from "react-hot-toast";
@@ -21,7 +20,7 @@ const defaultValues: FormInput = {
 
 const Login = () => {
   const router = useRouter();
-  const { setAuthStatus } = useAuth();
+  const { authStatus, setAuthStatus } = useAuth();
 
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
@@ -48,6 +47,12 @@ const Login = () => {
       reset();
     }
   }, [isSubmitSuccessful, reset]);
+
+  // If user is already logged in, redirect to Dashboard.
+  if (authStatus) {
+    router.replace("/");
+    return <></>;
+  }
 
   return (
     <section className="flex items-center justify-center h-screen w-full">

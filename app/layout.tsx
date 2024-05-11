@@ -2,8 +2,6 @@
 
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "@mui/material";
-import { theme } from "@/utils/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 

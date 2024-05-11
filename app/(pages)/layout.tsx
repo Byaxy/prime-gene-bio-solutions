@@ -9,6 +9,7 @@ import { theme } from "@/utils/theme";
 import { Toaster } from "react-hot-toast";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import Loading from "./Loading";
 
 export default function PagesLayout({
   children,
@@ -30,7 +31,7 @@ export default function PagesLayout({
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <AuthProvider value={{ authStatus, setAuthStatus }}>
           <Toaster />
-          {!loader && <main>{children}</main>}
+          {loader ? <Loading /> : <main>{children}</main>}
         </AuthProvider>
       </LocalizationProvider>
     </ThemeProvider>

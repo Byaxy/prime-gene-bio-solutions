@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
-import { useRouter } from "next/navigation";
 import AddType from "@/components/products/types/AddType";
 import ListComponent from "@/components/ListComponent";
 import ViewTypeDetails from "@/components/products/types/ViewTypeDetails";
@@ -12,13 +11,13 @@ import EditType from "@/components/products/types/EditType";
 import DeleteType from "@/components/products/types/DeleteType";
 import axios from "axios";
 import type { ProductType } from "@/components/Types";
+import Loading from "@/app/(pages)/Loading";
 
 export default function ProductTypesPage() {
   const [add, setAdd] = useState<boolean>(false);
   const [view, setView] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
-  const [typeID, setTypeID] = useState<string>("");
   const [types, setTypes] = useState<ProductType[]>([]);
   const [selectedRow, setSelectedRow] = useState<ProductType>(
     {} as ProductType
@@ -130,6 +129,9 @@ export default function ProductTypesPage() {
           className="scrollbar-hide"
           pagination
         />
+        <div>
+          <Loading />
+        </div>
       </>
     </ListComponent>
   );
