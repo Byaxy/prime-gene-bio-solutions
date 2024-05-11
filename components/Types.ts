@@ -25,7 +25,6 @@ export type ProductType = {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Unit = {
   id: string;

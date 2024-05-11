@@ -189,7 +189,7 @@ export default function RootLayout({
             </Link>
             <IconButton
               onClick={handleDrawerClose}
-              className="shadow-md"
+              className="shadow-md bg-primaryColor"
               sx={{
                 color: "white",
                 backgroundColor: "#002060",

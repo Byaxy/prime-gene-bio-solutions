@@ -39,7 +39,7 @@ export default function ViewTypeDetails({
             <TableBody>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Date of Registration
+                  Created On
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
                   {new Date(type.createdAt).toDateString()}
@@ -63,7 +63,7 @@ export default function ViewTypeDetails({
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Last Updated
+                  Last Updated On
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
                   {new Date(type.updatedAt).toDateString()}

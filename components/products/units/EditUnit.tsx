@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -9,8 +9,7 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { DB, ID } from "@/appwrite/appwriteConfig";
+import { DB } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
@@ -118,7 +117,7 @@ const EditUnit = ({ open, handleClose, unit }: EditUnitProps) => {
             onClick={() => reset()}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

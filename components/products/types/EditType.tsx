@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -10,8 +10,10 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
-type FormInput = Omit<ProductType, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<ProductType, "id" | "createdAt" | "updatedAt">;
 
 type EditTypeProps = {
   open: boolean;
@@ -24,19 +26,20 @@ const EditType = ({ open, handleClose, type }: EditTypeProps) => {
     defaultValues: {
       name: type.name,
       description: type.description,
-      updatedAt: new Date(),
     },
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const response = await axios.patch(
-        `http://localhost:5000/types/${type.id}`,
+      await DB.updateDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductTypesCollectionId,
+        type.id,
         data
-      );
-
-      if (response.status === 200) toast.success("Type Editted successfully");
+      ).then(() => {
+        toast.success("Type Editted successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -115,7 +118,7 @@ const EditType = ({ open, handleClose, type }: EditTypeProps) => {
             onClick={() => reset()}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

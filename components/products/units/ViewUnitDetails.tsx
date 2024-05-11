@@ -34,9 +34,7 @@ export default function ViewUnitDetails({
           <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell className="tableTitle">
-                  Date of Registration
-                </TableCell>
+                <TableCell className="tableTitle">Created On</TableCell>
                 <TableCell className="tableValue">
                   {new Date(unit.createdAt).toDateString()}
                 </TableCell>

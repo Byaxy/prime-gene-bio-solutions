@@ -9,19 +9,17 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB, ID } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ProductType, "id">;
+type FormInput = Omit<ProductType, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   description: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 type AddTypeProps = {
   open: boolean;
@@ -39,9 +37,13 @@ export default function AddType({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const response = await axios.post("http://localhost:5000/types", data);
-
-      if (response.status === 201) toast.success("Type added successfully");
+      const response = await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductTypesCollectionId,
+        ID.unique(),
+        data
+      );
+      if (response) toast.success("Type Added successfully");
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");

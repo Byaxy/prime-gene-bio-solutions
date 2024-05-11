@@ -12,6 +12,7 @@ import DeleteUnit from "@/components/products/units/DeleteUnit";
 import EditUnit from "@/components/products/units/EditUnit";
 import { DB, Query } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
+import Loading from "@/app/(pages)/Loading";
 
 export default function ProductsUnitsPage(): JSX.Element {
   const [add, setAdd] = useState<boolean>(false);
@@ -20,6 +21,7 @@ export default function ProductsUnitsPage(): JSX.Element {
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [units, setUnits] = useState<Unit[]>([]);
   const [selectedRow, setSelectedRow] = useState<Unit>({} as Unit);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const columns = [
     {
@@ -91,6 +93,7 @@ export default function ProductsUnitsPage(): JSX.Element {
   useEffect(() => {
     const fetchUnits = async () => {
       try {
+        setLoading(true);
         const { documents } = await DB.listDocuments(
           config.appwriteDatabaseId,
           config.appwriteProductUnitsCollectionId,
@@ -104,6 +107,7 @@ export default function ProductsUnitsPage(): JSX.Element {
           updatedAt: doc.$updatedAt,
         }));
         setUnits(units);
+        setLoading(false);
       } catch (error) {
         console.error(error);
       }

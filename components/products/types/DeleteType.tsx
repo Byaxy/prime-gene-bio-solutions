@@ -6,7 +6,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type DeleteTypeProps = {
   open: boolean;
@@ -17,12 +18,13 @@ type DeleteTypeProps = {
 const DeleteType = ({ open, handleClose, type }: DeleteTypeProps) => {
   const deleteType = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/types/${type.id}`
-      );
-      if (response.status === 200) {
+      await DB.deleteDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductTypesCollectionId,
+        type.id
+      ).then(() => {
         toast.success("Type Deleted Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");

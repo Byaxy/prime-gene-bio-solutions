@@ -8,7 +8,6 @@ export const typesData: ProductType[] = [
     description: "Analyzers",
     name: "Analyzers",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -16,7 +15,6 @@ export const typesData: ProductType[] = [
     description: "Equipment",
     name: "Equipment",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -24,7 +22,6 @@ export const typesData: ProductType[] = [
     description: "Instruments",
     name: "Instruments",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -32,7 +29,6 @@ export const typesData: ProductType[] = [
     description: "Reagents",
     name: "Reagents",
     updatedAt: new Date(),
-    isActive: true,
   },
   {
     id: generateId(),
@@ -40,6 +36,5 @@ export const typesData: ProductType[] = [
     description: "Kits",
     name: "Kits",
     updatedAt: new Date(),
-    isActive: true,
   },
 ];

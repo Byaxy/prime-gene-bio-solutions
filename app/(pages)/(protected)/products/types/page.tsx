@@ -9,9 +9,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditType from "@/components/products/types/EditType";
 import DeleteType from "@/components/products/types/DeleteType";
-import axios from "axios";
+import { DB, Query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 import type { ProductType } from "@/components/Types";
-import Loading from "@/app/(pages)/Loading";
 
 export default function ProductTypesPage() {
   const [add, setAdd] = useState<boolean>(false);
@@ -92,8 +92,21 @@ export default function ProductTypesPage() {
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/types");
-        setTypes(data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductTypesCollectionId,
+          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+        );
+
+        const types = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          description: doc.description,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        setTypes(types);
       } catch (error) {
         console.error(error);
       }
@@ -129,9 +142,6 @@ export default function ProductTypesPage() {
           className="scrollbar-hide"
           pagination
         />
-        <div>
-          <Loading />
-        </div>
       </>
     </ListComponent>
   );
