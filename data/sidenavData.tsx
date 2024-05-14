@@ -158,7 +158,7 @@ export const data: DataType[] = [
   },
   {
     id: generateId(),
-    title: "Iventory",
+    title: "Inventory",
     path: "",
     icon: <SummarizeRoundedIcon />,
     subCategories: [

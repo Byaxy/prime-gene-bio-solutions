@@ -11,7 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import type { Brand } from "@/components/Types";
 import DeleteBrand from "@/components/products/brands/DeleteBrand";
 import EditBrand from "@/components/products/brands/EditBrand";
-import { DB, Query } from "@/appwrite/appwriteConfig";
+import { DB, query } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
 
 export default function ProductBrandsPage() {
@@ -115,7 +115,7 @@ export default function ProductBrandsPage() {
         const { documents } = await DB.listDocuments(
           config.appwriteDatabaseId,
           config.appwriteProductBrandsCollectionId,
-          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+          query
         );
 
         const brands = documents.map((doc: any) => ({

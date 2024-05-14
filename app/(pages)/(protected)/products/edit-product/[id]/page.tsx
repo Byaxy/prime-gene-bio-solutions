@@ -5,17 +5,12 @@ import { Button, TextField, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useParams, useRouter } from "next/navigation";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import type {
-  Brand,
-  Option,
-  Product,
-  ProductCategory,
-  ProductType,
-} from "@/components/Types";
+import type { Option, Product } from "@/components/Types";
 import { useForm } from "react-hook-form";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type FormInput = Omit<Product, "id" | "createdAt" | "quantity" | "isActive">;
 
@@ -29,95 +24,152 @@ export default function EditProductPage() {
 
   const params = useParams();
 
-  const { register, handleSubmit, reset, formState, control, watch } =
+  const { register, handleSubmit, reset, formState, control } =
     useForm<FormInput>({
       defaultValues: {
         ...product,
-        updatedAt: new Date(),
       },
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const router = useRouter();
-  const watchCost = watch("cost");
+  const productId = params?.id;
 
+  // handle submit
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data, image: imageUrl };
+      const formData = { ...data, image: imageUrl };
 
-      const response = await axios.patch(
-        `http://localhost:5000/products/${params?.id}`,
-        newData
-      );
-
-      if (response.status === 200) {
+      await DB.updateDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductsCollectionId,
+        productId as string,
+        formData
+      ).then(() => {
         toast.success("Product Edited Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
     }
   };
 
+  // fetch product
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:5000/products/${params?.id}`
+        const response = await DB.getDocument(
+          config.appwriteDatabaseId,
+          config.appwriteProductsCollectionId,
+          productId as string
         );
-        setProduct(data);
-        setImageUrl(data.image);
+
+        const product = {
+          id: response.$id,
+          code: response.code,
+          name: response.name,
+          image: response.image,
+          brand: response.brand ? response.brand.name : null,
+          type: response.type.name ? response.type.name : null,
+          unit: response.unit.name ? response.unit.name : null,
+          category: response.category ? response.category.name : null,
+          description: response.description,
+          alertQuantity: response.alertQuantity,
+          inventory: response.inventory,
+          createdAt: response.$createdAt,
+          updatedAt: response.$updatedAt,
+        } as unknown as Product;
+
+        setImageUrl(product.image);
+        setProduct(product);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchProduct();
-  }, [params?.id]);
+  }, [productId]);
 
+  // fetch types, categories, brands and units options
   useEffect(() => {
     try {
       // Fetch product types
       const fetchTypeOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/types");
-        const options = data.map((option: ProductType) => ({
-          label: option.name,
-          value: option.name,
-        }));
-        setTypeOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductTypesCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setTypeOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchTypeOptions();
 
       // Fetch product categories
       const fetchCategoryOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/categories");
-        const options = data.map((option: ProductCategory) => ({
-          label: option.name,
-          value: option.name,
-        }));
-        setCategoryOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductCategoriesCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setCategoryOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchCategoryOptions();
 
       // Fetch product brands
       const fetchBrandOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/brands");
-        const options = data.map((option: Brand) => ({
-          label: option.name,
-          value: option.name,
-        }));
-        setBrandOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductBrandsCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setBrandOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchBrandOptions();
 
       // Fetch product units
       const fetchUnitOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/units");
-        const options = data.map((option: Brand) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        setUnitOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductUnitsCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setUnitOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchUnitOptions();
     } catch (error) {
@@ -167,7 +219,7 @@ export default function EditProductPage() {
                   Product Image
                 </span>
               </label>
-              <div className="relative mt-1 w-[min(100%,18rem)] h-[12.5rem] sm:h-[20rem] object-cover">
+              <div className="relative mt-1 w-[min(100%,18rem)] h-[12.5rem] sm:h-[13rem] object-cover">
                 {imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -195,7 +247,7 @@ export default function EditProductPage() {
                   return (
                     <Button
                       variant="contained"
-                      className="capitalize"
+                      className="capitalize saveBtn"
                       onClick={() => open()}
                     >
                       Upload New Image
@@ -217,7 +269,6 @@ export default function EditProductPage() {
                   <TextField
                     id="name"
                     type="text"
-                    label="Product Name"
                     defaultValue={product?.name}
                     {...register("name", {
                       required: "Name is required",
@@ -239,7 +290,6 @@ export default function EditProductPage() {
                   <TextField
                     id="code"
                     type="text"
-                    label="Product Code"
                     defaultValue={product?.code}
                     {...register("code", {
                       required: "Product Code is required",
@@ -301,69 +351,6 @@ export default function EditProductPage() {
                   )}
                 </div>
               </div>
-
-              <div className="flex flex-col sm:flex-row gap-5 w-full">
-                <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="cost">
-                    <span className="text-primaryDark font-semibold text-xl">
-                      Product Cost
-                    </span>
-                    <span className="text-redColor"> *</span>
-                  </label>
-                  <TextField
-                    id="cost"
-                    type="number"
-                    label="Product Cost"
-                    variant="outlined"
-                    inputProps={{ min: 1 }}
-                    defaultValue={product?.cost}
-                    {...register("cost", {
-                      required: "Product Cost is required",
-                      valueAsNumber: true,
-                      min: {
-                        value: 1,
-                        message: "Product Cost cannot be Zero",
-                      },
-                    })}
-                  />
-                  {errors.cost && (
-                    <span className="text-redColor text-sm">
-                      {errors.cost?.message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="price">
-                    <span className="text-primaryDark font-semibold text-xl">
-                      Product Price
-                    </span>
-                    <span className="text-redColor"> *</span>
-                  </label>
-                  <TextField
-                    id="price"
-                    type="number"
-                    label="Product Price"
-                    variant="outlined"
-                    inputProps={{ min: 1 }}
-                    defaultValue={product?.price}
-                    {...register("price", {
-                      required: "Product Price is required",
-                      valueAsNumber: true,
-                      min: {
-                        value: watchCost || product.cost,
-                        message:
-                          "Product Price cannot be less than Product Cost price",
-                      },
-                    })}
-                  />
-                  {errors.price && (
-                    <span className="text-redColor text-sm">
-                      {errors.price?.message}
-                    </span>
-                  )}
-                </div>
-              </div>
-
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col flex-1 gap-2">
                   <label htmlFor="brand">
@@ -419,7 +406,6 @@ export default function EditProductPage() {
           </label>
           <TextField
             id="description"
-            label="Product Details"
             defaultValue={product?.description}
             multiline
             rows={6}
@@ -436,7 +422,6 @@ export default function EditProductPage() {
               <TextField
                 id="alertQuantity"
                 type="number"
-                label="Alert Quantity"
                 defaultValue={product?.alertQuantity}
                 variant="outlined"
                 inputProps={{ min: 1 }}

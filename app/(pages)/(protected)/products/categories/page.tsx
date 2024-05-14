@@ -7,7 +7,7 @@ import AddCategory from "@/components/products/categories/AddCategory";
 import ViewCategoryDetails from "@/components/products/categories/ViewCategoryDetails";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DB, Query } from "@/appwrite/appwriteConfig";
+import { DB, query } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
 import type { ProductCategory } from "@/components/Types";
 import DeleteCategory from "@/components/products/categories/DeleteCategory";
@@ -108,7 +108,7 @@ export default function ProductCategoriesPage() {
         const { documents } = await DB.listDocuments(
           config.appwriteDatabaseId,
           config.appwriteProductCategoriesCollectionId,
-          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+          query
         );
 
         const categories = documents.map((doc: any) => ({

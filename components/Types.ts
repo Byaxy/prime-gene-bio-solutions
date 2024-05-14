@@ -126,21 +126,22 @@ export type Product = {
   type: string;
   unit: string;
   category: string;
-  stock: Stock[];
-  cost: number;
-  price: number;
+  inventory: Inventory[];
   description: string;
   alertQuantity: number;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
-export type Stock = {
+export type Inventory = {
   id: string;
+  productName: string;
   lotNumber: string;
-  manufactureDate: Date;
-  expiryDate: Date;
+  manufactureDate: Date | null;
+  expiryDate: Date | null;
   quantity: number;
+  cost: number;
+  price: number;
+  unit: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -241,7 +242,7 @@ export type WayBill = {
 };
 
 export type ProductWithNoStock = Omit<Product, "stock">;
-export type ProductWithStock = ProductWithNoStock & { stock: Stock };
+export type ProductWithStock = ProductWithNoStock & { stock: Inventory };
 
 export type SaleReturn = {
   id: string;

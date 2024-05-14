@@ -5,54 +5,32 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import type { Product, ProductWithStock } from "../Types";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import type { Inventory } from "../Types";
 import toast from "react-hot-toast";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type DeleteStockProps = {
   open: boolean;
   handleClose: () => void;
-  stock: ProductWithStock;
+  inventory: Inventory;
 };
-const DeleteStock = ({ open, handleClose, stock }: DeleteStockProps) => {
-  const [product, setProduct] = useState<Product>({} as Product);
-
+const DeleteStock = ({ open, handleClose, inventory }: DeleteStockProps) => {
   // delete stock from product
   const handleDelete = async () => {
     try {
-      const updatedStockArr = product.stock.filter(
-        (item) => item.id !== stock.stock.id
-      );
-      const data = { stock: updatedStockArr, updatedAt: new Date() };
-      const response = await axios.patch(
-        `http://localhost:5000/products/${stock.id}`,
-        data
-      );
-      if (response.status === 200) {
-        toast.success("Stock Deleted successfully");
-      }
+      await DB.deleteDocument(
+        config.appwriteDatabaseId,
+        config.appwriteInventoryCollectionId,
+        inventory.id
+      ).then(() => {
+        toast.success("Inventory Deleted successfully");
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
     }
   };
-
-  // fetch product from which to Delete stock
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/products/${stock.id}`
-        );
-        setProduct(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchProduct();
-  }, [stock]);
 
   return (
     <div>
@@ -66,9 +44,10 @@ const DeleteStock = ({ open, handleClose, stock }: DeleteStockProps) => {
           <span className="text-lg text-primaryDark">
             Confirm to permanantely Delete Stock with{" "}
             <span className="font-semibold">
-              Lot Number - {stock.stock?.lotNumber}
+              Lot Number - {inventory.lotNumber}
             </span>{" "}
-            from product <span className="font-semibold">{stock.name}</span>
+            from product{" "}
+            <span className="font-semibold">{inventory.productName}</span>
           </span>
           <br />
           <br />

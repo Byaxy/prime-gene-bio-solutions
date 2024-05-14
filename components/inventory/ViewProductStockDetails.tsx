@@ -4,18 +4,18 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import type { ProductWithStock } from "@/components/Types";
+import type { Inventory } from "@/components/Types";
 
 type ViewStockDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  stock: ProductWithStock;
+  inventory: Inventory;
 };
 
 export default function ViewProductStockDetails({
   open,
   handleClose,
-  stock,
+  inventory,
 }: ViewStockDetailsProps) {
   return (
     <div>
@@ -38,76 +38,78 @@ export default function ViewProductStockDetails({
                   Product Name
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {stock.name}
+                  {inventory.productName}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Product Code
+                  Lot Number
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {stock.code}
+                  {inventory.lotNumber}
                 </TableCell>
               </TableRow>
-              {stock.stock?.id ? (
-                <>
-                  <TableRow>
-                    <TableCell className="font-semibold text-lg text-primaryDark">
-                      Date of Registration
-                    </TableCell>
-                    <TableCell className="text-[17px] text-primaryDark w-fit">
-                      {new Date(stock.stock.createdAt).toDateString()}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold text-lg text-primaryDark">
-                      Lot Number
-                    </TableCell>
-                    <TableCell className="text-[17px] text-primaryDark">
-                      {stock.stock.lotNumber}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold text-lg text-primaryDark">
-                      Manufacture Date
-                    </TableCell>
-                    <TableCell className="text-[17px] text-primaryDark">
-                      {new Date(stock.stock.manufactureDate).toDateString()}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold text-lg text-primaryDark">
-                      Expiry Date
-                    </TableCell>
-                    <TableCell className="text-[17px] text-primaryDark">
-                      {new Date(stock.stock.expiryDate).toDateString()}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold text-lg text-primaryDark">
-                      Quantity
-                    </TableCell>
-                    <TableCell className="text-[17px] text-primaryDark">
-                      {stock.stock.quantity}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-semibold text-lg text-primaryDark">
-                      Last Updated
-                    </TableCell>
-                    <TableCell className="text-[17px] text-primaryDark">
-                      {new Date(stock.stock.updatedAt).toDateString()}
-                    </TableCell>
-                  </TableRow>
-                </>
-              ) : (
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    No Stock Registered
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-              )}
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Quantity
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {inventory.quantity} {inventory.unit}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Cost Price
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  ${inventory.cost}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Selling Price
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  ${inventory.price}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Manufacture Date
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {inventory.manufactureDate
+                    ? new Date(inventory.manufactureDate).toDateString()
+                    : "Null"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Expiry Date
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {inventory.expiryDate
+                    ? new Date(inventory.expiryDate).toDateString()
+                    : "Null"}
+                </TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Created on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark w-fit">
+                  {new Date(inventory.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last updated on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(inventory.updatedAt).toDateString()}
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </DialogContent>

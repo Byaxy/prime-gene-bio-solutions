@@ -1,7 +1,5 @@
 import type { Product } from "../Types";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -9,6 +7,8 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type DeleteProductProps = {
   open: boolean;
@@ -19,12 +19,13 @@ const DeleteProduct = ({ open, handleClose, product }: DeleteProductProps) => {
   // delete product
   const deleteProduct = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/products/${product.id}`
-      );
-      if (response.status === 200) {
+      await DB.deleteDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductsCollectionId,
+        product.id
+      ).then(() => {
         toast.success("Product Deleted Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");

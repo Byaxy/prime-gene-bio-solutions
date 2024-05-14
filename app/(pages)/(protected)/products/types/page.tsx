@@ -9,7 +9,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditType from "@/components/products/types/EditType";
 import DeleteType from "@/components/products/types/DeleteType";
-import { DB, Query } from "@/appwrite/appwriteConfig";
+import { DB, query } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
 import type { ProductType } from "@/components/Types";
 
@@ -95,7 +95,7 @@ export default function ProductTypesPage() {
         const { documents } = await DB.listDocuments(
           config.appwriteDatabaseId,
           config.appwriteProductTypesCollectionId,
-          [Query.orderDesc("$createdAt"), Query.limit(1000)]
+          query
         );
 
         const types = documents.map((doc: any) => ({

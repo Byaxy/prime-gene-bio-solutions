@@ -5,77 +5,75 @@ import { customTableStyles } from "@/styles/TableStyles";
 import ViewProductStockDetails from "@/components/inventory/ViewProductStockDetails";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ListPage from "@/components/ListPage";
-import axios from "axios";
-import type { Product, ProductWithStock, Stock } from "@/components/Types";
+import type { Inventory } from "@/components/Types";
 import DeleteStock from "@/components/inventory/DeleteStock";
-import toast from "react-hot-toast";
 import EditStock from "@/components/inventory/EditStock";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
+import ListComponent from "@/components/ListComponent";
+import AddStock from "@/components/inventory/AddStock";
 
 export default function InventoryPage() {
+  const [add, setAdd] = useState<boolean>(false);
   const [view, setView] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
-  const [stock, setStock] = useState<ProductWithStock[]>([]);
-  const [selectedRow, setSelectedRow] = useState<ProductWithStock>(
-    {} as ProductWithStock
-  );
+  const [inventory, setInventory] = useState<Inventory[]>([]);
+  const [selectedRow, setSelectedRow] = useState<Inventory>({} as Inventory);
 
   const columns = [
     {
-      name: "Reg. Date",
-      cell: (row: { stock: Stock }) => (
-        <span>
-          {row.stock.createdAt
-            ? new Date(row.stock.createdAt).toDateString()
-            : "Null"}
-        </span>
-      ),
-      width: "180px",
-    },
-    {
       name: "Product Name",
-      selector: (row: { name: string }) => row.name,
+      selector: (row: { productName: string }) => row.productName,
     },
     {
       name: "Lot Number",
-      cell: (row: { stock: Stock }) => (
-        <span>{row.stock.lotNumber ? row.stock.lotNumber : "Null"}</span>
+      selector: (row: { lotNumber: string }) => row.lotNumber,
+      width: "140px",
+    },
+    {
+      name: "Quantity",
+      cell: (row: { quantity: number; unit: string }) => (
+        <span>
+          {row.quantity} {row.unit}
+        </span>
       ),
-      width: "180px",
+      width: "100px",
+    },
+    {
+      name: "Cost",
+      cell: (row: { cost: number }) => <span>${row.cost}</span>,
+      width: "100px",
+    },
+    {
+      name: "Price",
+      cell: (row: { price: number }) => <span>${row.price}</span>,
+      width: "100px",
     },
     {
       name: "Manufacture Date",
-      cell: (row: { stock: Stock }) => (
-        <span>
-          {row.stock.manufactureDate
-            ? new Date(row.stock.manufactureDate).toDateString()
-            : "Null"}
-        </span>
-      ),
+      cell: (row: { manufactureDate: Date | null }) =>
+        row.manufactureDate ? (
+          <span>{new Date(row.manufactureDate).toDateString()}</span>
+        ) : (
+          <span>Null</span>
+        ),
       width: "180px",
     },
     {
       name: "Expiry Date",
-      cell: (row: { stock: Stock }) => (
-        <span>
-          {row.stock.expiryDate
-            ? new Date(row.stock.expiryDate).toDateString()
-            : "Null"}
-        </span>
-      ),
+      cell: (row: { expiryDate: Date | null }) =>
+        row.expiryDate ? (
+          <span>{new Date(row.expiryDate).toDateString()}</span>
+        ) : (
+          <span>Null</span>
+        ),
       width: "180px",
     },
-    {
-      name: "Qnty",
-      cell: (row: { stock: Stock }) => (
-        <span>{row.stock.quantity ? row.stock.quantity : "Null"}</span>
-      ),
-      width: "90px",
-    },
+
     {
       name: "Actions",
-      cell: (row: ProductWithStock) => [
+      cell: (row: Inventory) => [
         <span
           key={"edit" + row.id}
           onClick={() => handleEdit(row)}
@@ -101,86 +99,95 @@ export default function InventoryPage() {
 
   // close dialog
   const handleClose = useCallback((): void => {
+    setAdd(false);
     setView(false);
     setEdit(false);
     setConfirmDelete(false);
   }, []);
 
+  // Add new stock
+  const onAddClicked = useCallback((): void => {
+    setAdd(true);
+  }, []);
+
   // Edit stock
-  const handleEdit = (row: ProductWithStock) => {
-    if (!row.stock.id) {
-      toast.error("No stock to Edit. Please add new Stock");
-      return;
-    }
+  const handleEdit = (row: Inventory) => {
     setSelectedRow(row);
     setEdit(true);
   };
 
   // Delete stock
-  const handleDelete = (row: ProductWithStock) => {
-    if (!row.stock.id) {
-      toast.error("Stock is Empty. No Stock to Delete");
-      return;
-    }
+  const handleDelete = (row: Inventory) => {
     setSelectedRow(row);
     setConfirmDelete(true);
   };
 
-  const onRowClicked = (row: ProductWithStock) => {
+  const onRowClicked = (row: Inventory) => {
     setSelectedRow(row);
     setView(true);
-  };
-
-  // spread products by stcok
-  const spreadProductsByStock = (products: Product[]) => {
-    const spreadArray: ProductWithStock[] = [];
-    products.forEach((product) => {
-      if (product.stock.length > 0) {
-        product.stock.forEach((stockItem) => {
-          spreadArray.push({ ...product, stock: stockItem });
-        });
-      } else {
-        spreadArray.push({ ...product, stock: {} as Stock });
-      }
-    });
-    return spreadArray;
   };
 
   // Fetch all products and spread them by stock
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/products");
-        const data = spreadProductsByStock(response.data);
-        setStock(data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteInventoryCollectionId,
+          query
+        );
+        console.log(documents);
+        const inventory = documents.map((product: any) => ({
+          id: product.$id,
+          productName: product.product && product.product.name,
+          lotNumber: product.lotNumber,
+          manufactureDate: product.manufactureDate,
+          expiryDate: product.expiryDate,
+          quantity: product.quantity,
+          cost: product.cost,
+          price: product.price,
+          unit:
+            product.product &&
+            product.product.unit &&
+            product.product.unit.code,
+          createdAt: product.$createdAt,
+          updatedAt: product.$updatedAt,
+        }));
+
+        setInventory(inventory);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchProducts();
-  }, [stock]);
+  }, [inventory]);
 
   return (
-    <ListPage
+    <ListComponent
       title="Products Stock"
-      buttonText="Adjust Stock"
-      buttonPath="/inventory/adjust-stock"
+      buttonText="Add New Stock"
+      buttonAction={onAddClicked}
     >
       <>
-        <EditStock open={edit} handleClose={handleClose} stock={selectedRow} />
+        <AddStock open={add} handleClose={handleClose} />
+        <EditStock
+          open={edit}
+          handleClose={handleClose}
+          inventory={selectedRow}
+        />
         <ViewProductStockDetails
           open={view}
           handleClose={handleClose}
-          stock={selectedRow}
+          inventory={selectedRow}
         />
         <DeleteStock
           open={confirmDelete}
           handleClose={handleClose}
-          stock={selectedRow}
+          inventory={selectedRow}
         />
         <DataTable
-          data={stock}
+          data={inventory}
           columns={columns}
           customStyles={customTableStyles}
           onRowClicked={onRowClicked}
@@ -188,6 +195,6 @@ export default function InventoryPage() {
           pagination
         />
       </>
-    </ListPage>
+    </ListComponent>
   );
 }

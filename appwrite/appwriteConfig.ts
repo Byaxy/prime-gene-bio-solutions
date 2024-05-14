@@ -5,6 +5,8 @@ const appwriteClient = new Client();
 
 const DB = new Databases(appwriteClient);
 
+const query = [Query.orderDesc("$createdAt"), Query.limit(10000)]
+
 type CreateUserAccount = {
   name: string;
   email: string;
@@ -82,6 +84,6 @@ export class AppwriteService {
 
 const appwriteService = new AppwriteService();
 
-export { DB, Query, ID };
+export { DB, Query, ID , query};
 
 export default appwriteService;

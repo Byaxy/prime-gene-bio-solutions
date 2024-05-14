@@ -5,20 +5,14 @@ import { Button, TextField, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import type {
-  Brand,
-  Option,
-  Product,
-  ProductCategory,
-  ProductType,
-} from "@/components/Types";
+import type { Option, Product } from "@/components/Types";
 import { useForm } from "react-hook-form";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB, query, ID } from "@/appwrite/appwriteConfig";
 import { config } from "@/config/config";
 
-type FormInput = Omit<Product, "id">;
+type FormInput = Omit<Product, "id" | "inventory" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   code: "",
@@ -28,14 +22,8 @@ const defaultValues: FormInput = {
   type: "",
   unit: "",
   category: "",
-  stock: [],
-  cost: 0,
-  price: 0,
   description: "",
   alertQuantity: 5,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 
 const AddProductPage = () => {
@@ -45,76 +33,113 @@ const AddProductPage = () => {
   const [brandOptions, setBrandOptions] = useState<Option[]>([]);
   const [unitOptions, setUnitOptions] = useState<Option[]>([]);
 
-  const { register, handleSubmit, reset, formState, control, watch } =
+  const { register, handleSubmit, reset, formState, control } =
     useForm<FormInput>({
       defaultValues: defaultValues,
     });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const router = useRouter();
-  const watchCost = watch("cost");
 
+  // handle submit
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data, image: imageUrl };
+      const formData = { ...data, image: imageUrl };
 
-      const response = await axios.post(
-        "http://localhost:5000/products",
-        newData
-      );
-
-      if (response.status === 201) {
+      await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteProductsCollectionId,
+        ID.unique(),
+        formData
+      ).then(() => {
         toast.success("Product Added Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
     }
   };
 
+  // fetch types, categories, brands and units options
   useEffect(() => {
     try {
       // Fetch product types
       const fetchTypeOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/types");
-        const options = data.map((option: ProductType) => ({
-          label: option.name,
-          value: option.name,
-        }));
-        setTypeOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductTypesCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setTypeOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchTypeOptions();
 
       // Fetch product categories
       const fetchCategoryOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/categories");
-        const options = data.map((option: ProductCategory) => ({
-          label: option.name,
-          value: option.name,
-        }));
-        setCategoryOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductCategoriesCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setCategoryOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchCategoryOptions();
 
       // Fetch product brands
       const fetchBrandOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/brands");
-        const options = data.map((option: Brand) => ({
-          label: option.name,
-          value: option.name,
-        }));
-        setBrandOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductBrandsCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setBrandOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchBrandOptions();
 
       // Fetch product units
       const fetchUnitOptions = async () => {
-        const { data } = await axios.get("http://localhost:5000/units");
-        const options = data.map((option: Brand) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        setUnitOptions(options);
+        try {
+          const { documents } = await DB.listDocuments(
+            config.appwriteDatabaseId,
+            config.appwriteProductUnitsCollectionId,
+            query
+          );
+          const options = documents.map((option: any) => ({
+            label: option.name,
+            value: option.$id,
+          }));
+
+          setUnitOptions(options);
+        } catch (error) {
+          console.error(error);
+        }
       };
       fetchUnitOptions();
     } catch (error) {
@@ -164,7 +189,7 @@ const AddProductPage = () => {
                   Product Image
                 </span>
               </label>
-              <div className="relative mt-1 w-[min(100%,18rem)] h-[12.5rem] sm:h-[20rem] object-cover">
+              <div className="relative mt-1 w-[min(100%,18rem)] h-[12.5rem] sm:h-[13rem] object-cover">
                 {imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -192,7 +217,7 @@ const AddProductPage = () => {
                   return (
                     <Button
                       variant="contained"
-                      className="capitalize"
+                      className="capitalize saveBtn"
                       onClick={() => open()}
                     >
                       Upload Image
@@ -294,75 +319,13 @@ const AddProductPage = () => {
                   )}
                 </div>
               </div>
-
-              <div className="flex flex-col sm:flex-row gap-5 w-full">
-                <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="cost">
-                    <span className="text-primaryDark font-semibold text-xl">
-                      Product Cost
-                    </span>
-                    <span className="text-redColor"> *</span>
-                  </label>
-                  <TextField
-                    id="cost"
-                    type="number"
-                    label="Product Cost"
-                    variant="outlined"
-                    inputProps={{ min: 1 }}
-                    defaultValue={1}
-                    {...register("cost", {
-                      required: "Product Cost is required",
-                      valueAsNumber: true,
-                      min: {
-                        value: 1,
-                        message: "Product Cost cannot be Zero",
-                      },
-                    })}
-                  />
-                  {errors.cost && (
-                    <span className="text-redColor text-sm">
-                      {errors.cost?.message}
-                    </span>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="price">
-                    <span className="text-primaryDark font-semibold text-xl">
-                      Product Price
-                    </span>
-                    <span className="text-redColor"> *</span>
-                  </label>
-                  <TextField
-                    id="price"
-                    type="number"
-                    label="Product Price"
-                    variant="outlined"
-                    inputProps={{ min: 1 }}
-                    defaultValue={watchCost || 1}
-                    {...register("price", {
-                      required: "Product Price is required",
-                      valueAsNumber: true,
-                      min: {
-                        value: watchCost || 1,
-                        message:
-                          "Product Price cannot be less than Product Cost price",
-                      },
-                    })}
-                  />
-                  {errors.price && (
-                    <span className="text-redColor text-sm">
-                      {errors.price?.message}
-                    </span>
-                  )}
-                </div>
-              </div>
-
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col flex-1 gap-2">
                   <label htmlFor="brand">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Brand
                     </span>
+                    <span className="text-redColor"> *</span>
                   </label>
                   <FormInputDropdown
                     id="brand"
@@ -384,6 +347,7 @@ const AddProductPage = () => {
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Unit
                     </span>
+                    <span className="text-redColor"> *</span>
                   </label>
                   <FormInputDropdown
                     id="unit"

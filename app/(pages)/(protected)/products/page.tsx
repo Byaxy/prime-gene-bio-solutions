@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
@@ -7,11 +8,12 @@ import ListPage from "@/components/ListPage";
 import { CldImage } from "next-cloudinary";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Stock } from "@/components/Types";
+import { Inventory } from "@/components/Types";
 import type { Product } from "@/components/Types";
-import axios from "axios";
 import DeleteProduct from "@/components/products/DeleteProduct";
 import Link from "next/link";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 export default function ProductsPage() {
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
@@ -26,11 +28,11 @@ export default function ProductsPage() {
       width: "80px",
       cell: (row: { image: string }) => (
         <CldImage
-          className="rounded-lg"
+          className="rounded-lg w-auto h-auto"
           src={row.image}
           alt="Product Image"
           height={40}
-          width={60}
+          width={90}
         />
       ),
       style: {
@@ -41,7 +43,7 @@ export default function ProductsPage() {
     {
       name: "Code",
       selector: (row: { code: string }) => row.code,
-      width: "90px",
+      width: "120px",
       style: {
         fontWeight: "600",
       },
@@ -57,26 +59,58 @@ export default function ProductsPage() {
     },
     {
       name: "Category",
-      selector: (row: { category: string }) => row.category,
-    },
-    {
-      name: "Cost",
-      width: "90px",
-      cell: (row: { cost: number }) => <span>${row.cost}</span>,
-    },
-    {
-      name: "Price",
-      width: "90px",
-      cell: (row: { price: number }) => <span>${row.price}</span>,
+      selector: (row: { category: string }) =>
+        row.category ? row.category : "Null",
     },
     {
       name: "Qnty",
-      width: "80px",
-      cell: (row: { stock: Stock[]; unit: string }) => (
-        <span>
-          {row.stock.reduce((qty, obj) => qty + obj.quantity, 0)} {row.unit}
-        </span>
+      width: "90px",
+      cell: (row: { inventory: Inventory[]; unit: string }) => (
+        <div>
+          {row.inventory.length === 0 ? (
+            "Null"
+          ) : (
+            <span>
+              {row.inventory.reduce((qty, obj) => qty + obj.quantity, 0)}{" "}
+              {row.unit}
+            </span>
+          )}
+        </div>
       ),
+    },
+    {
+      name: "Cost",
+      cell: (row: { inventory: Inventory[] }) => (
+        <div>
+          {row.inventory.length === 0 ? (
+            "Null"
+          ) : (
+            <span>
+              $
+              {row.inventory.reduce((total, obj) => total + obj.cost, 0) /
+                row.inventory.length}
+            </span>
+          )}
+        </div>
+      ),
+      width: "90px",
+    },
+    {
+      name: "Price",
+      cell: (row: { inventory: Inventory[] }) => (
+        <div>
+          {row.inventory.length === 0 ? (
+            "Null"
+          ) : (
+            <span>
+              $
+              {row.inventory.reduce((total, obj) => total + obj.price, 0) /
+                row.inventory.length}
+            </span>
+          )}
+        </div>
+      ),
+      width: "90px",
     },
     {
       name: "Actions",
@@ -119,11 +153,32 @@ export default function ProductsPage() {
     setView(true);
   };
 
+  // fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/products");
-        setProducts(response.data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductsCollectionId,
+          query
+        );
+        const products = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          code: doc.code,
+          image: doc.image,
+          brand: doc.brand ? doc.brand.name : null,
+          type: doc.type ? doc.type.name : null,
+          unit: doc.unit ? doc.unit.code : null,
+          category: doc.category ? doc.category.name : null,
+          inventory: doc.inventory,
+          description: doc.description,
+          alertQuantity: doc.alertQuantity,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        setProducts(products);
       } catch (error) {
         console.error(error);
       }
