@@ -11,6 +11,8 @@ import type { Customer } from "@/components/Types";
 import axios from "axios";
 import DeleteCustomer from "@/components/customers/DeleteCustomer";
 import EditCustomer from "@/components/customers/EditCustomer";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 export default function CustomersPage() {
   const [add, setAdd] = useState<boolean>(false);
@@ -111,6 +113,22 @@ export default function CustomersPage() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteCustomerGroupsCollectionId,
+          query
+        );
+        const customers = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          email: doc.email,
+          phone: doc.phone,
+          address: doc.address,
+          city: doc.city,
+          country: doc.country,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
         const { data } = await axios.get("http://localhost:5000/customers");
         setCustomers(data);
       } catch (error) {

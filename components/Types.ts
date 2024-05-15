@@ -8,7 +8,6 @@ export type CustomerGroup = {
   percentage: number;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Brand = {
   id: string;
@@ -97,12 +96,9 @@ export type Customer = {
   phone: string;
   address: string;
   city: string;
-  state: string;
   country: string;
-  contactPerson?: ContactPerson;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Expense = {
   id: string;
@@ -200,7 +196,6 @@ export type Quotation = {
   notes: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type DeliveryProduct = {
   id: string;

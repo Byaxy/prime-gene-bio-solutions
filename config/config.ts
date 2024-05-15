@@ -34,4 +34,16 @@ export const config = {
   appwriteInventoryCollectionId: String(
     process.env.NEXT_PUBLIC_APPWRITE_INVENTORY_COLLECTION_ID
   ),
+
+  appwriteCustomersCollectionId: String(
+    process.env.NEXT_PUBLIC_APPWRITE_CUSTOMERS_COLLECTION_ID
+  ),
+
+  appwriteCustomerGroupsCollectionId: String(
+    process.env.NEXT_PUBLIC_APPWRITE_CUSTOMER_GROUPS_COLLECTION_ID
+  ),
+
+  appwriteQuotationsCollectionId: String(
+    process.env.NEXT_PUBLIC_APPWRITE_QUOTATIONS_COLLECTION_ID
+  ),
 };

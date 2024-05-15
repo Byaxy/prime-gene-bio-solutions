@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -8,10 +8,11 @@ import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { CustomerGroup } from "@/components/Types";
-import axios from "axios";
 import toast from "react-hot-toast";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
-type FormInput = Omit<CustomerGroup, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<CustomerGroup, "id" | "createdAt" | "updatedAt">;
 
 type EditCustomerGroupProps = {
   open: boolean;
@@ -28,21 +29,20 @@ const EditCustomerGroup = ({
     defaultValues: {
       name: group.name,
       percentage: group.percentage,
-      updatedAt: new Date(),
     },
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const response = await axios.patch(
-        `http://localhost:5000/customer-groups/${group.id}`,
+      await DB.updateDocument(
+        config.appwriteDatabaseId,
+        config.appwriteCustomerGroupsCollectionId,
+        group.id,
         data
-      );
-      if (response.status === 200) {
+      ).then(() => {
         toast.success("Customer Group Edited Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");
@@ -86,7 +86,6 @@ const EditCustomerGroup = ({
               <TextField
                 id="name"
                 type="text"
-                label="Name"
                 variant="outlined"
                 defaultValue={group.name}
                 {...register("name", { required: "Name is Required" })}
@@ -117,7 +116,7 @@ const EditCustomerGroup = ({
             onClick={() => reset()}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

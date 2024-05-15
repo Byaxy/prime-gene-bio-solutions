@@ -8,20 +8,18 @@ import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { CustomerGroup } from "@/components/Types";
-import axios from "axios";
 import toast from "react-hot-toast";
+import { DB, ID } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<CustomerGroup, "id">;
+type FormInput = Omit<CustomerGroup, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
-  createdAt: new Date(),
   percentage: 0,
-  isActive: true,
-  updatedAt: new Date(),
 };
 
 type AddCustomerGroupProps = {
@@ -40,14 +38,14 @@ export default function AddCustomerGroup({
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const response = await axios.post(
-        "http://localhost:5000/customer-groups",
+      await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteCustomerGroupsCollectionId,
+        ID.unique(),
         data
-      );
-      if (response.status === 201) {
+      ).then(() => {
         toast.success("Customer Group Added Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");

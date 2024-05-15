@@ -22,7 +22,7 @@ export default function ViewCustomerGroupDetails({
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle className="flex justify-between items-center">
           <span className="text-2xl text-primaryDark font-bold">
-            Group Details
+            Customer Group Details
           </span>
           <CancelIcon
             fontSize="large"
@@ -33,14 +33,6 @@ export default function ViewCustomerGroupDetails({
         <DialogContent>
           <Table size="small">
             <TableBody>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Date of Registration
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {new Date(group.createdAt).toDateString()}
-                </TableCell>
-              </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
                   Name
@@ -54,12 +46,20 @@ export default function ViewCustomerGroupDetails({
                   Percentage
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {group.percentage}
+                  {group.percentage}%
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Last Updated
+                  Created On
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(group.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last Updated On
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
                   {new Date(group.updatedAt).toDateString()}

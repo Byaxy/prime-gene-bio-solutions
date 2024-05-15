@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
@@ -8,9 +9,10 @@ import AddCustomerGroup from "@/components/customers/customer-groups/AddCudtomer
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CustomerGroup } from "@/components/Types";
-import axios from "axios";
 import DeleteCustomerGroup from "@/components/customers/customer-groups/DeleteCustomerGroup";
 import EditCustomerGroup from "@/components/customers/customer-groups/EditCustomerGroup";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 export default function CustomerGroupsPage() {
   const [add, setAdd] = useState<boolean>(false);
@@ -88,13 +90,24 @@ export default function CustomerGroupsPage() {
     setView(true);
   };
 
+  // Fetch customer groups
   useEffect(() => {
     const fetchCustomerGroups = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:5000/customer-groups"
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteCustomerGroupsCollectionId,
+          query
         );
-        setCustomerGroups(data);
+        const groups = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          percentage: doc.percentage,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        setCustomerGroups(groups);
       } catch (error) {
         console.error(error);
       }

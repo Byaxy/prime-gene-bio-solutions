@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { CustomerGroup } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type DeleteCustomerGroupProps = {
   open: boolean;
@@ -21,12 +21,13 @@ const DeleteCustomerGroup = ({
 }: DeleteCustomerGroupProps) => {
   const deleteCustomerGroup = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/customer-groups/${group.id}`
-      );
-      if (response.status === 200) {
+      await DB.deleteDocument(
+        config.appwriteDatabaseId,
+        config.appwriteCustomerGroupsCollectionId,
+        group.id
+      ).then(() => {
         toast.success("Customer Group Deleted Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");

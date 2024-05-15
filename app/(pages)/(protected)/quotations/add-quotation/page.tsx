@@ -37,7 +37,7 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import { viewTableStyles } from "@/styles/TableStyles";
 
-type FormInput = Omit<Quotation, "id">;
+type FormInput = Omit<Quotation, "id" | "createdAt" | "updatedAt">;
 
 const tax: number = 0;
 
@@ -50,9 +50,6 @@ const defaultValues: FormInput = {
   quotationStatus: "",
   products: [],
   notes: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 
 export default function AddQuotationPage() {
