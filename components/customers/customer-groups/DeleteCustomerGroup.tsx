@@ -19,6 +19,7 @@ const DeleteCustomerGroup = ({
   handleClose,
   group,
 }: DeleteCustomerGroupProps) => {
+  // Delete customer group
   const deleteCustomerGroup = async () => {
     try {
       await DB.deleteDocument(
@@ -33,6 +34,7 @@ const DeleteCustomerGroup = ({
       toast.error("Something went wrong!");
     }
   };
+
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>

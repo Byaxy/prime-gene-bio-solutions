@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
@@ -8,7 +9,6 @@ import ViewCustomerDetails from "@/components/customers/ViewCustomerDetails";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Customer } from "@/components/Types";
-import axios from "axios";
 import DeleteCustomer from "@/components/customers/DeleteCustomer";
 import EditCustomer from "@/components/customers/EditCustomer";
 import { DB, query } from "@/appwrite/appwriteConfig";
@@ -115,11 +115,12 @@ export default function CustomersPage() {
       try {
         const { documents } = await DB.listDocuments(
           config.appwriteDatabaseId,
-          config.appwriteCustomerGroupsCollectionId,
+          config.appwriteCustomersCollectionId,
           query
         );
         const customers = documents.map((doc: any) => ({
           id: doc.$id,
+          customerGroup: doc.customerGroup && doc.customerGroup.name,
           name: doc.name,
           email: doc.email,
           phone: doc.phone,
@@ -129,8 +130,8 @@ export default function CustomersPage() {
           createdAt: doc.$createdAt,
           updatedAt: doc.$updatedAt,
         }));
-        const { data } = await axios.get("http://localhost:5000/customers");
-        setCustomers(data);
+
+        setCustomers(customers);
       } catch (error) {
         console.error(error);
       }

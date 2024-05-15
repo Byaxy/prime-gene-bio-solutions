@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { Customer } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { DB } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type DeleteCustomerProps = {
   open: boolean;
@@ -19,14 +19,16 @@ const DeleteCustomer = ({
   handleClose,
   customer,
 }: DeleteCustomerProps) => {
+  // Delete customer
   const deleteCustomer = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/customers/${customer.id}`
-      );
-      if (response.status === 200) {
+      await DB.deleteDocument(
+        config.appwriteDatabaseId,
+        config.appwriteCustomersCollectionId,
+        customer.id
+      ).then(() => {
         toast.success("Customer Deleted Successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong!");

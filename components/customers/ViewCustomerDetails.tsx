@@ -35,22 +35,6 @@ export default function ViewCustomerDetails({
             <TableBody>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Date of Registration
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {new Date(customer?.createdAt).toDateString()}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Status
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {customer?.isActive ? "Active" : "Not Active"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
                   Name
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
@@ -97,14 +81,7 @@ export default function ViewCustomerDetails({
                   {customer?.city}
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  State
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {customer?.state}
-                </TableCell>
-              </TableRow>
+
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
                   Country
@@ -113,53 +90,24 @@ export default function ViewCustomerDetails({
                   {customer?.country}
                 </TableCell>
               </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Created On
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(customer?.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last Updated On
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(customer?.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
-          <h3 className="text-2xl text-primaryDark font-bold mb-0 mt-10 px-4">
-            Contact Person Details
-          </h3>
-          {customer?.contactPerson ? (
-            <Table size="small">
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Name
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {customer.contactPerson?.name}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Email
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {customer.contactPerson?.email}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Phone Number
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {customer.contactPerson?.phone}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Status
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {customer.contactPerson?.isActive ? "Active" : "Not Active"}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          ) : (
-            <span className="font-semibold text-lg text-primaryDark px-4 py-6 block">
-              No Contact Person
-            </span>
-          )}
         </DialogContent>
         <DialogActions>
           <Button

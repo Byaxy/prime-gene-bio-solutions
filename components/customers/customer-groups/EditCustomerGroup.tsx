@@ -33,6 +33,7 @@ const EditCustomerGroup = ({
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
+  // Edit Customer Group
   const onSubmit = async (data: FormInput) => {
     try {
       await DB.updateDocument(
