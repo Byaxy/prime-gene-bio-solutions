@@ -4,7 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Expense } from "../Types";
@@ -134,10 +134,10 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="expenseDate">
+              <FormLabel>
                 <span className="text-primaryDark font-semibold">Date</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <DatePicker
                 defaultValue={dayjs()}
                 value={expenseDate}
@@ -148,12 +148,12 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                 minDate={dayjs("01-01-2000")}
               />
 
-              <label htmlFor="title">
+              <FormLabel htmlFor="title">
                 <span className="text-primaryDark font-semibold">
                   Expense Title
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="title"
                 type="text"
@@ -164,12 +164,12 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                 error={!!errors.title}
                 helperText={errors.title?.message}
               />
-              <label htmlFor="reference">
+              <FormLabel htmlFor="reference">
                 <span className="text-primaryDark font-semibold">
                   Reference Number
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="reference"
                 type="text"
@@ -180,10 +180,10 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                 error={!!errors.reference}
                 helperText={errors.reference?.message}
               />
-              <label htmlFor="amount">
+              <FormLabel htmlFor="amount">
                 <span className="text-primaryDark font-semibold">Amount</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="amount"
                 type="number"
@@ -200,11 +200,11 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                 }
               />
               <div className="flex flex-col w-full gap-2">
-                <label htmlFor="category">
+                <FormLabel htmlFor="category">
                   <span className="text-primaryDark font-semibold">
                     Category
                   </span>
-                </label>
+                </FormLabel>
                 <FormInputDropdown
                   id="category"
                   name="category"
@@ -213,11 +213,11 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                   options={options}
                 />
               </div>
-              <label htmlFor="image">
+              <FormLabel htmlFor="image">
                 <span className="text-primaryDark font-semibold">
                   Attachment
                 </span>
-              </label>
+              </FormLabel>
               <div className="flex flex-row gap-2 items-center">
                 <div>
                   {previewImage && (
@@ -238,11 +238,11 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                   inputProps={{ accept: "image/*", multiple: false }}
                 />
               </div>
-              <label htmlFor="description">
+              <FormLabel htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description
                 </span>
-              </label>
+              </FormLabel>
               <TextField
                 id="description"
                 label="Description"

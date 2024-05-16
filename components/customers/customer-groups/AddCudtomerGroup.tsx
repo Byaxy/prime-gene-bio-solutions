@@ -36,6 +36,7 @@ export default function AddCustomerGroup({
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
+  // handle form submission
   const onSubmit = async (data: FormInput) => {
     try {
       await DB.createDocument(
@@ -52,6 +53,7 @@ export default function AddCustomerGroup({
     }
   };
 
+  // reset form on successful submit
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();

@@ -6,9 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   Button,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
+  FormLabel,
   Table,
   TableBody,
   TableCell,
@@ -20,12 +18,7 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import type {
-  Delivery,
-  DeliveryProduct,
-  ReturnProduct,
-  SaleReturn,
-} from "@/components/Types";
+import type { ReturnProduct, SaleReturn } from "@/components/Types";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import EditIcon from "@mui/icons-material/Edit";
@@ -243,12 +236,12 @@ const EditReturn = ({ open, handleClose, saleReturn }: EditReturnProps) => {
             <div className="flex flex-col gap-5 w-full">
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="deliveryDate">
+                  <FormLabel htmlFor="deliveryDate">
                     <span className="text-primaryDark font-semibold">
                       Delivery Date
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     defaultValue={dayjs()}
                     value={returnDate}
@@ -259,12 +252,12 @@ const EditReturn = ({ open, handleClose, saleReturn }: EditReturnProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="reference">
                     <span className="text-primaryDark font-semibold">
                       Delivery Reference Number
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="reference"
                     type="text"
@@ -277,12 +270,12 @@ const EditReturn = ({ open, handleClose, saleReturn }: EditReturnProps) => {
               </div>
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="customer">
+                  <FormLabel htmlFor="customer">
                     <span className="text-primaryDark font-semibold">
                       Customer
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="customer"
                     type="text"
@@ -293,13 +286,13 @@ const EditReturn = ({ open, handleClose, saleReturn }: EditReturnProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="saleInvoiceNumber">
                     <span className="text-primaryDark font-semibold">
                       Invoice Number
                     </span>
-                  </label>
+                  </FormLabel>
                   <TextField
-                    id="customer"
+                    id="saleInvoiceNumber"
                     type="text"
                     label="Customer"
                     variant="outlined"
@@ -310,12 +303,12 @@ const EditReturn = ({ open, handleClose, saleReturn }: EditReturnProps) => {
               </div>
               {/** Select product */}
               <div className="flex flex-col gap-4 w-full">
-                <label htmlFor="products">
+                <FormLabel htmlFor="products">
                   <span className="text-primaryDark font-semibold">
                     Products
                   </span>
                   <span className="text-redColor"> *</span>
-                </label>
+                </FormLabel>
                 {/** List of products delivered */}
                 <DataTable
                   columns={columns}
@@ -427,9 +420,9 @@ const EditReturn = ({ open, handleClose, saleReturn }: EditReturnProps) => {
               </Dialog>
 
               <div className="flex flex-col gap-4 w-full">
-                <label htmlFor="description">
+                <FormLabel htmlFor="description">
                   <span className="text-primaryDark font-semibold">Notes</span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="description"
                   label="Description"
@@ -449,7 +442,7 @@ const EditReturn = ({ open, handleClose, saleReturn }: EditReturnProps) => {
             onClick={handleCancel}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

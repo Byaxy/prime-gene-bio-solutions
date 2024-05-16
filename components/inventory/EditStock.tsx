@@ -196,11 +196,11 @@ const EditStock = ({ open, handleClose, inventory }: EditStockProps) => {
               </div>
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label>
+                  <FormLabel>
                     <span className="text-primaryDark font-semibold">
                       Manufacture Date
                     </span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     value={manufactureDate}
                     onChange={(newDate) => setManufactureDate(newDate)}
@@ -211,11 +211,11 @@ const EditStock = ({ open, handleClose, inventory }: EditStockProps) => {
                   />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
-                  <label>
+                  <FormLabel>
                     <span className="text-primaryDark font-semibold">
                       Expiry Date
                     </span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     value={expiryDate}
                     onChange={(newDate) => setExpiryDate(newDate)}
@@ -239,7 +239,7 @@ const EditStock = ({ open, handleClose, inventory }: EditStockProps) => {
             )}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

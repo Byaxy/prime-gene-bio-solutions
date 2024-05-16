@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, FormLabel, TextField, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useParams, useRouter } from "next/navigation";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
@@ -214,11 +214,11 @@ export default function EditProductPage() {
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-col md:flex-row gap-5 mb-2">
             <div className="flex flex-1 flex-col gap-4 items-center">
-              <label htmlFor="image">
+              <FormLabel htmlFor="image">
                 <span className="text-primaryDark font-semibold text-xl">
                   Product Image
                 </span>
-              </label>
+              </FormLabel>
               <div className="relative mt-1 w-[min(100%,18rem)] h-[12.5rem] sm:h-[13rem] object-cover">
                 {imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -260,12 +260,12 @@ export default function EditProductPage() {
             <div className="flex flex-col flex-[2] gap-5">
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="name">
+                  <FormLabel htmlFor="name">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Name
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="name"
                     type="text"
@@ -281,12 +281,12 @@ export default function EditProductPage() {
                   )}
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="code">
+                  <FormLabel htmlFor="code">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Code
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="code"
                     type="text"
@@ -305,12 +305,12 @@ export default function EditProductPage() {
 
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="type">
+                  <FormLabel htmlFor="type">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Type
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="type"
                     control={control}
@@ -328,12 +328,12 @@ export default function EditProductPage() {
                   )}
                 </div>
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="category">
+                  <FormLabel htmlFor="category">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Category
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="category"
                     control={control}
@@ -353,11 +353,11 @@ export default function EditProductPage() {
               </div>
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="brand">
+                  <FormLabel htmlFor="brand">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Brand
                     </span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="brand"
                     control={control}
@@ -375,11 +375,11 @@ export default function EditProductPage() {
                   )}
                 </div>
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="unit">
+                  <FormLabel htmlFor="unit">
                     <span className="text-primaryDark font-semibold text-xl">
                       Product Unit
                     </span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="unit"
                     control={control}
@@ -399,11 +399,11 @@ export default function EditProductPage() {
               </div>
             </div>
           </div>
-          <label htmlFor="description">
+          <FormLabel htmlFor="description">
             <span className="text-primaryDark font-semibold text-xl">
               Product Details
             </span>
-          </label>
+          </FormLabel>
           <TextField
             id="description"
             defaultValue={product?.description}
@@ -413,12 +413,12 @@ export default function EditProductPage() {
           />
           <div className="flex flex-col sm:flex-row gap-5 w-full mt-2">
             <div className="flex flex-col gap-2">
-              <label htmlFor="alertQuantity">
+              <FormLabel htmlFor="alertQuantity">
                 <span className="text-primaryDark font-semibold text-xl">
                   Alert Quantity
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="alertQuantity"
                 type="number"

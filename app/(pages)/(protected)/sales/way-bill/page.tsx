@@ -1,11 +1,11 @@
 "use client";
+
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
 import { useCallback, useEffect, useState } from "react";
 import ListComponent from "@/components/ListComponent";
 import AddWayBill from "@/components/sales/waybill/AddWayBill";
 import ViewWayBillDetails from "@/components/sales/waybill/ViewWayBillDetails";
-import { allWayBillsData } from "@/data/allWayBillsData";
 import type { WayBill } from "@/components/Types";
 import axios from "axios";
 import EditIcon from "@mui/icons-material/Edit";

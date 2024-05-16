@@ -6,6 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   Button,
+  FormLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -276,12 +277,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
             <div className="flex flex-col gap-5 w-full">
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="deliveryDate">
+                  <FormLabel htmlFor="deliveryDate">
                     <span className="text-primaryDark font-semibold">
                       Purchase Date
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     defaultValue={dayjs()}
                     value={date}
@@ -293,12 +294,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="purchaseStatus">
+                  <FormLabel htmlFor="purchaseStatus">
                     <span className="text-primaryDark font-semibold">
                       Purchase Status
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="purchaseStatus"
                     name="purchaseStatus"
@@ -310,12 +311,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
               </div>
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="purchaseOrderNumber">
+                  <FormLabel htmlFor="purchaseOrderNumber">
                     <span className="text-primaryDark font-semibold">
                       Purchase Order Number
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="purchaseOrderNumber"
                     type="text"
@@ -328,12 +329,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="supplier">
+                  <FormLabel htmlFor="supplier">
                     <span className="text-primaryDark font-semibold">
                       Supplier
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="supplier"
                     name="supplier"
@@ -356,12 +357,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
 
               {/** Select product */}
               <div className="flex flex-col gap-4 w-full">
-                <label htmlFor="products">
+                <FormLabel htmlFor="products">
                   <span className="text-primaryDark font-semibold">
                     Products
                   </span>
                   <span className="text-redColor"> *</span>
-                </label>
+                </FormLabel>
                 {/** List of products delivered */}
                 <DataTable
                   data={products}
@@ -401,12 +402,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                     <div className="flex flex-col gap-5">
                       <div className="flex w-full gap-5">
                         <div className="flex flex-col flex-1 gap-4">
-                          <label htmlFor="name">
+                          <FormLabel htmlFor="name">
                             <span className="text-primaryDark font-semibold">
                               Name
                             </span>
                             <span className="text-redColor"> *</span>
-                          </label>
+                          </FormLabel>
                           <TextField
                             id="name"
                             type="text"
@@ -418,12 +419,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                           />
                         </div>
                         <div className="flex flex-col flex-1 gap-4">
-                          <label htmlFor="lotNumber">
+                          <FormLabel htmlFor="lotNumber">
                             <span className="text-primaryDark font-semibold">
                               Lot Number
                             </span>
                             <span className="text-redColor"> *</span>
-                          </label>
+                          </FormLabel>
                           <TextField
                             id="lotNumber"
                             type="text"
@@ -437,16 +438,16 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                     <div className="flex flex-col gap-5">
                       <div className="flex w-full gap-5">
                         <div className="flex flex-col flex-1 gap-4">
-                          <label htmlFor="paymentSatatus">
+                          <FormLabel htmlFor="unit">
                             <span className="text-primaryDark font-semibold">
                               Unit
                             </span>
                             <span className="text-redColor"> *</span>
-                          </label>
+                          </FormLabel>
                           <div className="w-full">
                             <Select
-                              label="Invoice Number"
-                              id="invoiceNumber"
+                              label="Unit"
+                              id="unit"
                               value={unit}
                               onChange={(event: SelectChangeEvent) =>
                                 setUnit(event.target.value)
@@ -462,12 +463,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                           </div>
                         </div>
                         <div className="flex flex-col flex-1 gap-4">
-                          <label htmlFor="quantity">
+                          <FormLabel htmlFor="quantity">
                             <span className="text-primaryDark font-semibold">
                               Quantity
                             </span>
                             <span className="text-redColor"> *</span>
-                          </label>
+                          </FormLabel>
                           <TextField
                             id="quantity"
                             type="number"
@@ -487,12 +488,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                     <div className="flex flex-col gap-5">
                       <div className="flex w-full gap-5">
                         <div className="flex flex-col flex-1 gap-4">
-                          <label htmlFor="price">
+                          <FormLabel htmlFor="price">
                             <span className="text-primaryDark font-semibold">
                               Price
                             </span>
                             <span className="text-redColor"> *</span>
-                          </label>
+                          </FormLabel>
                           <TextField
                             id="price"
                             type="number"
@@ -506,12 +507,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                           />
                         </div>
                         <div className="flex flex-col flex-1 gap-4">
-                          <label htmlFor="subTotal">
+                          <FormLabel htmlFor="subTotal">
                             <span className="text-primaryDark font-semibold">
                               Sub Total
                             </span>
                             <span className="text-redColor"> *</span>
-                          </label>
+                          </FormLabel>
                           <TextField
                             id="subTotal"
                             type="number"
@@ -546,12 +547,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
               </Dialog>
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="paymentStatus">
+                  <FormLabel htmlFor="paymentStatus">
                     <span className="text-primaryDark font-semibold">
                       Payment Status
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="paymentStatus"
                     name="paymentStatus"
@@ -562,12 +563,12 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                 </div>
 
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="paid">
+                  <FormLabel htmlFor="paid">
                     <span className="text-primaryDark font-semibold">
                       Amount Paid
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="paid"
                     type="number"
@@ -587,11 +588,11 @@ const AddPurchase = ({ open, handleClose }: AddPurchaseProps) => {
                 </div>
               </div>
               <div className="flex flex-col gap-4 w-full">
-                <label htmlFor="description">
+                <FormLabel htmlFor="description">
                   <span className="text-primaryDark font-semibold">
                     Description
                   </span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="description"
                   label="Description"

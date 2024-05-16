@@ -1,4 +1,5 @@
 "use client";
+
 import { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
@@ -88,6 +89,7 @@ export default function ProductsUnitsPage(): JSX.Element {
     setView(true);
   };
 
+  // fetch units
   useEffect(() => {
     const fetchUnits = async () => {
       try {

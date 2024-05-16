@@ -193,12 +193,12 @@ const AddStock = ({ open, handleClose }: AddStockProps) => {
               {/** Select product to adjust */}
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label htmlFor="products">
+                  <FormLabel htmlFor="products">
                     <span className="text-primaryDark font-semibold text-lg">
                       Select Product
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <Button
                     variant="outlined"
                     size="large"
@@ -358,11 +358,11 @@ const AddStock = ({ open, handleClose }: AddStockProps) => {
               </div>
               <div className="flex flex-col sm:flex-row gap-5 w-full">
                 <div className="flex flex-col gap-2 flex-1">
-                  <label>
+                  <FormLabel>
                     <span className="text-primaryDark font-semibold">
                       Manufacture Date
                     </span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     value={manufactureDate}
                     onChange={(newDate) => setManufactureDate(newDate)}
@@ -372,11 +372,11 @@ const AddStock = ({ open, handleClose }: AddStockProps) => {
                   />
                 </div>
                 <div className="flex flex-col gap-2 flex-1">
-                  <label>
+                  <FormLabel>
                     <span className="text-primaryDark font-semibold">
                       Expiry Date
                     </span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     value={expiryDate}
                     onChange={(newDate) => setExpiryDate(newDate)}

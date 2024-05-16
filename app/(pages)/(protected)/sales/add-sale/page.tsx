@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  FormLabel,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -302,10 +303,10 @@ export default function AddSalePage() {
         <div className="flex flex-col gap-5">
           <div className="flex flex-col sm:flex-row gap-5 w-full">
             <div className="flex flex-col gap-2 flex-1">
-              <label>
+              <FormLabel>
                 <span className="text-primaryDark font-semibold">Date</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <DatePicker
                 defaultValue={dayjs()}
                 value={saleDate}
@@ -317,12 +318,12 @@ export default function AddSalePage() {
               />
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label htmlFor="invoiceNumber">
+              <FormLabel htmlFor="invoiceNumber">
                 <span className="text-primaryDark font-semibold">
                   Invoice Number
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="invoiceNumber"
                 type="text"
@@ -339,10 +340,10 @@ export default function AddSalePage() {
               )}
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label>
+              <FormLabel htmlFor="customer">
                 <span className="text-primaryDark font-semibold">Customer</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <FormInputDropdown
                 id="customer"
                 control={control}
@@ -358,10 +359,10 @@ export default function AddSalePage() {
             </div>
           </div>
           <div>
-            <label htmlFor="products">
+            <FormLabel>
               <span className="text-primaryDark font-semibold">Products</span>
               <span className="text-redColor"> *</span>
-            </label>
+            </FormLabel>
 
             <Button
               variant="outlined"
@@ -631,11 +632,11 @@ export default function AddSalePage() {
 
           <div className="flex flex-col sm:flex-row gap-5 w-full">
             <div className="flex flex-col gap-2 flex-1">
-              <label htmlFor="purchaseOrderNumber">
+              <FormLabel htmlFor="purchaseOrderNumber">
                 <span className="text-primaryDark font-semibold">
                   Purchase Order No
                 </span>
-              </label>
+              </FormLabel>
               <TextField
                 id="purchaseOrderNumber"
                 type="text"
@@ -650,12 +651,12 @@ export default function AddSalePage() {
               )}
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label>
+              <FormLabel htmlFor="paymentStatus">
                 <span className="text-primaryDark font-semibold">
                   Payment Status
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <FormInputDropdown
                 id="paymentStatus"
                 control={control}
@@ -672,12 +673,12 @@ export default function AddSalePage() {
               )}
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label>
+              <FormLabel htmlFor="saleStatus">
                 <span className="text-primaryDark font-semibold">
                   Sale Status
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <FormInputDropdown
                 id="saleStatus"
                 control={control}
@@ -695,12 +696,12 @@ export default function AddSalePage() {
             </div>
           </div>
           <div className="flex flex-col gap-2 sm:w-1/3">
-            <label htmlFor="paid">
+            <FormLabel htmlFor="paid">
               <span className="text-primaryDark font-semibold">
                 Amount Paid
               </span>
               <span className="text-redColor"> *</span>
-            </label>
+            </FormLabel>
             <TextField
               id="paid"
               type="number"
@@ -723,9 +724,9 @@ export default function AddSalePage() {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="notes">
+            <FormLabel htmlFor="notes">
               <span className="text-primaryDark font-semibold">Notes</span>
-            </label>
+            </FormLabel>
             <TextField
               id="notes"
               label="Notes"

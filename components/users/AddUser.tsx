@@ -4,23 +4,12 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import {
-  Button,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  TextField,
-} from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { User, Gender, UserRole } from "@/components/Types";
-import Image from "next/image";
-import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
-import { CldUploadWidget } from "next-cloudinary";
+import { User, Gender } from "@/components/Types";
 import toast from "react-hot-toast";
 import appwriteService from "@/appwrite/appwriteConfig";
-import { clear } from "console";
 
 type FormInput = Omit<User, "id" | "role" | "phone">;
 

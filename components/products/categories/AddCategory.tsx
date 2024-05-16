@@ -4,7 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { Option, ProductCategory } from "@/components/Types";
@@ -113,10 +113,10 @@ export default function AddCategory({
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -127,10 +127,10 @@ export default function AddCategory({
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="code">
+              <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="code"
                 type="text"
@@ -141,13 +141,13 @@ export default function AddCategory({
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
-              <label htmlFor="parentCategory">
+              <FormLabel htmlFor="parentCategory">
                 <span className="text-primaryDark font-semibold">
                   Parent Category
                 </span>
-              </label>
+              </FormLabel>
               <FormInputDropdown
-                id="category"
+                id="parentCategory"
                 control={control}
                 label="Select Category"
                 options={categoryOptions}
@@ -158,11 +158,11 @@ export default function AddCategory({
                   {errors.parentCategory?.message}
                 </span>
               )}
-              <label htmlFor="description">
+              <FormLabel htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description
                 </span>
-              </label>
+              </FormLabel>
               <TextField
                 id="description"
                 label="Description"

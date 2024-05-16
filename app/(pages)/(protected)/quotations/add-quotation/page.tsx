@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  FormLabel,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -336,10 +337,10 @@ export default function AddQuotationPage() {
         <div className="flex flex-col gap-5">
           <div className="flex flex-col sm:flex-row gap-5 w-full">
             <div className="flex flex-col gap-2 flex-1">
-              <label>
+              <FormLabel>
                 <span className="text-primaryDark font-semibold">Date</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <DatePicker
                 defaultValue={dayjs()}
                 value={quotationDate}
@@ -351,12 +352,12 @@ export default function AddQuotationPage() {
               />
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label htmlFor="invoiceNumber">
+              <FormLabel htmlFor="quotationNumber">
                 <span className="text-primaryDark font-semibold">
                   Quotation Number
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="quotationNumber"
                 type="text"
@@ -373,10 +374,10 @@ export default function AddQuotationPage() {
               )}
             </div>
             <div className="flex flex-col gap-2 flex-1">
-              <label>
+              <FormLabel htmlFor="customer">
                 <span className="text-primaryDark font-semibold">Customer</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <FormInputDropdown
                 id="customer"
                 control={control}
@@ -392,10 +393,10 @@ export default function AddQuotationPage() {
             </div>
           </div>
           <div>
-            <label htmlFor="products">
+            <FormLabel>
               <span className="text-primaryDark font-semibold">Products</span>
               <span className="text-redColor"> *</span>
-            </label>
+            </FormLabel>
 
             <Button
               variant="outlined"
@@ -584,12 +585,12 @@ export default function AddQuotationPage() {
             </div>
           )}
           <div className="flex flex-col gap-2 w-full md:max-w-sm mt-5">
-            <label>
+            <FormLabel htmlFor="quotationStatus">
               <span className="text-primaryDark font-semibold">
                 Quotation Status
               </span>
               <span className="text-redColor"> *</span>
-            </label>
+            </FormLabel>
             <FormInputDropdown
               id="quotationStatus"
               control={control}
@@ -607,9 +608,9 @@ export default function AddQuotationPage() {
           </div>
 
           <div className="flex flex-col gap-2 ">
-            <label htmlFor="notes">
+            <FormLabel htmlFor="notes">
               <span className="text-primaryDark font-semibold">Notes</span>
-            </label>
+            </FormLabel>
             <TextField
               id="notes"
               label="Notes"

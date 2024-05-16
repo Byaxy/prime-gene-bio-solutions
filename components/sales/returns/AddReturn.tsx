@@ -6,6 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   Button,
+  FormLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -278,12 +279,12 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
             <div className="flex flex-col gap-5 w-full">
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="deliveryDate">
+                  <FormLabel htmlFor="deliveryDate">
                     <span className="text-primaryDark font-semibold">
                       Delivery Date
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     defaultValue={dayjs()}
                     value={returnDate}
@@ -294,12 +295,12 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="deliveryReferenceNumber">
                     <span className="text-primaryDark font-semibold">
                       Delivery Reference Number
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <div className="w-full">
                     <Select
                       label="Delivery Reference Number"
@@ -328,12 +329,12 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
               </div>
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="customer">
+                  <FormLabel htmlFor="customer">
                     <span className="text-primaryDark font-semibold">
                       Customer
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="customer"
                     type="text"
@@ -344,13 +345,13 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="invoiceNumber">
                     <span className="text-primaryDark font-semibold">
                       Invoice Number
                     </span>
-                  </label>
+                  </FormLabel>
                   <TextField
-                    id="customer"
+                    id="invoiceNumber"
                     type="text"
                     label="Customer"
                     variant="outlined"
@@ -361,12 +362,12 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
               </div>
               {/** Select product */}
               <div className="flex flex-col gap-4 w-full">
-                <label htmlFor="products">
+                <FormLabel htmlFor="products">
                   <span className="text-primaryDark font-semibold">
                     Products
                   </span>
                   <span className="text-redColor"> *</span>
-                </label>
+                </FormLabel>
                 {/** List of products delivered */}
                 <DataTable
                   columns={columns}
@@ -478,9 +479,9 @@ export default function AddReturn({ open, handleClose }: AddReturnProps) {
               </Dialog>
 
               <div className="flex flex-col gap-4 w-full">
-                <label htmlFor="description">
+                <FormLabel htmlFor="description">
                   <span className="text-primaryDark font-semibold">Notes</span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="description"
                   label="Description"

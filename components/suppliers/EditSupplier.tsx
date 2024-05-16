@@ -388,7 +388,7 @@ const EditSupplier = ({
             }}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

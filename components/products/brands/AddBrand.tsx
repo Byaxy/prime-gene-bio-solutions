@@ -4,7 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
@@ -87,10 +87,10 @@ export default function AddBrand({
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -101,10 +101,10 @@ export default function AddBrand({
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="code">
+              <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="code"
                 type="text"
@@ -115,9 +115,9 @@ export default function AddBrand({
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
-              <label htmlFor="image">
+              <FormLabel htmlFor="image">
                 <span className="text-primaryDark font-semibold">Image</span>
-              </label>
+              </FormLabel>
               <div className="flex flex-row gap-4 items-center">
                 <div>
                   {imageUrl && (
