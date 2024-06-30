@@ -46,4 +46,12 @@ export const config = {
   appwriteQuotationsCollectionId: String(
     process.env.NEXT_PUBLIC_APPWRITE_QUOTATIONS_COLLECTION_ID
   ),
+
+  appwritesSaleProductsCollectionId: String(
+    process.env.NEXT_PUBLIC_APPWRITE_SALE_PRODUCTS_COLLECTION_ID
+  ),
+
+  appwriteSalesCollectionId: String(
+    process.env.NEXT_PUBLIC_APPWRITE_SALES_COLLECTION_ID
+  ),
 };

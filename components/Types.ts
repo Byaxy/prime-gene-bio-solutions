@@ -162,7 +162,6 @@ export type SaleProduct = {
   code: string;
   unit: string;
   quantity: number;
-  availableQuantity: number;
   price: number;
   subTotal: number;
 };
@@ -182,7 +181,6 @@ export type Sale = {
   notes: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Quotation = {
   id: string;

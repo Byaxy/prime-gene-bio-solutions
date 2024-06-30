@@ -37,6 +37,8 @@ import type { Option } from "@/components/Types";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import { viewTableStyles } from "@/styles/TableStyles";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 type FormInput = Omit<Quotation, "id" | "createdAt" | "updatedAt">;
 
@@ -172,12 +174,32 @@ export default function AddQuotationPage() {
     setFilteredProducts(searchedProducts);
   }, [products, searchTerm]);
 
-  // Fetch products
+  // fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/products");
-        setProducts(response.data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductsCollectionId,
+          query
+        );
+        const products = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          code: doc.code,
+          image: doc.image,
+          brand: doc.brand ? doc.brand.name : null,
+          type: doc.type ? doc.type.name : null,
+          unit: doc.unit ? doc.unit.code : null,
+          category: doc.category ? doc.category.name : null,
+          inventory: doc.inventory,
+          description: doc.description,
+          alertQuantity: doc.alertQuantity,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        setProducts(products);
       } catch (error) {
         console.error(error);
       }
@@ -186,7 +208,7 @@ export default function AddQuotationPage() {
     fetchProducts();
   }, [products]);
 
-  // Fetch customers
+  // Fetch customers options
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -219,10 +241,9 @@ export default function AddQuotationPage() {
         code: product.code,
         unit: product.unit,
         quantity: quantity,
-        lotNumber: product.stock[0].lotNumber,
-        price: product.price,
-        subTotal: product.price * quantity,
-        availableQuantity: availableQuantity,
+        lotNumber: product.inventory[0].lotNumber,
+        price: product.inventory[0].price,
+        subTotal: product.inventory[0].price * quantity,
       },
       ...quotationProducts,
     ]);
@@ -494,9 +515,7 @@ export default function AddQuotationPage() {
                           <TableCell className="text-primaryDark text-[17px] font-semibold">
                             {selectedProduct.name}
                           </TableCell>
-                          <TableCell className="text-primaryDark text-[17px]">
-                            {selectedProduct.price}
-                          </TableCell>
+                          <TableCell className="text-primaryDark text-[17px]"></TableCell>
                           <TableCell className="text-lg">
                             <TextField
                               type="number"
@@ -510,9 +529,7 @@ export default function AddQuotationPage() {
                             />
                           </TableCell>
                           <TableCell className="text-lg text-primaryDark">
-                            <span>
-                              {selectedProduct.price * Math.max(1, quantity)}
-                            </span>
+                            <span>{Math.max(1, quantity)}</span>
                           </TableCell>
                         </TableRow>
                       ) : (

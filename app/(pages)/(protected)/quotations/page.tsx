@@ -8,12 +8,12 @@ import ListPage from "@/components/ListPage";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Quotation } from "@/components/Types";
-import axios from "axios";
 import DeleteQuotation from "@/components/quotations/DeleteQuotation";
 import ViewQuotationDetails from "@/components/quotations/ViewQuotationDetails";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 
 export default function QuotationsPage() {
-  const [add, setAdd] = useState<boolean>(false);
   const [view, setView] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<Quotation>({} as Quotation);
@@ -113,7 +113,6 @@ export default function QuotationsPage() {
   // close dialog
   const handleClose = useCallback((): void => {
     setView(false);
-    setAdd(false);
     setConfirmDelete(false);
   }, []);
 
@@ -127,8 +126,27 @@ export default function QuotationsPage() {
   useEffect(() => {
     const fetchQuotations = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/quotations");
-        setQuotations(data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteQuotationsCollectionId,
+          query
+        );
+        const quotations = documents.map((doc: any) => ({
+          id: doc.$id,
+          quotationNumber: doc.quotationNumber,
+          customer: doc.customer && doc.customer.name,
+          tax: doc.tax,
+          subTotal: doc.subTotal,
+          total: doc.total,
+          quotationStatus: doc.quotationStatus,
+          products: doc.products,
+          notes: doc.notes,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        console.log(quotations);
+        setQuotations(quotations);
       } catch (error) {
         console.error(error);
       }

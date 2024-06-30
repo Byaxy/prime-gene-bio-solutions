@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useCallback, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { customTableStyles } from "@/styles/TableStyles";
@@ -8,7 +9,8 @@ import Link from "next/link";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { Sale } from "@/components/Types";
-import axios from "axios";
+import { DB, query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
 import DeleteSale from "@/components/sales/DeleteSale";
 
 export default function SalesPage() {
@@ -66,19 +68,19 @@ export default function SalesPage() {
     },
     {
       name: "Paid",
-      selector: (row: { paid: number }) => row.paid,
-      width: "90px",
+      cell: (row: { paid: number }) => <span>${row.paid}</span>,
+      width: "100px",
       sortable: true,
     },
     {
       name: "Total",
-      selector: (row: { total: number }) => row.total,
-      width: "90px",
+      cell: (row: { total: number }) => <span>${row.total}</span>,
+      width: "100px",
     },
     {
       name: "Payment Status",
       selector: (row: { paymentStatus: string }) => row.paymentStatus,
-      width: "150px",
+      width: "180px",
       sortable: true,
       conditionalCellStyles: [
         {
@@ -150,8 +152,30 @@ export default function SalesPage() {
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/sales");
-        setSales(response.data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteSalesCollectionId,
+          query
+        );
+        const sales = documents.map((doc: any) => ({
+          id: doc.$id,
+          invoiceNumber: doc.invoiceNumber,
+          purchaseOrderNumber: doc.purchaseOrderNumber,
+          customer: doc.customer && doc.customer.name,
+          tax: doc.tax,
+          subTotal: doc.subTotal,
+          total: doc.total,
+          paid: doc.paid,
+          paymentStatus: doc.paymentStatus,
+          saleStatus: doc.saleStatus,
+          products: doc.products,
+          notes: doc.notes,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        console.log(sales);
+        setSales(sales);
       } catch (error) {
         console.error(error);
       }

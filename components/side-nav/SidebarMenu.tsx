@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import SidebarItem from "./SidebarItem";
 import type { DataType } from "@/data/sidenavData";
-import { useRouter } from "next/navigation";
 
 export default function SidebarMenu({
   data,
@@ -12,11 +11,8 @@ export default function SidebarMenu({
 }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const router = useRouter();
-
-  const handleItemClick = (index: number, path: string) => {
+  const handleItemClick = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
-    router.push(path);
   };
 
   return (
@@ -27,7 +23,7 @@ export default function SidebarMenu({
           data={item}
           open={open}
           isOpen={openIndex === index}
-          handleClick={() => handleItemClick(index, item.path)}
+          handleClick={() => handleItemClick(index)}
         />
       ))}
     </ul>

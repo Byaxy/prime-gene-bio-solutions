@@ -15,6 +15,13 @@ export default function ReportsPage() {
       >
         Reports Page
       </Typography>
+      <div>
+        <iframe
+          src="https://app.appsmith.com/app/my-first-application/login-667d324c3a0cf24bb351f094?embed=true"
+          frameBorder="0"
+          className="w-full h-screen"
+        ></iframe>
+      </div>
     </Box>
   );
 }

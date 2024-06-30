@@ -36,25 +36,20 @@ import { FormInputDropdown } from "@/components/form-components/FormInputDropdow
 import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
+  Code,
 } from "@mui/icons-material";
 import toast from "react-hot-toast";
 import { paymentStatus } from "@/components/constants";
 import { saleStatus } from "@/components/constants";
-import axios from "axios";
+import { DB, query, ID, Query } from "@/appwrite/appwriteConfig";
+import { config } from "@/config/config";
+import DataTable from "react-data-table-component";
+import { customTableStyles } from "@/styles/TableStyles";
 
-type FormInput = Omit<Sale, "id">;
+type FormInput = Omit<Sale, "id" | "createdAt" | "updatedAt">;
 
 const tax: number = 0;
 
-const InvoiceColumns = [
-  "Code",
-  "Name",
-  "Lot No.",
-  "Unit Price",
-  "Quantity",
-  "Sub Total",
-  "Actions",
-];
 const dialogColumns = [
   "Name",
   "Lot No.",
@@ -69,7 +64,7 @@ const defaultValues: FormInput = {
   invoiceNumber: "",
   purchaseOrderNumber: "",
   customer: "",
-  tax: tax,
+  tax: 0,
   subTotal: 0,
   total: 0,
   paid: 0,
@@ -77,9 +72,6 @@ const defaultValues: FormInput = {
   saleStatus: "",
   products: [],
   notes: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 
 export default function AddSalePage() {
@@ -88,6 +80,7 @@ export default function AddSalePage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [lotNumber, setLotNumber] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
+  const [price, setPrice] = useState<number>(0);
   const [availableQuantity, setAvailableQuantity] = useState<number>(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([
@@ -100,6 +93,57 @@ export default function AddSalePage() {
   const [grandTotal, setGrandTotal] = useState<number>(0);
   const [taxAmount, setTaxAmount] = useState<number>(0);
   const [customerOptions, setCustomerOptions] = useState<Option[]>([]);
+
+  // table columns
+  const columns = [
+    {
+      name: "Code",
+      selector: (row: { code: string }) => row.code,
+      width: "120px",
+    },
+    {
+      name: "Name",
+      selector: (row: { name: string }) => row.name,
+    },
+    {
+      name: "Lot No.",
+      selector: (row: { lotNumber: string }) => row.lotNumber,
+      width: "120px",
+    },
+    {
+      name: "Quantity",
+      cell: (row: { quantity: number; unit: string }) => (
+        <span>
+          {row.quantity} {row.unit}
+        </span>
+      ),
+      width: "120px",
+    },
+    {
+      name: "Unit Price",
+      cell: (row: { price: number }) => <span>${row.price}</span>,
+      width: "120px",
+    },
+    {
+      name: "Sub Total",
+      cell: (row: { subTotal: number }) => <span>${row.subTotal}</span>,
+      width: "120px",
+    },
+    {
+      name: "Actions",
+      cell: (row: SaleProduct) => (
+        <Button
+          variant="contained"
+          size="small"
+          className="bg-redColor/95 hover:bg-redColor p-1 text-white font-bold"
+          onClick={() => handleDeleteProduct(row)}
+        >
+          Delete
+        </Button>
+      ),
+      width: "120px",
+    },
+  ];
 
   const handleCloseModal = () => {
     setSelectedProduct(null);
@@ -146,11 +190,33 @@ export default function AddSalePage() {
     setFilteredProducts(searchedProducts);
   }, [products, searchTerm]);
 
+  // fetch products and customer options
   useEffect(() => {
+    // fetch products
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/products");
-        setProducts(response.data);
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteProductsCollectionId,
+          query
+        );
+        const products = documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          code: doc.code,
+          image: doc.image,
+          brand: doc.brand ? doc.brand.name : null,
+          type: doc.type ? doc.type.name : null,
+          unit: doc.unit ? doc.unit.code : null,
+          category: doc.category ? doc.category.name : null,
+          inventory: doc.inventory,
+          description: doc.description,
+          alertQuantity: doc.alertQuantity,
+          createdAt: doc.$createdAt,
+          updatedAt: doc.$updatedAt,
+        }));
+
+        setProducts(products);
       } catch (error) {
         console.error(error);
       }
@@ -158,15 +224,20 @@ export default function AddSalePage() {
 
     fetchProducts();
 
+    // fetch customer options
     const fetchCustomerOptions = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/customers");
-        const options = data.map((option: Customer) => ({
-          label: option.name,
-          value: option.name,
+        const { documents } = await DB.listDocuments(
+          config.appwriteDatabaseId,
+          config.appwriteCustomersCollectionId,
+          query
+        );
+        const customerOptions = documents.map((doc: any) => ({
+          value: doc.$id,
+          label: doc.name,
         }));
 
-        setCustomerOptions(options);
+        setCustomerOptions(customerOptions);
       } catch (error) {
         console.error(error);
       }
@@ -186,18 +257,27 @@ export default function AddSalePage() {
       toast.error("Insufficient quantity in stock");
     }
 
+    let pdct = saleProducts.find(
+      (item) => item.id === product?.id && item.lotNumber === lotNumber
+    );
+
+    if (pdct) {
+      toast.error("Product is already on the list. Delete it to make changes");
+      handleCloseModal();
+      return;
+    }
+
     setSaleProducts([
       ...saleProducts,
       {
-        id: product.id,
+        id: ID.unique(),
         name: product.name,
         code: product.code,
         unit: product.unit,
         quantity: quantity,
         lotNumber: lotNumber,
-        price: product.price,
-        subTotal: product.price * quantity,
-        availableQuantity: availableQuantity,
+        price: price,
+        subTotal: price * quantity,
       },
     ]);
 
@@ -205,9 +285,10 @@ export default function AddSalePage() {
     handleCloseModal();
   };
 
-  const handleDeleteProduct = (index: number) => {
+  // delete product TO DO: make it more efficcient.
+  const handleDeleteProduct = (product: SaleProduct) => {
     let newSaleProducts = [...saleProducts];
-    newSaleProducts.splice(index, 1);
+    newSaleProducts.splice(newSaleProducts.indexOf(product), 1);
     setSaleProducts(newSaleProducts);
 
     toast.success("Product deleted successfully");
@@ -236,18 +317,32 @@ export default function AddSalePage() {
         return;
       }
 
-      const newData = {
+      const products = saleProducts.map((product) => ({
+        name: product.name,
+        code: product.code,
+        lotNumber: product.lotNumber,
+        unit: product.unit,
+        quantity: product.quantity,
+        price: product.price,
+        subTotal: product.subTotal,
+      }));
+
+      const formData = {
         ...data,
-        products: [...saleProducts],
+        products: [...products],
         subTotal: total,
         tax: taxAmount,
         total: grandTotal,
       };
 
-      const response = await axios.post("http://localhost:5000/sales", newData);
-      if (response.status === 201) {
+      await DB.createDocument(
+        config.appwriteDatabaseId,
+        config.appwriteSalesCollectionId,
+        ID.unique(),
+        formData
+      ).then(() => {
         toast.success("Sale added successfully");
-      }
+      });
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
@@ -463,13 +558,14 @@ export default function AddSalePage() {
                               label="Lot No."
                               defaultValue={""}
                             >
-                              {selectedProduct.stock.map((item) => (
+                              {selectedProduct.inventory.map((item) => (
                                 <MenuItem
                                   key={item.lotNumber}
                                   value={item.lotNumber}
                                   onClick={() => (
                                     setLotNumber(item.lotNumber),
-                                    setAvailableQuantity(item.quantity)
+                                    setAvailableQuantity(item.quantity),
+                                    setPrice(item.price)
                                   )}
                                 >
                                   {item.lotNumber}
@@ -478,10 +574,10 @@ export default function AddSalePage() {
                             </Select>
                           </TableCell>
                           <TableCell className="text-primaryDark">
-                            {availableQuantity}
+                            {availableQuantity} {selectedProduct.unit}
                           </TableCell>
                           <TableCell className="text-primaryDark">
-                            {selectedProduct.price}
+                            ${price}
                           </TableCell>
                           <TableCell className="text-lg">
                             <TextField
@@ -496,9 +592,7 @@ export default function AddSalePage() {
                             />
                           </TableCell>
                           <TableCell className="text-lg text-primaryDark">
-                            <span>
-                              {selectedProduct.price * Math.max(1, quantity)}
-                            </span>
+                            <span>{price * Math.max(1, quantity)}</span>
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -534,101 +628,42 @@ export default function AddSalePage() {
             </div>
           </div>
 
-          <Table size="small">
-            <TableHead>
-              <TableRow className="bg-primaryColor">
-                {InvoiceColumns.map((column, index) => (
-                  <TableCell
-                    key={index + column}
-                    className="text-white font-semibold text-lg"
-                  >
-                    {column}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {saleProducts ? (
-                <>
-                  {saleProducts.map((product, index) => (
-                    <TableRow key={index + product.id}>
-                      <TableCell className="text-primaryDark text-lg font-semibold">
-                        {product.code}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.name}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.lotNumber}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.price}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.quantity} {product.unit}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        {product.subTotal}
-                      </TableCell>
-                      <TableCell className="text-primaryDark text-lg">
-                        <Button
-                          variant="contained"
-                          size="small"
-                          className="bg-redColor/95 hover:bg-redColor text-white font-bold"
-                          onClick={() => handleDeleteProduct(index)}
-                        >
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow>
-                    <TableCell rowSpan={3} colSpan={4}></TableCell>
-                    <TableCell
-                      className="text-primaryDark font-bold text-lg pt-8"
-                      colSpan={2}
-                    >
-                      Total
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg pt-8">
-                      ${total}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      Tax
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      {tax}%
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      ${taxAmount}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell
-                      className="text-primaryDark font-bold text-lg"
-                      colSpan={2}
-                    >
-                      Grand Total
-                    </TableCell>
-                    <TableCell className="text-primaryDark font-bold text-lg">
-                      ${grandTotal}
-                    </TableCell>
-                  </TableRow>
-                </>
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={8}
-                    className="text-center text-lg text-primaryDark"
-                  >
-                    No Items To Display
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <div className="w-full py-6">
+            <DataTable
+              columns={columns}
+              data={saleProducts}
+              customStyles={customTableStyles}
+            />
+            <div className="flex w-full justify-end pt-8">
+              <div className="w-[400px] grid grid-cols-1 gap-5">
+                <div className="grid grid-cols-3 gap-5">
+                  <span className="text-primaryDark font-bold text-lg col-span-2">
+                    Sub Total
+                  </span>
+                  <span className="text-primaryDark font-bold text-lg">
+                    ${total}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-5">
+                  <span className="text-primaryDark font-bold text-lg">
+                    Tax
+                  </span>
+                  <span>{tax}%</span>
+                  <span className="text-primaryDark font-bold text-lg">
+                    ${taxAmount}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-5">
+                  <span className="text-primaryDark font-bold text-lg col-span-2">
+                    Grand Total
+                  </span>
+                  <span className="text-primaryDark font-bold text-lg">
+                    ${grandTotal}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="flex flex-col sm:flex-row gap-5 w-full">
             <div className="flex flex-col gap-2 flex-1">
