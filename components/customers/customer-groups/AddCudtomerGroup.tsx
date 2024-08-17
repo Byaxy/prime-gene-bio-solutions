@@ -1,4 +1,3 @@
-import React, { ReactNode, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -8,20 +7,17 @@ import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { CustomerGroup } from "@/components/Types";
-import axios from "axios";
 import toast from "react-hot-toast";
+import { addCustomerGroup } from "@/server/actions/customerGroups";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<CustomerGroup, "id">;
+type FormInput = Omit<CustomerGroup, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
-  createdAt: new Date(),
   percentage: 0,
-  isActive: true,
-  updatedAt: new Date(),
 };
 
 type AddCustomerGroupProps = {
@@ -32,34 +28,30 @@ type AddCustomerGroupProps = {
 export default function AddCustomerGroup({
   open,
   handleClose,
-}: AddCustomerGroupProps): ReactNode {
+}: AddCustomerGroupProps) {
   const { register, handleSubmit, reset, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
+  // handle form submission
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const response = await axios.post(
-        "http://localhost:5000/customer-groups",
-        data
-      );
-      if (response.status === 201) {
-        toast.success("Customer Group Added Successfully");
+      const response = await addCustomerGroup(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer Group added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error adding Customer Group:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -83,33 +75,37 @@ export default function AddCustomerGroup({
             </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-2 w-full">
-              <FormLabel htmlFor="name">
-                <span className="text-primaryDark font-semibold">Name</span>
-                <span className="text-redColor"> *</span>
-              </FormLabel>
-              <TextField
-                id="name"
-                type="text"
-                label="Name"
-                variant="outlined"
-                {...register("name", { required: "Name is Required" })}
-                error={!!errors.name}
-                helperText={errors.name?.message}
-              />
-              <FormLabel htmlFor="percentage">
-                <span className="text-primaryDark font-semibold">
-                  Discount Percentage
-                </span>
-              </FormLabel>
-              <TextField
-                id="percentage"
-                type="number"
-                label="Percentage"
-                inputProps={{ min: 0 }}
-                variant="outlined"
-                {...register("percentage", { valueAsNumber: true })}
-              />
+            <div className="flex flex-col gap-5 w-full">
+              <div className="flex flex-col gap-4 w-full">
+                <FormLabel htmlFor="name">
+                  <span className="text-primaryDark font-semibold">Name</span>
+                  <span className="text-redColor"> *</span>
+                </FormLabel>
+                <TextField
+                  id="name"
+                  type="text"
+                  label="Name"
+                  variant="outlined"
+                  {...register("name", { required: "Name is Required" })}
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                />
+              </div>
+              <div className="flex flex-col gap-4 w-full">
+                <FormLabel htmlFor="percentage">
+                  <span className="text-primaryDark font-semibold">
+                    Discount Percentage
+                  </span>
+                </FormLabel>
+                <TextField
+                  id="percentage"
+                  type="number"
+                  label="Percentage"
+                  inputProps={{ min: 0 }}
+                  variant="outlined"
+                  {...register("percentage", { valueAsNumber: true })}
+                />
+              </div>
             </div>
           </form>
         </DialogContent>

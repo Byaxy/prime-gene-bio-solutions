@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { useState } from "react";
+import { deleteType } from "@/server/actions/types";
 
 type DeleteTypeProps = {
   open: boolean;
@@ -15,17 +15,29 @@ type DeleteTypeProps = {
 };
 
 const DeleteType = ({ open, handleClose, type }: DeleteTypeProps) => {
-  const deleteType = async () => {
+  const [deleting, setDeleting] = useState(false);
+
+  // delete Type from the database
+  const handleDeleteType = async () => {
+    setDeleting(true);
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/types/${type.id}`
-      );
-      if (response.status === 200) {
-        toast.success("Type Deleted Successfully");
+      const response = await deleteType(type.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Type deleted successfully");
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Type:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Type"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -63,12 +75,13 @@ const DeleteType = ({ open, handleClose, type }: DeleteTypeProps) => {
             variant="outlined"
             size="large"
             onClick={() => {
-              deleteType();
+              handleDeleteType();
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

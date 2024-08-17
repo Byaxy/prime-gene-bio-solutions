@@ -6,6 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   Button,
+  FormLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -191,10 +192,10 @@ export default function AddWayBill({ open, handleClose }: AddWayBillProps) {
             <div className="flex flex-col gap-5 w-full">
               <div className="flex flex-col md:flex-row w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="wayBillDate">
+                  <FormLabel htmlFor="wayBillDate">
                     <span className="text-primaryDark font-semibold">Date</span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     defaultValue={dayjs()}
                     value={wayBillDate}
@@ -205,12 +206,12 @@ export default function AddWayBill({ open, handleClose }: AddWayBillProps) {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="deliveryReferenceNumber">
                     <span className="text-primaryDark font-semibold">
                       Delivery Reference Number
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <div className="w-full">
                     <Select
                       label="Delivery Reference Number"
@@ -240,12 +241,12 @@ export default function AddWayBill({ open, handleClose }: AddWayBillProps) {
 
               <div className="flex w-full gap-5 flex-col md:flex-row">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="customer">
+                  <FormLabel htmlFor="customer">
                     <span className="text-primaryDark font-semibold">
                       Customer
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="customer"
                     type="text"
@@ -256,12 +257,12 @@ export default function AddWayBill({ open, handleClose }: AddWayBillProps) {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="address">
+                  <FormLabel htmlFor="address">
                     <span className="text-primaryDark font-semibold">
                       Address
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="address"
                     type="text"
@@ -274,11 +275,11 @@ export default function AddWayBill({ open, handleClose }: AddWayBillProps) {
               </div>
 
               <div className="w-full flex flex-col gap-2">
-                <label htmlFor="products">
+                <FormLabel htmlFor="products">
                   <span className="text-primaryDark font-semibold">
                     Products
                   </span>
-                </label>
+                </FormLabel>
                 <DataTable
                   columns={columns}
                   data={products}
@@ -291,10 +292,10 @@ export default function AddWayBill({ open, handleClose }: AddWayBillProps) {
                 />
               </div>
               <div className="w-full flex flex-col gap-4 md:w-1/2">
-                <label htmlFor="amount">
+                <FormLabel htmlFor="amount">
                   <span className="text-primaryDark font-semibold">Amount</span>
                   <span className="text-redColor"> *</span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="amount"
                   type="number"
@@ -310,9 +311,9 @@ export default function AddWayBill({ open, handleClose }: AddWayBillProps) {
                 />
               </div>
               <div className="w-full flex flex-col gap-4">
-                <label htmlFor="description">
+                <FormLabel htmlFor="description">
                   <span className="text-primaryDark font-semibold">Notes</span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="description"
                   label="Description"

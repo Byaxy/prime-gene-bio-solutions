@@ -4,6 +4,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SidebarMenu from "./SidebarMenu";
 import type { DataType } from "@/data/sidenavData";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import clsx from "clsx";
 
 type SidebarItemProps = {
   data: DataType;
@@ -22,21 +24,25 @@ export default function SidebarItem({
 
   return (
     <li className="w-full flex flex-col items-center cursor-pointer gap-2 bg-white">
-      <button
+      <Link
+        href={data.path}
         onClick={handleClick}
-        className={`${
-          pathname === data.path || isOpen
-            ? "text-mainColor bg-primaryColor"
-            : "text-primaryColor bg-white"
-        } w-full flex flex-row gap-2 items-center justify-start hover:text-mainColor hover:bg-primaryColor border-0 rounded-md p-2 cursor-pointer`}
+        className={clsx(
+          "w-full flex flex-row gap-2 items-center justify-start  hover:text-mainColor hover:bg-primaryColor border-0 rounded-md p-2 cursor-pointer",
+          {
+            "text-mainColor bg-primaryColor": pathname === data.path,
+            "text-primaryColor bg-white": pathname !== data.path,
+          }
+        )}
       >
         <span>{data.icon}</span>
         {data.subCategories && data.subCategories.length !== 0 ? (
           <div
-            className={`${
-              open ? "opacity-100" : "hidden"
-            } w-full flex flex-row gap-4
-           items-center justify-between text-[16px] font-medium`}
+            className={clsx(
+              `w-full flex flex-row gap-4
+           items-center justify-between text-[16px] font-medium`,
+              { "opacity-100": open, hidden: !open }
+            )}
           >
             <span>{data.title}</span>
             {isOpen ? (
@@ -51,12 +57,15 @@ export default function SidebarItem({
           </div>
         ) : (
           <span
-            className={`${open ? "opacity-100" : "hidden"} text-lg font-medium`}
+            className={clsx("text-lg font-medium", {
+              "opacity-100": open,
+              hidden: !open,
+            })}
           >
             {data.title}
           </span>
         )}
-      </button>
+      </Link>
       {isOpen && data.subCategories && (
         <SidebarMenu data={data.subCategories} open={open} />
       )}

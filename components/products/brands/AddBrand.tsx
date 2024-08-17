@@ -1,29 +1,27 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { addBrand } from "@/server/actions/brands";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Brand, "id">;
+type FormInput = Omit<Brand, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   image: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 
 type AddBrandProps = {
@@ -31,40 +29,38 @@ type AddBrandProps = {
   handleClose: () => void;
 };
 
-export default function AddBrand({
-  open,
-  handleClose,
-}: AddBrandProps): ReactNode {
+export default function AddBrand({ open, handleClose }: AddBrandProps) {
   const { register, handleSubmit, reset, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [imageUrl, setImageUrl] = useState<string>("/placeholder.jpg");
+  const { errors, isSubmitting } = formState;
+  const [imageUrl, setImageUrl] = useState<string>("");
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const newData = { ...data, image: imageUrl };
+      const newData = {
+        ...data,
+        image: imageUrl,
+      };
 
-      const response = await axios.post(
-        "http://localhost:5000/brands",
-        newData
-      );
+      const response = await addBrand(newData);
 
-      if (response.status === 201) toast.success("Brand added successfully");
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Brand added successfully");
+        reset({}, { keepDefaultValues: true });
+        setImageUrl("");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error adding Brand:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      setImageUrl("/placeholder.jpg");
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -87,10 +83,10 @@ export default function AddBrand({
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -101,10 +97,10 @@ export default function AddBrand({
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="code">
+              <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="code"
                 type="text"
@@ -115,18 +111,22 @@ export default function AddBrand({
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
-              <label htmlFor="image">
+              <FormLabel htmlFor="image">
                 <span className="text-primaryDark font-semibold">Image</span>
-              </label>
+              </FormLabel>
               <div className="flex flex-row gap-4 items-center">
                 <div>
                   {imageUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imageUrl} alt="Preview" className="w-40 h-40" />
+                    <img
+                      src={imageUrl ? imageUrl : "/placeholder.jpg"}
+                      alt="Brand Image"
+                      className="w-40 h-40"
+                    />
                   )}
                 </div>
                 <CldUploadWidget
-                  uploadPreset="prime-gene-biomedical-solutions"
+                  uploadPreset={config.cloudinaryUploadPreset}
                   options={{
                     multiple: false,
                     clientAllowedFormats: ["jpg", "png", "webp", "svg"],
@@ -143,7 +143,7 @@ export default function AddBrand({
                     return (
                       <Button
                         variant="contained"
-                        className="capitalize"
+                        className="capitalize saveBtn"
                         onClick={() => open()}
                       >
                         Upload Image
@@ -159,7 +159,7 @@ export default function AddBrand({
           <Button
             size="large"
             variant="contained"
-            onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
+            onClick={() => (reset(), setImageUrl(""))}
             className="cancelBtn"
           >
             Cancel

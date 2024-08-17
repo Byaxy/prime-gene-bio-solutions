@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import {
-  Button,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  TextField,
-} from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { Supplier } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { addSupplier } from "@/server/actions/suppliers";
 
-type FormInput = Omit<Supplier, "id">;
+type FormInput = Omit<Supplier, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
@@ -28,10 +20,7 @@ const defaultValues: FormInput = {
   city: "",
   state: "",
   country: "",
-  contactPerson: { name: "", email: "", phone: "", isActive: false },
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
+  contactPerson: { name: "", email: "", phone: "" },
 };
 
 type AddSupplierProps = {
@@ -43,52 +32,26 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [contactPersonStatus, setContactPersonStatus] =
-    useState<boolean>(false);
-  const [supplierStatus, setSupplierStatus] = useState<boolean>(true);
+  const { errors, isSubmitting } = formState;
 
-  const handleContactPersonStatusChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setContactPersonStatus(event.target.value === "true");
-  };
-
-  const handleSupplierStatusChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSupplierStatus(event.target.value === "true");
-  };
-
+  // Handle form submission
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const newData = {
-        ...data,
-        isActive: supplierStatus,
-        contactPerson: { ...data.contactPerson, isActive: contactPersonStatus },
-      };
-      const response = await axios.post(
-        "http://localhost:5000/suppliers",
-        newData
-      );
-      if (response.status === 201) {
-        toast.success("Supplier Added Successfully");
+      const response = await addSupplier(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Supplier added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error adding supplier:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      setSupplierStatus(true);
-      setContactPersonStatus(false);
-      reset();
-    }
-  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -137,15 +100,12 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                     <span className="text-primaryDark font-semibold">
                       Email
                     </span>
-                    <span className="text-redColor"> *</span>
                   </FormLabel>
                   <TextField
                     id="email"
                     type="email"
                     label="Email"
-                    {...register("email", {
-                      required: "Email is required",
-                    })}
+                    {...register("email")}
                     error={!!errors.email}
                     helperText={errors.email?.message}
                   />
@@ -196,15 +156,12 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                 <div className="flex flex-col w-full gap-2">
                   <FormLabel htmlFor="city">
                     <span className="text-primaryDark font-semibold">City</span>
-                    <span className="text-redColor"> *</span>
                   </FormLabel>
                   <TextField
                     id="city"
                     type="text"
                     label="City"
-                    {...register("city", {
-                      required: "City is required",
-                    })}
+                    {...register("city")}
                     error={!!errors.city}
                     helperText={errors.city?.message}
                   />
@@ -237,35 +194,6 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                     {...register("country")}
                   />
                 </div>
-              </div>
-              <div className="flex flex-col w-full gap-2">
-                <FormLabel
-                  htmlFor="supplierStatus"
-                  className="text-primaryDark font-semibold"
-                >
-                  Supplier Status
-                </FormLabel>
-                <RadioGroup
-                  id="supplierStatus"
-                  row
-                  aria-labelledby="Supplier status"
-                  name="isActive"
-                  value={supplierStatus}
-                  onChange={handleSupplierStatusChange}
-                >
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio className="text-primaryDark" />}
-                    label="Active"
-                    className="text-primaryDark"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio className="text-primaryDark" />}
-                    label="Not Active"
-                    className="text-primaryDark"
-                  />
-                </RadioGroup>
               </div>
             </div>
             <span className="text-primaryDark font-semibold text-xl block mt-16 mb-2">
@@ -300,35 +228,6 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                   />
                 </div>
               </div>
-              <div className="flex flex-col w-full gap-2">
-                <FormLabel
-                  htmlFor="contactPersonStatus"
-                  className="text-primaryDark font-semibold"
-                >
-                  Status
-                </FormLabel>
-                <RadioGroup
-                  id="contactPersonStatus"
-                  row
-                  aria-labelledby="Contact person status"
-                  name="contactPerson.isActive"
-                  value={contactPersonStatus}
-                  onChange={handleContactPersonStatusChange}
-                >
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio className="text-primaryDark" />}
-                    label="Active"
-                    className="text-primaryDark"
-                  />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio className="text-primaryDark" />}
-                    label="Not Active"
-                    className="text-primaryDark"
-                  />
-                </RadioGroup>
-              </div>
               <div className="flex flex-col w-full gap-2 max-w-[400px]">
                 <FormLabel htmlFor="phone">
                   <span className="text-primaryDark font-semibold">
@@ -341,7 +240,7 @@ export default function AddSupplier({ open, handleClose }: AddSupplierProps) {
                   label="xxx-xxx-xxxx"
                   aria-labelledby="Phone Number"
                   {...register("contactPerson.phone", {
-                    pattern: /^\d{10}$/,
+                    pattern: /^(\+)?(\()?(\d ?){6,14}\d(\))?$/,
                   })}
                   error={!!errors.contactPerson?.phone}
                   helperText={

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import type { Expense } from "../Types";
-import { allExpensesData } from "@/data/allExpensesData";
 import {
   Button,
   Dialog,
@@ -13,35 +12,23 @@ import {
   TableRow,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import Image from "next/image";
+import { CldImage } from "next-cloudinary";
 
 type ViewExpenseDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  expenseID: string;
+  expense: Expense;
 };
 
 export default function ViewExpenseDetails({
   open,
   handleClose,
-  expenseID,
+  expense,
 }: ViewExpenseDetailsProps) {
-  const [expense, setExpense] = useState<Expense | null>(null);
-
-  useEffect(() => {
-    let expenseDetails = allExpensesData.data.filter(
-      (expense) => expense.id === expenseID
-    );
-    if (expenseDetails) {
-      setExpense(expenseDetails[0]);
-    }
-  }, [expenseID]);
-
-  if (!expense) {
-    return null;
-  }
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle className="flex justify-between items-center">
           <span className="text-2xl text-primaryDark font-bold">
             Expense Details
@@ -60,7 +47,7 @@ export default function ViewExpenseDetails({
                   Date
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {expense.date.toDateString()}
+                  {new Date(expense.date).toDateString()}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -84,7 +71,7 @@ export default function ViewExpenseDetails({
                   Amount
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {expense.amount}
+                  ${expense.amount}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -95,8 +82,44 @@ export default function ViewExpenseDetails({
                   {expense.description}
                 </TableCell>
               </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Created on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark w-fit">
+                  {new Date(expense.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last updated on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(expense.updatedAt).toDateString()}
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
+          <div className="flex flex-col gap-5 pt-5">
+            <p className="font-semibold text-lg text-primaryDark">Attachment</p>
+            {expense.image ? (
+              <CldImage
+                className="rounded"
+                src={expense.image}
+                alt="Product Image"
+                height={300}
+                width={300}
+              />
+            ) : (
+              <Image
+                src={"/placeholder.jpg"}
+                alt="Preview"
+                width={300}
+                height={300}
+                className="rounded-lg"
+              />
+            )}
+          </div>
         </DialogContent>
         <DialogActions>
           <Button

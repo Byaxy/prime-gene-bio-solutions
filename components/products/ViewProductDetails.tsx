@@ -6,6 +6,8 @@ import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { CldImage } from "next-cloudinary";
 import type { Product } from "@/components/Types";
+import useInventory from "@/utils/hooks/useInventory";
+import Image from "next/image";
 
 type ViewProductDetailsProps = {
   open: boolean;
@@ -18,7 +20,11 @@ export default function ViewProductDetails({
   handleClose,
   product,
 }: ViewProductDetailsProps) {
-  const quantity = product.stock?.reduce(
+  const { data } = useInventory();
+  const productInventory = data?.success?.filter(
+    (obj) => obj.product === product.name
+  );
+  const quantity = productInventory?.reduce(
     (qty: number, obj: { quantity: number }) => qty + obj.quantity,
     0
   );
@@ -38,23 +44,25 @@ export default function ViewProductDetails({
         </DialogTitle>
         <DialogContent>
           <div className="flex flex-col gap-10">
-            <CldImage
-              alt="Product Image"
-              src={product.image}
-              height={200}
-              width={300}
-              className="rounded-lg"
-            />
+            {product.image ? (
+              <CldImage
+                className="rounded"
+                src={product.image}
+                alt="Product Image"
+                height={300}
+                width={300}
+              />
+            ) : (
+              <Image
+                src={"/placeholder.jpg"}
+                alt="Preview"
+                width={300}
+                height={300}
+                className="rounded-lg"
+              />
+            )}
             <Table size="small">
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Date of Registration
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {new Date(product.createdAt).toDateString()}
-                  </TableCell>
-                </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
                     Name
@@ -76,7 +84,7 @@ export default function ViewProductDetails({
                     Category
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
-                    {product.category}
+                    {product.category ? product.category : "Null"}
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -105,22 +113,6 @@ export default function ViewProductDetails({
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Cost
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {product.cost}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Price
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {product.price}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Quantity
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
@@ -137,18 +129,26 @@ export default function ViewProductDetails({
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Last Updated
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {new Date(product.updatedAt).toDateString()}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Description
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
                     {product.description}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Created on
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {new Date(product.createdAt).toDateString()}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Last updated on
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {new Date(product.updatedAt).toDateString()}
                   </TableCell>
                 </TableRow>
               </TableBody>

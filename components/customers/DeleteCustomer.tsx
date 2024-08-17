@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { Customer } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { useState } from "react";
+import { deleteCustomer } from "@/server/actions/customers";
 
 type DeleteCustomerProps = {
   open: boolean;
@@ -19,17 +19,28 @@ const DeleteCustomer = ({
   handleClose,
   customer,
 }: DeleteCustomerProps) => {
-  const deleteCustomer = async () => {
+  const [deleting, setDeleting] = useState(false);
+
+  // Delete customer
+  const handleDeleteCustomer = async () => {
+    setDeleting(true);
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/customers/${customer.id}`
-      );
-      if (response.status === 200) {
-        toast.success("Customer Deleted Successfully");
+      const response = await deleteCustomer(customer.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer deleted successfully");
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Customer:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Customer"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -67,12 +78,13 @@ const DeleteCustomer = ({
             variant="outlined"
             size="large"
             onClick={() => {
-              deleteCustomer();
+              handleDeleteCustomer();
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

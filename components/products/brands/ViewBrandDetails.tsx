@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +5,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { Brand } from "@/components/Types";
-import axios from "axios";
 import { CldImage } from "next-cloudinary";
 
 type ViewBrandDetailsProps = {
@@ -47,14 +45,6 @@ export default function ViewBrandDetails({
               <TableBody>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Date of Registration
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {new Date(brand.createdAt).toDateString()}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
                     Name
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
@@ -71,7 +61,15 @@ export default function ViewBrandDetails({
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold text-lg text-primaryDark">
-                    Last Updated At
+                    Created on
+                  </TableCell>
+                  <TableCell className="text-[17px] text-primaryDark">
+                    {new Date(brand.createdAt).toDateString()}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold text-lg text-primaryDark">
+                    Last updated on
                   </TableCell>
                   <TableCell className="text-[17px] text-primaryDark">
                     {new Date(brand.updatedAt).toDateString()}

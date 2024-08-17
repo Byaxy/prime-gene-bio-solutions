@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +6,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { ProductCategory } from "@/components/Types";
-import axios from "axios";
 
 type ViewCategoryDetailsProps = {
   open: boolean;
@@ -37,14 +36,6 @@ export default function ViewCategoryDetails({
             <TableBody>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Date of Registration
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {new Date(category.createdAt).toDateString()}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
                   Name
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
@@ -61,14 +52,6 @@ export default function ViewCategoryDetails({
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Parent Category
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {category.parentCategory}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
                   Description
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
@@ -77,10 +60,18 @@ export default function ViewCategoryDetails({
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Status
+                  Created on
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {category.isActive ? "Active" : "Not Active"}
+                  {new Date(category.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last updated on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(category.updatedAt).toDateString()}
                 </TableCell>
               </TableRow>
             </TableBody>

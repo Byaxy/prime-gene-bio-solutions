@@ -4,7 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -136,10 +136,10 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
             <div className="flex flex-col gap-5 w-full">
               <div className="flex flex-col md:flex-row w-full gap-5">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="wayBillDate">
+                  <FormLabel htmlFor="wayBillDate">
                     <span className="text-primaryDark font-semibold">Date</span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     defaultValue={dayjs(wayBill.date)}
                     value={wayBillDate}
@@ -149,12 +149,12 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="deliveryReferenceNumber">
                     <span className="text-primaryDark font-semibold">
                       Delivery Reference Number
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="deliveryReferenceNumber"
                     type="text"
@@ -168,12 +168,12 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
 
               <div className="flex w-full gap-5 flex-col md:flex-row">
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="customer">
+                  <FormLabel htmlFor="customer">
                     <span className="text-primaryDark font-semibold">
                       Customer
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="customer"
                     type="text"
@@ -184,12 +184,12 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-4">
-                  <label htmlFor="address">
+                  <FormLabel htmlFor="address">
                     <span className="text-primaryDark font-semibold">
                       Address
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="address"
                     type="text"
@@ -202,11 +202,11 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
               </div>
 
               <div className="w-full flex flex-col gap-2">
-                <label htmlFor="products">
+                <FormLabel htmlFor="products">
                   <span className="text-primaryDark font-semibold">
                     Products
                   </span>
-                </label>
+                </FormLabel>
                 <DataTable
                   columns={columns}
                   data={wayBill.products}
@@ -219,10 +219,10 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
                 />
               </div>
               <div className="w-full flex flex-col gap-4 md:w-1/2">
-                <label htmlFor="amount">
+                <FormLabel htmlFor="amount">
                   <span className="text-primaryDark font-semibold">Amount</span>
                   <span className="text-redColor"> *</span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="amount"
                   type="number"
@@ -239,9 +239,9 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
                 />
               </div>
               <div className="w-full flex flex-col gap-4">
-                <label htmlFor="description">
+                <FormLabel htmlFor="description">
                   <span className="text-primaryDark font-semibold">Notes</span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="description"
                   label="Description"
@@ -261,7 +261,7 @@ const EditWayBill = ({ open, handleClose, wayBill }: EditWayBillProps) => {
             onClick={() => reset()}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { CustomerGroup } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { useState } from "react";
+import { deleteCustomerGroup } from "@/server/actions/customerGroups";
 
 type DeleteCustomerGroupProps = {
   open: boolean;
@@ -19,19 +19,31 @@ const DeleteCustomerGroup = ({
   handleClose,
   group,
 }: DeleteCustomerGroupProps) => {
-  const deleteCustomerGroup = async () => {
+  const [deleting, setDeleting] = useState(false);
+
+  // Delete customer group
+  const handleDeleteCustomerGroup = async () => {
+    setDeleting(true);
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/customer-groups/${group.id}`
-      );
-      if (response.status === 200) {
-        toast.success("Customer Group Deleted Successfully");
+      const response = await deleteCustomerGroup(group.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer Group deleted successfully");
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Customer Group:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Customer Group"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
+
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -66,12 +78,13 @@ const DeleteCustomerGroup = ({
             variant="outlined"
             size="large"
             onClick={() => {
-              deleteCustomerGroup();
+              handleDeleteCustomerGroup();
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

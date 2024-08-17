@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { DB, ID } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { editUnit } from "@/server/actions/units";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Unit, "id" | "createdAt" | "updatedAt">;
+type FormInput = Omit<Unit, "id" | "createdAt">;
 
 type EditUnitProps = {
   open: boolean;
@@ -29,25 +27,31 @@ const EditUnit = ({ open, handleClose, unit }: EditUnitProps) => {
     defaultValues: {
       name: unit.name,
       code: unit.code,
+      updatedAt: new Date(),
     },
   });
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
-  const onSubmit = async (data: FormInput) => {
+  // submit form data
+  const onSubmit = handleSubmit(async (data) => {
     try {
-      await DB.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductUnitsCollectionId,
-        unit.id,
-        data
-      ).then(() => {
-        toast.success("Unit Editted successfully");
-      });
+      const response = await editUnit(data, unit.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Unit updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error updating Unit:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
-  };
+  });
 
   // Reset form to defaults on Successfull submission of data
   useEffect(() => {
@@ -76,12 +80,12 @@ const EditUnit = ({ open, handleClose, unit }: EditUnitProps) => {
               are required input fields.
             </span>
           </DialogContentText>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+          <form onSubmit={onSubmit}>
+            <div className="flex flex-col gap-2 mb-8 w-full">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -93,10 +97,10 @@ const EditUnit = ({ open, handleClose, unit }: EditUnitProps) => {
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="code">
+              <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="code"
                 type="text"
@@ -109,28 +113,28 @@ const EditUnit = ({ open, handleClose, unit }: EditUnitProps) => {
                 helperText={errors.code?.message}
               />
             </div>
+            <DialogActions>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => reset()}
+                className="cancelBtn"
+              >
+                Reset
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                onClick={onSubmit}
+                size="large"
+                className="saveBtn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : "Save"}
+              </Button>
+            </DialogActions>
           </form>
         </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => reset()}
-            className="cancelBtn"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            onClick={handleSubmit(onSubmit)}
-            size="large"
-            className="saveBtn"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Saving..." : "Save"}
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );

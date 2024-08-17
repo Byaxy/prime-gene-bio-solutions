@@ -1,78 +1,53 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import toast from "react-hot-toast";
-import axios from "axios";
-import type { Option, ProductCategory } from "@/components/Types";
-import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
+import type { ProductCategory } from "@/components/Types";
+import { editCategory } from "@/server/actions/categories";
 
-type FormInput = Omit<ProductCategory, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<ProductCategory, "id" | "createdAt">;
 type EditCategoryProps = {
   open: boolean;
   handleClose: () => void;
   category: ProductCategory;
 };
 const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
-  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
-
   const { handleSubmit, reset, control, register, formState } =
     useForm<FormInput>({
       defaultValues: {
         name: category.name,
         code: category.code,
-        parentCategory: category.parentCategory,
         description: category.description,
         updatedAt: new Date(),
       },
     });
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const response = await axios.patch(
-        `http://localhost:5000/categories/${category.id}`,
-        data
-      );
-      if (response.status === 200)
-        toast.success("Product Category Edited Successfully");
+      const response = await editCategory(data, category.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Category updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error updating Category:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data } = await axios.get("http://localhost:5000/categories");
-        const options = data.map((category: ProductCategory) => ({
-          label: category.name,
-          value: category.name,
-        }));
-        options.unshift({ label: "None", value: "None" });
-        setCategoryOptions(options);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   return (
     <div>
@@ -97,10 +72,10 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -112,57 +87,31 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="code">
+              <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
-                <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="code"
                 type="text"
                 label="Code"
                 defaultValue={category.code}
-                {...register("code", {
-                  required: "Code is required",
-                })}
+                {...register("code")}
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
-              <label htmlFor="parentCategory">
-                <span className="text-primaryDark font-semibold">
-                  Parent Category
-                </span>
-                <span className="text-redColor"> *</span>
-              </label>
-              <FormInputDropdown
-                id="category"
-                control={control}
-                label="Select Category"
-                defaultValue={category.parentCategory}
-                options={categoryOptions}
-                {...register("parentCategory", {
-                  required: "Product Category is required",
-                })}
-              />
-              {errors.parentCategory && (
-                <span className="text-redColor text-sm">
-                  {errors.parentCategory?.message}
-                </span>
-              )}
-              <label htmlFor="description">
+
+              <FormLabel htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description
                 </span>
-                <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="description"
                 label="Description"
                 defaultValue={category.description}
                 multiline
                 rows={3}
-                {...register("description", {
-                  required: "Description is required",
-                })}
+                {...register("description")}
                 error={!!errors.description}
                 helperText={errors.description?.message}
               />
@@ -176,7 +125,7 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
             onClick={() => reset()}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

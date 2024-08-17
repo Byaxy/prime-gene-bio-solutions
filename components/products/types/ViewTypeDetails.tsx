@@ -5,10 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { typesData } from "@/data/typesData";
 import type { ProductType } from "@/components/Types";
-import axios from "axios";
-import toast from "react-hot-toast";
 
 type ViewTypeDetailsProps = {
   open: boolean;
@@ -39,14 +36,6 @@ export default function ViewTypeDetails({
             <TableBody>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Date of Registration
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {new Date(type.createdAt).toDateString()}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
                   Name
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
@@ -63,7 +52,15 @@ export default function ViewTypeDetails({
               </TableRow>
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
-                  Last Updated
+                  Created on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(type.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last updated on
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
                   {new Date(type.updatedAt).toDateString()}

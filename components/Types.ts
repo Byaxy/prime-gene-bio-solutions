@@ -8,7 +8,6 @@ export type CustomerGroup = {
   percentage: number;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Brand = {
   id: string;
@@ -17,7 +16,6 @@ export type Brand = {
   image: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type ProductType = {
   id: string;
@@ -25,7 +23,6 @@ export type ProductType = {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Unit = {
   id: string;
@@ -38,11 +35,9 @@ export type ProductCategory = {
   id: string;
   code: string;
   name: string;
-  parentCategory: string;
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 
 export type ExpenseCategory = {
@@ -52,7 +47,6 @@ export type ExpenseCategory = {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export enum Gender {
   MALE = "MALE",
@@ -60,8 +54,8 @@ export enum Gender {
   OTHER = "OTHER",
 }
 export enum UserRole {
-  USER = "USER",
-  ADMIN = "ADMIN",
+  USER = "user",
+  ADMIN = "admin",
 }
 export type User = {
   id: string;
@@ -70,6 +64,9 @@ export type User = {
   email: string;
   phone: string;
   password: string;
+  confirmPassword: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 export type Supplier = {
   id: string;
@@ -83,13 +80,11 @@ export type Supplier = {
   contactPerson?: ContactPerson;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type ContactPerson = {
   name: string;
   email: string;
   phone: string;
-  isActive: boolean;
 };
 
 export type Customer = {
@@ -100,12 +95,9 @@ export type Customer = {
   phone: string;
   address: string;
   city: string;
-  state: string;
   country: string;
-  contactPerson?: ContactPerson;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Expense = {
   id: string;
@@ -118,7 +110,6 @@ export type Expense = {
   image: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Product = {
   id: string;
@@ -129,21 +120,21 @@ export type Product = {
   type: string;
   unit: string;
   category: string;
-  stock: Stock[];
-  cost: number;
-  price: number;
   description: string;
   alertQuantity: number;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
-export type Stock = {
+export type Inventory = {
   id: string;
+  product: string;
   lotNumber: string;
-  manufactureDate: Date;
-  expiryDate: Date;
+  manufactureDate: Date | null;
+  expiryDate: Date | null;
   quantity: number;
+  cost: number;
+  price: number;
+  unit: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -163,14 +154,17 @@ export type ProductStock = {
 };
 export type SaleProduct = {
   id: string;
+  saleID: string;
+  productID: string;
   lotNumber: string;
   name: string;
   code: string;
   unit: string;
   quantity: number;
-  availableQuantity: number;
   price: number;
   subTotal: number;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type Sale = {
@@ -178,17 +172,16 @@ export type Sale = {
   invoiceNumber: string;
   purchaseOrderNumber: string;
   customer: string;
-  tax: number;
+  taxAmount: number;
   subTotal: number;
   total: number;
-  paid: number;
+  amountPaid: number;
   paymentStatus: string;
   saleStatus: string;
   products: SaleProduct[];
   notes: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Quotation = {
   id: string;
@@ -202,7 +195,6 @@ export type Quotation = {
   notes: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type DeliveryProduct = {
   id: string;
@@ -244,7 +236,7 @@ export type WayBill = {
 };
 
 export type ProductWithNoStock = Omit<Product, "stock">;
-export type ProductWithStock = ProductWithNoStock & { stock: Stock };
+export type ProductWithStock = ProductWithNoStock & { stock: Inventory };
 
 export type SaleReturn = {
   id: string;

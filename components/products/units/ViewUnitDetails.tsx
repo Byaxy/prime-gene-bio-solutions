@@ -34,14 +34,6 @@ export default function ViewUnitDetails({
           <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell className="tableTitle">
-                  Date of Registration
-                </TableCell>
-                <TableCell className="tableValue">
-                  {new Date(unit.createdAt).toDateString()}
-                </TableCell>
-              </TableRow>
-              <TableRow>
                 <TableCell className="tableTitle">Name</TableCell>
                 <TableCell className="tableValue">{unit.name}</TableCell>
               </TableRow>
@@ -50,7 +42,13 @@ export default function ViewUnitDetails({
                 <TableCell className="tableValue">{unit.code}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="tableTitle">Last Updated On</TableCell>
+                <TableCell className="tableTitle">Created on</TableCell>
+                <TableCell className="tableValue">
+                  {new Date(unit.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="tableTitle">Last updated on</TableCell>
                 <TableCell className="tableValue">
                   {new Date(unit.updatedAt).toDateString()}
                 </TableCell>

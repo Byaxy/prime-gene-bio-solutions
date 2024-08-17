@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -8,10 +8,10 @@ import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { CustomerGroup } from "@/components/Types";
-import axios from "axios";
 import toast from "react-hot-toast";
+import { editCustomerGroup } from "@/server/actions/customerGroups";
 
-type FormInput = Omit<CustomerGroup, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<CustomerGroup, "id" | "createdAt">;
 
 type EditCustomerGroupProps = {
   open: boolean;
@@ -33,19 +33,23 @@ const EditCustomerGroup = ({
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
 
+  // Edit Customer Group
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      const response = await axios.patch(
-        `http://localhost:5000/customer-groups/${group.id}`,
-        data
-      );
-      if (response.status === 200) {
-        toast.success("Customer Group Edited Successfully");
+      const response = await editCustomerGroup(data, group.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer Group updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error updating Customer Group:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 
@@ -86,7 +90,6 @@ const EditCustomerGroup = ({
               <TextField
                 id="name"
                 type="text"
-                label="Name"
                 variant="outlined"
                 defaultValue={group.name}
                 {...register("name", { required: "Name is Required" })}
@@ -117,7 +120,7 @@ const EditCustomerGroup = ({
             onClick={() => reset()}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

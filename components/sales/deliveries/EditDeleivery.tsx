@@ -6,6 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   Button,
+  FormLabel,
   Table,
   TableBody,
   TableCell,
@@ -218,12 +219,12 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
             <div className="flex flex-col gap-5 w-full">
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="deliveryDate">
+                  <FormLabel htmlFor="deliveryDate">
                     <span className="text-primaryDark font-semibold">
                       Delivery Date
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <DatePicker
                     defaultValue={dayjs()}
                     value={deliveryDate}
@@ -234,12 +235,12 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="category">
+                  <FormLabel htmlFor="status">
                     <span className="text-primaryDark font-semibold">
                       Status
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <FormInputDropdown
                     id="status"
                     name="status"
@@ -251,12 +252,12 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
               </div>
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="deliveryReferenceNumber">
                     <span className="text-primaryDark font-semibold">
                       Delivery Reference Number
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="deliveryReferenceNumber"
                     type="text"
@@ -270,14 +271,14 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="reference">
+                  <FormLabel htmlFor="saleInvoiceNumber">
                     <span className="text-primaryDark font-semibold">
                       Sale Invoice Number
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
-                    id="reference"
+                    id="saleInvoiceNumber"
                     type="text"
                     label="Invoice Number"
                     variant="outlined"
@@ -288,12 +289,12 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
               </div>
               <div className="flex w-full gap-5">
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="customer">
+                  <FormLabel htmlFor="customer">
                     <span className="text-primaryDark font-semibold">
                       Customer
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="customer"
                     type="text"
@@ -305,12 +306,12 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
                 </div>
 
                 <div className="flex flex-col flex-1 gap-2">
-                  <label htmlFor="amount">
+                  <FormLabel htmlFor="address">
                     <span className="text-primaryDark font-semibold">
                       Address
                     </span>
                     <span className="text-redColor"> *</span>
-                  </label>
+                  </FormLabel>
                   <TextField
                     id="address"
                     type="text"
@@ -327,12 +328,12 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
               </div>
               {/** Select product */}
               <div>
-                <label htmlFor="products">
+                <FormLabel htmlFor="products">
                   <span className="text-primaryDark font-semibold">
                     Products
                   </span>
                   <span className="text-redColor"> *</span>
-                </label>
+                </FormLabel>
               </div>
 
               {/** List of products delivered */}
@@ -431,9 +432,9 @@ const EditDeleivery = ({ open, handleClose, delivery }: EditDeliveryProps) => {
               </Dialog>
 
               <div className="flex flex-col gap-2 w-full">
-                <label htmlFor="description">
+                <FormLabel htmlFor="description">
                   <span className="text-primaryDark font-semibold">Notes</span>
-                </label>
+                </FormLabel>
                 <TextField
                   id="description"
                   label="Description"

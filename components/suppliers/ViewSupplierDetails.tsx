@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -58,14 +57,7 @@ export default function ViewSupplierDetails({
                   {supplier.phone}
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Status
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {supplier.isActive ? "Active" : "Not Active"}
-                </TableCell>
-              </TableRow>
+
               <TableRow>
                 <TableCell className="font-semibold text-lg text-primaryDark">
                   Address
@@ -103,48 +95,35 @@ export default function ViewSupplierDetails({
           <h3 className="text-2xl text-primaryDark font-bold mb-0 mt-10 px-4">
             Contact Person Details
           </h3>
-          {supplier.contactPerson ? (
-            <Table size="small">
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Name
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {supplier.contactPerson?.name}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Email
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {supplier.contactPerson?.email}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Phone Number
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {supplier.contactPerson?.phone}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-semibold text-lg text-primaryDark">
-                    Status
-                  </TableCell>
-                  <TableCell className="text-[17px] text-primaryDark">
-                    {supplier.contactPerson?.isActive ? "Active" : "Not Active"}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          ) : (
-            <span className="font-semibold text-lg text-primaryDark px-4 py-6 block">
-              No Contact Person
-            </span>
-          )}
+
+          <Table size="small">
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Name
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {supplier.contactPerson?.name || "Null"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Email
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {supplier.contactPerson?.email || "Null"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Phone Number
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {supplier.contactPerson?.phone || "Null"}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </DialogContent>
         <DialogActions>
           <Button

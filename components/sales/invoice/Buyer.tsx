@@ -36,9 +36,6 @@ export default function Buyer({ customer }: BuyerProps) {
       <ul className="list-none m-0 text-primaryColor text-xs pl-4">
         <li className="font-semibold mb-1">{buyerDetails?.name}</li>
         <li>
-          {buyerDetails?.address}, {buyerDetails?.state}
-        </li>
-        <li>
           {buyerDetails?.city}, {buyerDetails?.country}
         </li>
         <li></li>

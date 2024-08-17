@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { editBrand } from "@/server/actions/brands";
+import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Brand, "id" | "createdAt" | "isActive">;
+type FormInput = Omit<Brand, "id" | "createdAt">;
 
 type EditBrandProps = {
   open: boolean;
@@ -34,34 +35,31 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
       updatedAt: new Date(),
     },
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
       const newData = { ...data, image: imageUrl };
 
-      const response = await axios.patch(
-        `http://localhost:5000/brands/${brand.id}`,
-        newData
-      );
+      const response = await editBrand(newData, brand.id);
 
-      if (response.status === 200) {
-        toast.success("Brand Editted successfully");
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Brand updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        setImageUrl("");
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error updating Brand:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      setImageUrl(brand.image);
-      handleClose();
-    }
-  }, [brand.image, handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -86,10 +84,10 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -101,10 +99,10 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="code">
+              <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="code"
                 type="text"
@@ -116,9 +114,9 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
-              <label htmlFor="image">
+              <FormLabel htmlFor="image">
                 <span className="text-primaryDark font-semibold">Image</span>
-              </label>
+              </FormLabel>
               <div className="flex flex-row gap-4 items-center">
                 <div>
                   {imageUrl && (
@@ -127,7 +125,7 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
                   )}
                 </div>
                 <CldUploadWidget
-                  uploadPreset="prime-gene-biomedical-solutions"
+                  uploadPreset={config.cloudinaryUploadPreset}
                   options={{
                     multiple: false,
                     clientAllowedFormats: ["jpg", "png", "webp", "svg"],
@@ -144,7 +142,7 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
                     return (
                       <Button
                         variant="contained"
-                        className="capitalize"
+                        className="capitalize saveBtn"
                         onClick={() => open()}
                       >
                         Upload New Image
@@ -163,7 +161,7 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
             onClick={() => (reset(), setImageUrl(brand.image))}
             className="cancelBtn"
           >
-            Cancel
+            Reset
           </Button>
           <Button
             type="submit"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,8 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { deleteUnit } from "@/server/actions/units";
 
 type DeleteUnitProps = {
   open: boolean;
@@ -15,20 +14,32 @@ type DeleteUnitProps = {
   unit: Unit;
 };
 const DeleteUnit = ({ open, handleClose, unit }: DeleteUnitProps) => {
-  const deleteUnit = async () => {
+  const [deleting, setDeleting] = useState(false);
+
+  // delete Unit from the database
+  const handleDeleteUnit = async () => {
+    setDeleting(true);
     try {
-      await DB.deleteDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductUnitsCollectionId,
-        unit.id
-      ).then(() => {
-        toast.success("Unit Deleted successfully");
-      });
+      const response = await deleteUnit(unit.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Unit deleted successfully");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Unit:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Unit"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
+
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -55,19 +66,18 @@ const DeleteUnit = ({ open, handleClose, unit }: DeleteUnitProps) => {
             variant="contained"
             onClick={handleClose}
             size="large"
+            className="saveBtn"
           >
             Cancel
           </Button>
           <Button
             variant="outlined"
             size="large"
-            onClick={() => {
-              deleteUnit();
-              handleClose();
-            }}
+            onClick={handleDeleteUnit}
             className="cancelBtn text-white"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

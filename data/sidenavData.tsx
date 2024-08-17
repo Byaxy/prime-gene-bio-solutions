@@ -6,7 +6,7 @@ import SummarizeRoundedIcon from "@mui/icons-material/SummarizeRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import { generateId } from "@/components/utils";
+import { generateId } from "@/utils/utils";
 
 export type DataType = {
   id: string;
@@ -158,21 +158,9 @@ export const data: DataType[] = [
   },
   {
     id: generateId(),
-    title: "Iventory",
-    path: "",
+    title: "Inventory",
+    path: "/inventory",
     icon: <SummarizeRoundedIcon />,
-    subCategories: [
-      {
-        id: generateId(),
-        title: "Products Stock",
-        path: "/inventory",
-      },
-      {
-        id: generateId(),
-        title: "Inventory Logs",
-        path: "/inventory/inventory-logs",
-      },
-    ],
   },
   {
     id: generateId(),

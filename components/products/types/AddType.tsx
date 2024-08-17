@@ -1,60 +1,53 @@
-import React, { ReactNode, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { Button, TextField } from "@mui/material";
+import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
-import axios from "axios";
+import { addType } from "@/server/actions/types";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ProductType, "id">;
+type FormInput = Omit<ProductType, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   description: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  isActive: true,
 };
 type AddTypeProps = {
   open: boolean;
   handleClose: () => void;
 };
 
-export default function AddType({
-  open,
-  handleClose,
-}: AddTypeProps): ReactNode {
+export default function AddType({ open, handleClose }: AddTypeProps) {
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const response = await axios.post("http://localhost:5000/types", data);
-
-      if (response.status === 201) toast.success("Type added successfully");
+      const response = await addType(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Type added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error adding Type:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -77,10 +70,10 @@ export default function AddType({
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="name">
+              <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="name"
                 type="text"
@@ -91,12 +84,12 @@ export default function AddType({
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-              <label htmlFor="description">
+              <FormLabel htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description
                 </span>
                 <span className="text-redColor"> *</span>
-              </label>
+              </FormLabel>
               <TextField
                 id="description"
                 label="Description"
