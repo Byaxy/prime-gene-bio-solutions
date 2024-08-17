@@ -7,8 +7,8 @@ import {
 } from "@mui/material";
 import type { Inventory } from "../Types";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { useState } from "react";
+import { deleteInventory } from "@/server/actions/inventory";
 
 type DeleteStockProps = {
   open: boolean;
@@ -16,19 +16,42 @@ type DeleteStockProps = {
   inventory: Inventory;
 };
 const DeleteStock = ({ open, handleClose, inventory }: DeleteStockProps) => {
+  const [deleting, setDeleting] = useState(false);
+
   // delete stock from product
   const handleDelete = async () => {
+    setDeleting(true);
+
+    const response = await deleteInventory(inventory.id);
+
+    if (response?.error) {
+      toast.error(response.error);
+    } else {
+      toast.success("Inventory deleted successfully");
+    }
+
+    setDeleting(false);
+    handleClose();
+
+    setDeleting(true);
     try {
-      await DB.deleteDocument(
-        config.appwriteDatabaseId,
-        config.appwriteInventoryCollectionId,
-        inventory.id
-      ).then(() => {
-        toast.success("Inventory Deleted successfully");
-      });
+      const response = await deleteInventory(inventory.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Inventory deleted successfully");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error deleting Inventory:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Inventory"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -47,7 +70,7 @@ const DeleteStock = ({ open, handleClose, inventory }: DeleteStockProps) => {
               Lot Number - {inventory.lotNumber}
             </span>{" "}
             from product{" "}
-            <span className="font-semibold">{inventory.productName}</span>
+            <span className="font-semibold">{inventory.product}</span>
           </span>
           <br />
           <br />
@@ -74,8 +97,9 @@ const DeleteStock = ({ open, handleClose, inventory }: DeleteStockProps) => {
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

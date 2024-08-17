@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,13 +6,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import type { Customer, Option } from "@/components/Types";
+import type { Customer } from "@/components/Types";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import toast from "react-hot-toast";
-import { DB, query } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { editCustomer } from "@/server/actions/customers";
+import useCustomerGroupOptions from "@/utils/hooks/useCustomerGroupOptions";
 
-type FormInput = Omit<Customer, "id" | "createdAt" | "updatedAt">;
+type FormInput = Omit<Customer, "id" | "createdAt">;
 type EditCustomerDetailsProps = {
   open: boolean;
   handleClose: () => void;
@@ -25,9 +24,8 @@ const EditCustomer = ({
   handleClose,
   customer,
 }: EditCustomerDetailsProps) => {
-  const [customerGroupOptions, setCustomerGroupOptions] = useState<Option[]>(
-    []
-  );
+  // Get Customer Groups
+  const { data: customerGroupOptions } = useCustomerGroupOptions();
 
   const { handleSubmit, reset, register, formState, control } =
     useForm<FormInput>({
@@ -39,57 +37,31 @@ const EditCustomer = ({
         address: customer.address,
         city: customer.city,
         country: customer.country,
+        updatedAt: new Date(),
       },
     });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
   // Edit Customer
   const onSubmit = async (data: FormInput) => {
     try {
-      await DB.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteCustomersCollectionId,
-        customer.id,
-        data
-      ).then(() => {
-        toast.success("Customer Edited successfully");
-      });
+      const response = await editCustomer(data, customer.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error updating Customer:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
-
-  // Fetch Customer Group Options
-  useEffect(() => {
-    async function fetchCustomerGroupOptions() {
-      try {
-        const { documents } = await DB.listDocuments(
-          config.appwriteDatabaseId,
-          config.appwriteCustomerGroupsCollectionId,
-          query
-        );
-        const customersOptions = documents.map((doc: any) => ({
-          label: doc.name,
-          value: doc.$id,
-        }));
-
-        setCustomerGroupOptions(customersOptions);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchCustomerGroupOptions();
-  }, []);
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -147,7 +119,7 @@ const EditCustomer = ({
                     control={control}
                     defaultValue={customer.customerGroup}
                     label="Customer Group"
-                    options={customerGroupOptions}
+                    options={customerGroupOptions?.success || []}
                   />
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -10,13 +10,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
+import { editBrand } from "@/server/actions/brands";
 import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<Brand, "id" | "createdAt" | "updatedAt">;
+type FormInput = Omit<Brand, "id" | "createdAt">;
 
 type EditBrandProps = {
   open: boolean;
@@ -32,36 +32,34 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
       name: brand.name,
       code: brand.code,
       image: brand.image,
+      updatedAt: new Date(),
     },
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = { ...data, image: imageUrl };
+      const newData = { ...data, image: imageUrl };
 
-      await DB.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductBrandsCollectionId,
-        brand.id,
-        formData
-      ).then(() => {
-        toast.success("Brand Editted successfully");
-      });
+      const response = await editBrand(newData, brand.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Brand updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        setImageUrl("");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error updating Brand:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      setImageUrl(brand.image);
-      handleClose();
-    }
-  }, [brand.image, handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -127,7 +125,7 @@ const EditBrand = ({ open, handleClose, brand }: EditBrandProps) => {
                   )}
                 </div>
                 <CldUploadWidget
-                  uploadPreset="prime-gene-biomedical-solutions"
+                  uploadPreset={config.cloudinaryUploadPreset}
                   options={{
                     multiple: false,
                     clientAllowedFormats: ["jpg", "png", "webp", "svg"],

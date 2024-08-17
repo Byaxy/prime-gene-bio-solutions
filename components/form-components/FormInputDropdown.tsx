@@ -8,7 +8,7 @@ interface FormInputProps {
   control: any;
   label: string;
   setValue?: any;
-  options: Option[];
+  options: Option[] | null;
   defaultValue?: any;
 }
 export const FormInputDropdown: React.FC<FormInputProps> = ({
@@ -20,7 +20,7 @@ export const FormInputDropdown: React.FC<FormInputProps> = ({
   defaultValue,
 }) => {
   const generateSingleOptions = () => {
-    return options.map((option: any) => {
+    return options?.map((option: Option) => {
       return (
         <MenuItem
           key={option.value}

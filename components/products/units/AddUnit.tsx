@@ -1,4 +1,3 @@
-import React, { ReactNode, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,10 +6,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { Unit } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB, ID } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { addUnit } from "@/server/actions/units";
+import { Unit } from "@/components/Types";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
@@ -27,38 +25,30 @@ type AddUnitProps = {
   handleClose: () => void;
 };
 
-export default function AddUnit({
-  open,
-  handleClose,
-}: AddUnitProps): ReactNode {
+export default function AddUnit({ open, handleClose }: AddUnitProps) {
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitting, isSubmitSuccessful } = formState;
+  const { errors, isSubmitting } = formState;
 
-  const onSubmit = async (data: FormInput) => {
+  // submit form data
+  const onSubmit = handleSubmit(async (data) => {
     try {
-      await DB.createDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductUnitsCollectionId,
-        ID.unique(),
-        data
-      ).then(() => {
-        toast.success("Unit Added successfully");
-      });
+      const response = await addUnit(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Unit added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong ");
+      console.error("Error adding Unit:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
-  };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
+  });
 
   return (
     <div>
@@ -79,8 +69,8 @@ export default function AddUnit({
               are required input fields.
             </span>
           </DialogContentText>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-2 w-full">
+          <form onSubmit={onSubmit}>
+            <div className="flex flex-col gap-2 mb-8 w-full">
               <FormLabel htmlFor="name">
                 <span className="text-primaryDark font-semibold">Name</span>
                 <span className="text-redColor"> *</span>
@@ -110,28 +100,27 @@ export default function AddUnit({
                 helperText={errors.code?.message}
               />
             </div>
+            <DialogActions>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() => reset()}
+                className="cancelBtn"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                className="saveBtn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving..." : "Save"}
+              </Button>
+            </DialogActions>
           </form>
         </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => reset()}
-            className="cancelBtn"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            onClick={handleSubmit(onSubmit)}
-            size="large"
-            className="saveBtn"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Saving..." : "Save"}
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );

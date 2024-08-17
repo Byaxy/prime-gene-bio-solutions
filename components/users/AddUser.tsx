@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,16 +7,20 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { User, Gender } from "@/components/Types";
+import { User, UserRole } from "@/components/Types";
 import toast from "react-hot-toast";
-import appwriteService from "@/appwrite/appwriteConfig";
+import { FormInputDropdown } from "../form-components/FormInputDropdown";
+import { signup } from "@/server/actions/signup";
 
-type FormInput = Omit<User, "id" | "role" | "phone">;
+type FormInput = Omit<User, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   email: "",
   password: "",
+  phone: "",
+  role: UserRole.USER,
+  confirmPassword: "",
 };
 
 type AddUserProps = {
@@ -24,28 +28,52 @@ type AddUserProps = {
   handleClose: () => void;
 };
 
+const roleOptions = [
+  {
+    label: "User",
+    value: UserRole.USER,
+  },
+  {
+    label: "Admin",
+    value: UserRole.ADMIN,
+  },
+];
+
 export default function AddUser({ open, handleClose }: AddUserProps) {
-  const { handleSubmit, reset, control, register, formState } = useForm<User>({
-    defaultValues: defaultValues,
-  });
+  const { handleSubmit, reset, register, formState, watch, control } =
+    useForm<User>({
+      defaultValues: defaultValues,
+    });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [userImage, setUserImage] = useState<string | null>(null);
-  const [gender, setGender] = useState<Gender>(Gender.MALE);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setGender(event.target.value as Gender);
-  };
-
+  // submit form data
   const onSubmit = async (data: User) => {
     try {
-      const userAccount = await appwriteService.createUserAccount(data);
-      if (userAccount) {
-        toast.success("User Account Added successfully");
-        return userAccount;
+      const formData = new FormData();
+
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      formData.append("phone", data.phone);
+      formData.append("role", data.role);
+
+      // Send form data to server
+      const response = await signup(formData);
+
+      const { error } = JSON.parse(response);
+
+      if (error?.message) {
+        toast.error(error?.message);
+      } else {
+        toast.success("User Created Successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
       }
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error.message);
+    } catch (error) {
+      console.error("Error creating User:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 
@@ -53,10 +81,9 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setUserImage(null);
-      setGender(Gender.MALE);
+      handleClose();
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [handleClose, isSubmitSuccessful, reset]);
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
@@ -94,7 +121,6 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
                   helperText={errors.name?.message}
                 />
               </div>
-
               <div className="flex flex-col gap-4 w-full">
                 <FormLabel htmlFor="email">
                   <span className="text-primaryDark font-semibold">Email</span>
@@ -130,6 +156,66 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
                   helperText={errors.password?.message}
                 />
               </div>
+              <div className="flex flex-col gap-4 w-full">
+                <FormLabel htmlFor="confirmPassword">
+                  <span className="text-primaryDark font-semibold">
+                    Confirm Password
+                  </span>
+                  <span className="text-redColor"> *</span>
+                </FormLabel>
+                <TextField
+                  id="confirmPassword"
+                  type="password"
+                  label="Confirm Password"
+                  {...register("confirmPassword", {
+                    required: "Confirm Password is required",
+                    validate: (value) =>
+                      value === watch("password") || "Passwords do not match",
+                  })}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword?.message}
+                />
+              </div>
+              <div className="flex flex-col md:flex-row gap-5 md:gap-4 w-full">
+                <div className="flex flex-col gap-4 w-full">
+                  <FormLabel htmlFor="phoneMumber">
+                    <span className="text-primaryDark font-semibold">
+                      Phone Number
+                    </span>
+                  </FormLabel>
+                  <TextField
+                    id="phoneMumber"
+                    type="text"
+                    label="Phone Number"
+                    {...register("phone", {
+                      pattern: {
+                        value:
+                          /^(\+\d{1,2}\s?)?1?\-?\s?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{4}$/,
+                        message: "Invalid phone number format",
+                      },
+                    })}
+                    error={!!errors.phone}
+                    helperText={errors.phone?.message}
+                  />
+                </div>
+                <div className="flex flex-col gap-4 w-full">
+                  <FormLabel htmlFor="role">
+                    <span className="text-primaryDark font-semibold">Role</span>
+                  </FormLabel>
+                  <FormInputDropdown
+                    id="role"
+                    control={control}
+                    label="Select Role"
+                    options={roleOptions}
+                    {...register("role")}
+                  />
+                  {errors.role && (
+                    <span className="text-redColor text-sm">
+                      {errors.role?.message}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </form>
         </DialogContent>
@@ -137,7 +223,7 @@ export default function AddUser({ open, handleClose }: AddUserProps) {
           <Button
             variant="outlined"
             size="large"
-            onClick={() => (reset(), setUserImage(null))}
+            onClick={() => reset()}
             className="cancelBtn"
           >
             Cancel

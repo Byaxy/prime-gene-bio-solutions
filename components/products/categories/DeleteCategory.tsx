@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,8 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { ProductCategory } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { deleteCategory } from "@/server/actions/categories";
 
 type DeleteCategoryProps = {
   open: boolean;
@@ -20,18 +19,29 @@ const DeleteCategory = ({
   handleClose,
   category,
 }: DeleteCategoryProps) => {
-  const deleteCategory = async () => {
+  const [deleting, setDeleting] = useState(false);
+
+  // delete Category from the database
+  const handleDeleteCategory = async () => {
+    setDeleting(true);
     try {
-      await DB.deleteDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductCategoriesCollectionId,
-        category.id
-      ).then(() => {
-        toast.success("Product Category Deleted Successfully");
-      });
-    } catch (error: any) {
-      console.error(error);
-      toast.error("Something went wrong");
+      const response = await deleteCategory(category.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Category deleted successfully");
+        handleClose();
+      }
+    } catch (error) {
+      console.error("Error deleting Category:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Category"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -69,12 +79,13 @@ const DeleteCategory = ({
             variant="outlined"
             size="large"
             onClick={() => {
-              deleteCategory();
+              handleDeleteCategory();
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

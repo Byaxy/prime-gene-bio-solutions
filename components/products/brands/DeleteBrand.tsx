@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,8 +6,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { Brand } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { deleteBrand } from "@/server/actions/brands";
 
 type DeleteBrandProps = {
   open: boolean;
@@ -16,18 +15,29 @@ type DeleteBrandProps = {
 };
 
 const DeleteBrand = ({ open, handleClose, brand }: DeleteBrandProps) => {
-  const deleteCategory = async () => {
+  const [deleting, setDeleting] = useState(false);
+
+  // delete Brand from the database
+  const handleDeleteBrand = async () => {
+    setDeleting(true);
     try {
-      await DB.deleteDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductBrandsCollectionId,
-        brand.id
-      ).then(() => {
-        toast.success("Brand Deleted Successfully");
-      });
+      const response = await deleteBrand(brand.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Brand deleted successfully");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Brand:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Brand"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -65,12 +75,13 @@ const DeleteBrand = ({ open, handleClose, brand }: DeleteBrandProps) => {
             variant="outlined"
             size="large"
             onClick={() => {
-              deleteCategory();
+              handleDeleteBrand();
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

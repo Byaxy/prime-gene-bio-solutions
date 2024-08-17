@@ -5,10 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { typesData } from "@/data/typesData";
 import type { ProductType } from "@/components/Types";
-import axios from "axios";
-import toast from "react-hot-toast";
 
 type ViewTypeDetailsProps = {
   open: boolean;

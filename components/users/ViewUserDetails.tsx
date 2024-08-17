@@ -5,33 +5,19 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { usersData } from "@/data/usersData";
-import Image from "next/image";
-import { User } from "../Types";
+import type { User } from "../Types";
 
 type ViewUserDetailsProps = {
   open: boolean;
   handleClose: () => void;
-  userID: string;
+  user: User;
 };
 
 export default function ViewUserDetails({
   open,
   handleClose,
-  userID,
+  user,
 }: ViewUserDetailsProps) {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    let userDetails = usersData.find((user) => user.id === userID);
-    if (userDetails) {
-      setUser(userDetails);
-    }
-  }, [userID]);
-
-  if (!user) {
-    return null;
-  }
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -52,7 +38,7 @@ export default function ViewUserDetails({
                 <TableCell className="font-semibold text-lg text-primaryDark">
                   Role
                 </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
+                <TableCell className="text-[17px] text-primaryDark uppercase font-semibold">
                   {user.role}
                 </TableCell>
               </TableRow>
@@ -77,7 +63,23 @@ export default function ViewUserDetails({
                   Phone Number
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {user?.phone}
+                  {user?.phone || "N/A"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Created On
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(user?.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last Updated On
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(user?.updatedAt).toDateString()}
                 </TableCell>
               </TableRow>
             </TableBody>

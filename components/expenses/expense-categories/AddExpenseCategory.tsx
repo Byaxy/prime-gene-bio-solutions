@@ -8,17 +8,18 @@ import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ExpenseCategory } from "@/components/Types";
+import { addExpenseCategory } from "@/server/actions/expenseCategories";
+import toast from "react-hot-toast";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
 // See https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
-type FormInput = Omit<ExpenseCategory, "id" | "isActive" | "updatedAt">;
+type FormInput = Omit<ExpenseCategory, "id" | "createdAt" | "updatedAt">;
 
 const defaultValues: FormInput = {
   name: "",
   code: "",
   description: "",
-  createdAt: new Date(),
 };
 type AddExpenseCategoryProps = {
   open: boolean;
@@ -32,24 +33,25 @@ export default function AddExpenseCategory({
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
   const onSubmit = async (data: FormInput) => {
     try {
-      // Handle form data with corresponding API call
-      console.log(data);
+      const response = await addExpenseCategory(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Expense Category added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error adding Expense Category:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-    }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -66,11 +68,11 @@ export default function AddExpenseCategory({
         </DialogTitle>
         <DialogContent>
           <DialogContentText className="mb-5">
-            <p>
+            <span>
               Please fill in the information below. The field labels marked with
               <span className="text-redColor font-bold text-xl"> * </span>
               are required input fields.
-            </p>
+            </span>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-2 w-full">
@@ -101,16 +103,13 @@ export default function AddExpenseCategory({
                 <span className="text-primaryDark font-semibold">
                   Description
                 </span>
-                <span className="text-redColor"> *</span>
               </FormLabel>
               <TextField
                 id="description"
                 label="Description"
                 multiline
                 rows={4}
-                {...register("description", {
-                  required: "Description is required",
-                })}
+                {...register("description")}
                 error={!!errors.description}
                 helperText={errors.description?.message}
               />
@@ -132,6 +131,7 @@ export default function AddExpenseCategory({
             onClick={handleSubmit(onSubmit)}
             size="large"
             className="saveBtn"
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

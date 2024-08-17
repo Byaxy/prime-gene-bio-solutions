@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -10,7 +10,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { Brand } from "@/components/Types";
 import { CldUploadWidget } from "next-cloudinary";
 import toast from "react-hot-toast";
-import { DB, ID } from "@/appwrite/appwriteConfig";
+import { addBrand } from "@/server/actions/brands";
 import { config } from "@/config/config";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
@@ -29,42 +29,38 @@ type AddBrandProps = {
   handleClose: () => void;
 };
 
-export default function AddBrand({
-  open,
-  handleClose,
-}: AddBrandProps): ReactNode {
+export default function AddBrand({ open, handleClose }: AddBrandProps) {
   const { register, handleSubmit, reset, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [imageUrl, setImageUrl] = useState<string>("/placeholder.jpg");
+  const { errors, isSubmitting } = formState;
+  const [imageUrl, setImageUrl] = useState<string>("");
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = { ...data, image: imageUrl };
+      const newData = {
+        ...data,
+        image: imageUrl,
+      };
 
-      await DB.createDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductBrandsCollectionId,
-        ID.unique(),
-        formData
-      ).then(() => {
-        toast.success("Brand Added Successfully");
-      });
+      const response = await addBrand(newData);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Brand added successfully");
+        reset({}, { keepDefaultValues: true });
+        setImageUrl("");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error adding Brand:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      setImageUrl("/placeholder.jpg");
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -122,11 +118,15 @@ export default function AddBrand({
                 <div>
                   {imageUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imageUrl} alt="Preview" className="w-40 h-40" />
+                    <img
+                      src={imageUrl ? imageUrl : "/placeholder.jpg"}
+                      alt="Brand Image"
+                      className="w-40 h-40"
+                    />
                   )}
                 </div>
                 <CldUploadWidget
-                  uploadPreset="prime-gene-biomedical-solutions"
+                  uploadPreset={config.cloudinaryUploadPreset}
                   options={{
                     multiple: false,
                     clientAllowedFormats: ["jpg", "png", "webp", "svg"],
@@ -159,7 +159,7 @@ export default function AddBrand({
           <Button
             size="large"
             variant="contained"
-            onClick={() => (reset(), setImageUrl("/placeholder.jpg"))}
+            onClick={() => (reset(), setImageUrl(""))}
             className="cancelBtn"
           >
             Cancel

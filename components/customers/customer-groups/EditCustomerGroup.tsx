@@ -9,10 +9,9 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { CustomerGroup } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { editCustomerGroup } from "@/server/actions/customerGroups";
 
-type FormInput = Omit<CustomerGroup, "id" | "createdAt" | "updatedAt">;
+type FormInput = Omit<CustomerGroup, "id" | "createdAt">;
 
 type EditCustomerGroupProps = {
   open: boolean;
@@ -29,6 +28,7 @@ const EditCustomerGroup = ({
     defaultValues: {
       name: group.name,
       percentage: group.percentage,
+      updatedAt: new Date(),
     },
   });
   const { errors, isSubmitSuccessful, isSubmitting } = formState;
@@ -36,17 +36,20 @@ const EditCustomerGroup = ({
   // Edit Customer Group
   const onSubmit = async (data: FormInput) => {
     try {
-      await DB.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteCustomerGroupsCollectionId,
-        group.id,
-        data
-      ).then(() => {
-        toast.success("Customer Group Edited Successfully");
-      });
+      const response = await editCustomerGroup(data, group.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer Group updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error updating Customer Group:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 

@@ -239,7 +239,7 @@ export default function AddDelivery({ open, handleClose }: AddDeliveryProps) {
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle className="flex justify-between items-center">
           <span className="text-2xl text-primaryDark font-bold">
             Add Delivery

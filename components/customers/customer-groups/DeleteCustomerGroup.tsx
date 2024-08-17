@@ -5,8 +5,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button } from "@mui/material";
 import type { CustomerGroup } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { useState } from "react";
+import { deleteCustomerGroup } from "@/server/actions/customerGroups";
 
 type DeleteCustomerGroupProps = {
   open: boolean;
@@ -19,19 +19,28 @@ const DeleteCustomerGroup = ({
   handleClose,
   group,
 }: DeleteCustomerGroupProps) => {
+  const [deleting, setDeleting] = useState(false);
+
   // Delete customer group
-  const deleteCustomerGroup = async () => {
+  const handleDeleteCustomerGroup = async () => {
+    setDeleting(true);
     try {
-      await DB.deleteDocument(
-        config.appwriteDatabaseId,
-        config.appwriteCustomerGroupsCollectionId,
-        group.id
-      ).then(() => {
-        toast.success("Customer Group Deleted Successfully");
-      });
+      const response = await deleteCustomerGroup(group.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer Group deleted successfully");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Customer Group:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Customer Group"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -69,12 +78,13 @@ const DeleteCustomerGroup = ({
             variant="outlined"
             size="large"
             onClick={() => {
-              deleteCustomerGroup();
+              handleDeleteCustomerGroup();
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

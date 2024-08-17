@@ -13,8 +13,13 @@ import Image from "next/image";
 import { FormInputDropdown } from "../form-components/FormInputDropdown";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import { CldUploadWidget } from "next-cloudinary";
+import { config } from "@/config/config";
+import toast from "react-hot-toast";
+import { addExpense } from "@/server/actions/expenses";
+import useExpenseCategoryOptions from "@/utils/hooks/useExpenseCategoryOptions";
 
-type FormInput = Omit<Expense, "id" | "updatedAt" | "isActive">;
+type FormInput = Omit<Expense, "id" | "updatedAt" | "createdAt">;
 
 const defaultValues: FormInput = {
   date: new Date(),
@@ -24,7 +29,6 @@ const defaultValues: FormInput = {
   description: "",
   amount: 0,
   image: "",
-  createdAt: new Date(),
 };
 
 type AddExpenseProps = {
@@ -32,88 +36,47 @@ type AddExpenseProps = {
   handleClose: () => void;
 };
 
-const options = [
-  {
-    label: "Purchase",
-    value: "Purchase",
-  },
-  {
-    label: "Office Maintenance",
-    value: "Office Maintenance",
-  },
-  {
-    label: "Transportation",
-    value: "Transportation",
-  },
-  {
-    label: "Salary",
-    value: "Salary",
-  },
-];
-
 export default function AddExpense({ open, handleClose }: AddExpenseProps) {
+  const expenseCategoryOptions = useExpenseCategoryOptions();
+
   const { register, handleSubmit, reset, formState, control } =
     useForm<FormInput>({
       defaultValues: defaultValues,
     });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const { errors, isSubmitting } = formState;
+
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [expenseDate, setExpenseDate] = useState<Dayjs | null>(dayjs());
 
   const onSubmit = async (data: FormInput) => {
-    if (data.image.length > 0) {
-      const imageFile = data.image[0];
-
-      const formData = new FormData();
-      formData.append("file", imageFile);
-
-      formData.append("upload_preset", "prime-gene-bio-solutions");
-
-      try {
-        const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dykyxconb/image/upload",
-          formData
-        );
-        setImageUrl(response.data.secure_url);
-        console.log(imageUrl);
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      setImageUrl(null);
-      console.log(imageUrl);
-    }
-
-    // Handle form data and cloudinary image url with corresponding API call
-    console.log({ ...data, image: imageUrl, date: expenseDate });
-  };
-
-  // Set selected Image for preview
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
+    try {
+      const newData = {
+        ...data,
+        image: imageUrl,
+        date: expenseDate?.toDate() || new Date(),
       };
-      reader.readAsDataURL(file);
-    } else {
-      setPreviewImage(null);
+
+      const response = await addExpense(newData);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Expense added successfully");
+        reset({}, { keepDefaultValues: true });
+        setImageUrl("");
+        handleClose();
+      }
+    } catch (error) {
+      console.error("Error adding Expense:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      setPreviewImage(null);
-    }
-    console.log(isSubmitSuccessful);
-  }, [isSubmitSuccessful, reset]);
   return (
     <div>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle className="flex justify-between items-center">
           <span className="text-2xl text-primaryDark font-bold">
             Add Expense
@@ -133,72 +96,83 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
             </p>
           </DialogContentText>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-2 w-full">
-              <FormLabel>
-                <span className="text-primaryDark font-semibold">Date</span>
-                <span className="text-redColor"> *</span>
-              </FormLabel>
-              <DatePicker
-                defaultValue={dayjs()}
-                value={expenseDate}
-                onChange={(newDate) => setExpenseDate(newDate)}
-                format="LL"
-                label="MM-DD-YYYY"
-                disableFuture={true}
-                minDate={dayjs("01-01-2000")}
-              />
+            <div className="flex flex-col gap-5 w-full">
+              <div className="flex flex-col sm:flex-row gap-5 w-full">
+                <div className="flex flex-col gap-2 flex-1">
+                  <FormLabel>
+                    <span className="text-primaryDark font-semibold">Date</span>
+                    <span className="text-redColor"> *</span>
+                  </FormLabel>
+                  <DatePicker
+                    defaultValue={dayjs()}
+                    value={expenseDate}
+                    onChange={(newDate) => setExpenseDate(newDate)}
+                    format="LL"
+                    label="MM-DD-YYYY"
+                    disableFuture={true}
+                    minDate={dayjs("01-01-2000")}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <FormLabel htmlFor="title">
+                    <span className="text-primaryDark font-semibold">
+                      Expense Title
+                    </span>
+                    <span className="text-redColor"> *</span>
+                  </FormLabel>
+                  <TextField
+                    id="title"
+                    type="text"
+                    label="Expense Title"
+                    {...register("title", {
+                      required: "Title is required",
+                    })}
+                    error={!!errors.title}
+                    helperText={errors.title?.message}
+                  />
+                </div>
+              </div>
 
-              <FormLabel htmlFor="title">
-                <span className="text-primaryDark font-semibold">
-                  Expense Title
-                </span>
-                <span className="text-redColor"> *</span>
-              </FormLabel>
-              <TextField
-                id="title"
-                type="text"
-                label="Expense Title"
-                {...register("title", {
-                  required: "Name is required",
-                })}
-                error={!!errors.title}
-                helperText={errors.title?.message}
-              />
-              <FormLabel htmlFor="reference">
-                <span className="text-primaryDark font-semibold">
-                  Reference Number
-                </span>
-                <span className="text-redColor"> *</span>
-              </FormLabel>
-              <TextField
-                id="reference"
-                type="text"
-                label="Reference Number"
-                {...register("reference", {
-                  required: "Reference Number is required",
-                })}
-                error={!!errors.reference}
-                helperText={errors.reference?.message}
-              />
-              <FormLabel htmlFor="amount">
-                <span className="text-primaryDark font-semibold">Amount</span>
-                <span className="text-redColor"> *</span>
-              </FormLabel>
-              <TextField
-                id="amount"
-                type="number"
-                label="Amount"
-                variant="outlined"
-                {...register("amount", {
-                  required: true,
-                  valueAsNumber: true,
-                  validate: (value) => value > 0,
-                })}
-                error={!!errors.amount}
-                helperText={
-                  errors.amount ? "Amount is required and cannot be Zero" : ""
-                }
-              />
+              <div className="flex flex-col sm:flex-row gap-5 w-full">
+                <div className="flex flex-col gap-2 flex-1">
+                  <FormLabel htmlFor="reference">
+                    <span className="text-primaryDark font-semibold">
+                      Reference Number
+                    </span>
+                  </FormLabel>
+                  <TextField
+                    id="reference"
+                    type="text"
+                    label="Reference Number"
+                    {...register("reference")}
+                    error={!!errors.reference}
+                    helperText={errors.reference?.message}
+                  />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <FormLabel htmlFor="amount">
+                    <span className="text-primaryDark font-semibold">
+                      Amount
+                    </span>
+                    <span className="text-redColor"> *</span>
+                  </FormLabel>
+                  <TextField
+                    id="amount"
+                    type="number"
+                    label="Amount"
+                    variant="outlined"
+                    inputProps={{ min: 0 }}
+                    {...register("amount", {
+                      required: "Amount is required and cannot be Zero",
+                      valueAsNumber: true,
+                      validate: (value) => value > 0,
+                    })}
+                    error={!!errors.amount?.message}
+                    helperText={errors.amount?.message}
+                  />
+                </div>
+              </div>
+
               <div className="flex flex-col w-full gap-2">
                 <FormLabel htmlFor="category">
                   <span className="text-primaryDark font-semibold">
@@ -210,46 +184,66 @@ export default function AddExpense({ open, handleClose }: AddExpenseProps) {
                   name="category"
                   control={control}
                   label="Expense Category"
-                  options={options}
+                  options={expenseCategoryOptions.data?.success || []}
                 />
               </div>
-              <FormLabel htmlFor="image">
-                <span className="text-primaryDark font-semibold">
-                  Attachment
-                </span>
-              </FormLabel>
-              <div className="flex flex-row gap-2 items-center">
-                <div>
-                  {previewImage && (
-                    <Image
-                      src={previewImage}
-                      alt="Preview"
-                      width={100}
-                      height={100}
-                    />
-                  )}
-                </div>
+              <div className="flex flex-col gap-2 w-full">
+                <FormLabel htmlFor="description">
+                  <span className="text-primaryDark font-semibold">
+                    Description
+                  </span>
+                </FormLabel>
                 <TextField
-                  id="image"
-                  type="file"
-                  variant="outlined"
-                  {...register("image")}
-                  onChange={handleImageChange}
-                  inputProps={{ accept: "image/*", multiple: false }}
+                  id="description"
+                  label="Description"
+                  multiline
+                  rows={4}
+                  {...register("description")}
                 />
               </div>
-              <FormLabel htmlFor="description">
-                <span className="text-primaryDark font-semibold">
-                  Description
-                </span>
-              </FormLabel>
-              <TextField
-                id="description"
-                label="Description"
-                multiline
-                rows={4}
-                {...register("description")}
-              />
+
+              <div className="flex flex-col sm:flex-row gap-5 items-center sm:items-end justify-start">
+                <div className="flex flex-col gap-5">
+                  <FormLabel htmlFor="image">
+                    <span className="text-primaryDark font-semibold">
+                      Attachment
+                    </span>
+                  </FormLabel>
+                  <Image
+                    src={imageUrl ? imageUrl : "/placeholder.jpg"}
+                    alt="Preview"
+                    width={300}
+                    height={300}
+                    className="object-cover w-full h-full rounded-lg"
+                  />
+                </div>
+                <CldUploadWidget
+                  uploadPreset={config.cloudinaryUploadPreset}
+                  options={{
+                    multiple: false,
+                    clientAllowedFormats: ["jpg", "jpeg", "png", "webp", "svg"],
+                    sources: ["local", "url", "dropbox", "google_drive"],
+                  }}
+                  onSuccess={(result) => {
+                    if (result.info && typeof result.info !== "string") {
+                      const url: string = result.info.secure_url;
+                      setImageUrl(url);
+                    }
+                  }}
+                >
+                  {({ open }) => {
+                    return (
+                      <Button
+                        variant="contained"
+                        className="capitalize saveBtn"
+                        onClick={() => open()}
+                      >
+                        Choose File
+                      </Button>
+                    );
+                  }}
+                </CldUploadWidget>
+              </div>
             </div>
           </form>
         </DialogContent>

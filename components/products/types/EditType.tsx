@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -9,10 +8,9 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { editType } from "@/server/actions/types";
 
-type FormInput = Omit<ProductType, "id" | "createdAt" | "updatedAt">;
+type FormInput = Omit<ProductType, "id" | "createdAt">;
 
 type EditTypeProps = {
   open: boolean;
@@ -25,33 +23,30 @@ const EditType = ({ open, handleClose, type }: EditTypeProps) => {
     defaultValues: {
       name: type.name,
       description: type.description,
+      updatedAt: new Date(),
     },
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      await DB.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductTypesCollectionId,
-        type.id,
-        data
-      ).then(() => {
-        toast.success("Type Editted successfully");
-      });
+      const response = await editType(data, type.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Type updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error updating Type:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>

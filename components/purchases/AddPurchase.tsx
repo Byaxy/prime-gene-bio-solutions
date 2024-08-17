@@ -39,7 +39,7 @@ import {
   quotationStatus as purchaseStatus,
   paymentStatus,
 } from "@/components/constants";
-import { generateId } from "../utils";
+import { generateId } from "../../utils/utils";
 
 type FormInput = Omit<Purchase, "id">;
 

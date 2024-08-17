@@ -6,8 +6,8 @@ import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { CldImage } from "next-cloudinary";
 import type { Product } from "@/components/Types";
-import DataTable from "react-data-table-component";
-import { viewTableStyles } from "@/styles/TableStyles";
+import useInventory from "@/utils/hooks/useInventory";
+import Image from "next/image";
 
 type ViewProductDetailsProps = {
   open: boolean;
@@ -15,54 +15,16 @@ type ViewProductDetailsProps = {
   product: Product;
 };
 
-const columns = [
-  {
-    name: "Lot Number",
-    selector: (row: { lotNumber: string }) => row.lotNumber,
-    width: "120px",
-    style: {
-      fontWeight: "600",
-    },
-  },
-  {
-    name: "Manufacture Date",
-    selector: (row: { manufactureDate: Date }) =>
-      new Date(row.manufactureDate).toDateString(),
-  },
-  {
-    name: "Expiry Date",
-    selector: (row: { expiryDate: Date }) =>
-      new Date(row.expiryDate).toDateString(),
-  },
-  {
-    name: "Qnty",
-    width: "100px",
-    cell: (row: { quantity: number }) => (
-      <span>{row.quantity ? row.quantity : "Null"}</span>
-    ),
-  },
-  {
-    name: "Cost",
-    cell: (row: { cost: number }) => (
-      <span>{row.cost ? row.cost : "Null"}</span>
-    ),
-    width: "100px",
-  },
-  {
-    name: "Price",
-    cell: (row: { price: number }) => (
-      <span>{row.price ? row.price : "Null"}</span>
-    ),
-    width: "100px",
-  },
-];
-
 export default function ViewProductDetails({
   open,
   handleClose,
   product,
 }: ViewProductDetailsProps) {
-  const quantity = product.inventory?.reduce(
+  const { data } = useInventory();
+  const productInventory = data?.success?.filter(
+    (obj) => obj.product === product.name
+  );
+  const quantity = productInventory?.reduce(
     (qty: number, obj: { quantity: number }) => qty + obj.quantity,
     0
   );
@@ -82,13 +44,23 @@ export default function ViewProductDetails({
         </DialogTitle>
         <DialogContent>
           <div className="flex flex-col gap-10">
-            <CldImage
-              alt="Product Image"
-              src={product.image}
-              height={200}
-              width={300}
-              className="rounded-lg"
-            />
+            {product.image ? (
+              <CldImage
+                className="rounded"
+                src={product.image}
+                alt="Product Image"
+                height={300}
+                width={300}
+              />
+            ) : (
+              <Image
+                src={"/placeholder.jpg"}
+                alt="Preview"
+                width={300}
+                height={300}
+                className="rounded-lg"
+              />
+            )}
             <Table size="small">
               <TableBody>
                 <TableRow>
@@ -181,17 +153,6 @@ export default function ViewProductDetails({
                 </TableRow>
               </TableBody>
             </Table>
-          </div>
-          <div className="flex flex-col gap-4 mt-6 w-full">
-            <span className="text-primaryDark text-lg font-semibold">
-              Inventory
-            </span>
-            <DataTable
-              data={product.inventory}
-              columns={columns}
-              customStyles={viewTableStyles}
-              className="scrollbar-hide"
-            />
           </div>
         </DialogContent>
         <DialogActions>

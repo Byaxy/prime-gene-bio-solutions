@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,11 +6,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import type { Customer, Option } from "@/components/Types";
+import type { Customer } from "@/components/Types";
 import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
 import toast from "react-hot-toast";
-import { DB, ID, query } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { addCustomer } from "@/server/actions/customers";
+import useCustomerGroupOptions from "@/utils/hooks/useCustomerGroupOptions";
 
 type FormInput = Omit<Customer, "id" | "createdAt" | "updatedAt">;
 
@@ -31,63 +30,33 @@ type AddCustomerProps = {
 };
 
 export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
-  const [customerGroupOptions, setCustomerGroupOptions] = useState<Option[]>(
-    []
-  );
+  // Get Customer Groups
+  const { data: customerGroupOptions } = useCustomerGroupOptions();
 
   const { handleSubmit, reset, register, formState, control } =
     useForm<FormInput>({
       defaultValues: defaultValues,
     });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
   // Add Customer
   const onSubmit = async (data: FormInput) => {
     try {
-      await DB.createDocument(
-        config.appwriteDatabaseId,
-        config.appwriteCustomersCollectionId,
-        ID.unique(),
-        data
-      ).then(() => {
-        toast.success("Customer Added successfully");
-      });
+      const response = await addCustomer(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Customer added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error adding Customer:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
-
-  // Fetch Customer Group Options
-  useEffect(() => {
-    async function fetchCustomerGroupOptions() {
-      try {
-        const { documents } = await DB.listDocuments(
-          config.appwriteDatabaseId,
-          config.appwriteCustomerGroupsCollectionId,
-          query
-        );
-        const customersOptions = documents.map((doc: any) => ({
-          label: doc.name,
-          value: doc.$id,
-        }));
-
-        setCustomerGroupOptions(customersOptions);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchCustomerGroupOptions();
-  }, []);
 
   return (
     <div>
@@ -144,7 +113,7 @@ export default function AddCustomer({ open, handleClose }: AddCustomerProps) {
                     name="customerGroup"
                     control={control}
                     label="Customer Group"
-                    options={customerGroupOptions}
+                    options={customerGroupOptions?.success || []}
                   />
                 </div>
               </div>

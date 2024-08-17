@@ -5,7 +5,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { expenseCategoriesData } from "@/data/expenseCategoriesData";
 import { ExpenseCategory } from "@/components/Types";
 
 type DataCells = Omit<ExpenseCategory, "isActive" | "updatedAt">;
@@ -13,28 +12,14 @@ type DataCells = Omit<ExpenseCategory, "isActive" | "updatedAt">;
 type ViewExpenseCategoryProps = {
   open: boolean;
   handleClose: () => void;
-  expenseCategoryID: string;
+  expenseCategory: ExpenseCategory;
 };
 
 export default function ViewExpenseCategory({
   open,
   handleClose,
-  expenseCategoryID,
+  expenseCategory,
 }: ViewExpenseCategoryProps) {
-  const [category, setCategory] = useState<DataCells | null>(null);
-
-  useEffect(() => {
-    let expenseCategory = expenseCategoriesData.data.find(
-      (expense) => expense.id === expenseCategoryID
-    );
-    if (expenseCategory) {
-      setCategory(expenseCategory);
-    }
-  }, [expenseCategoryID]);
-
-  if (!category) {
-    return null;
-  }
   return (
     <div>
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -52,27 +37,43 @@ export default function ViewExpenseCategory({
           <Table size="medium">
             <TableBody>
               <TableRow>
-                <TableCell className="font-semibold text-lg">
-                  Date of Registration
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Name
                 </TableCell>
-                <TableCell className="text-[17px]">
-                  {category.createdAt.toDateString()}
+                <TableCell className="text-[17px] text-primaryDark">
+                  {expenseCategory.name}
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Name</TableCell>
-                <TableCell className="text-[17px]">{category.name}</TableCell>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Code
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {expenseCategory.code}
+                </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-semibold text-lg">Code</TableCell>
-                <TableCell className="text-[17px]">{category.code}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg">
+                <TableCell className="font-semibold text-lg text-primaryDark">
                   Description
                 </TableCell>
-                <TableCell className="text-[17px]">
-                  {category.description}
+                <TableCell className="text-[17px] text-primaryDark">
+                  {expenseCategory.description}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Created on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark w-fit">
+                  {new Date(expenseCategory.createdAt).toDateString()}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-semibold text-lg text-primaryDark">
+                  Last updated on
+                </TableCell>
+                <TableCell className="text-[17px] text-primaryDark">
+                  {new Date(expenseCategory.updatedAt).toDateString()}
                 </TableCell>
               </TableRow>
             </TableBody>

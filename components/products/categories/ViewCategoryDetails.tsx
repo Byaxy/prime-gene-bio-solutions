@@ -6,7 +6,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { ProductCategory } from "@/components/Types";
-import { customTableStyles } from "@/styles/TableStyles";
 
 type ViewCategoryDetailsProps = {
   open: boolean;
@@ -49,14 +48,6 @@ export default function ViewCategoryDetails({
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
                   {category.code}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-semibold text-lg text-primaryDark">
-                  Parent category
-                </TableCell>
-                <TableCell className="text-[17px] text-primaryDark">
-                  {category.parentCategory ? category.parentCategory : "Null"}
                 </TableCell>
               </TableRow>
               <TableRow>

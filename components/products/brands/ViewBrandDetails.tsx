@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -6,7 +5,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import type { Brand } from "@/components/Types";
-import axios from "axios";
 import { CldImage } from "next-cloudinary";
 
 type ViewBrandDetailsProps = {

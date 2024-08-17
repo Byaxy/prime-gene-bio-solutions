@@ -9,19 +9,16 @@ import {
   TextField,
 } from "@mui/material";
 import type { Inventory } from "../Types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import dayjs, { Dayjs } from "dayjs";
 import CancelIcon from "@mui/icons-material/Cancel";
+
 import { useForm } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { editInventory } from "@/server/actions/inventory";
 
-type FormInput = Omit<
-  Inventory,
-  "id" | "createdAt" | "updatedAt" | "productName" | "unit"
->;
+type FormInput = Omit<Inventory, "id" | "createdAt" | "product" | "unit">;
 
 type EditStockProps = {
   open: boolean;
@@ -39,39 +36,45 @@ const EditStock = ({ open, handleClose, inventory }: EditStockProps) => {
 
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: {
-      ...inventory,
+      lotNumber: inventory.lotNumber,
+      quantity: inventory.quantity,
+      cost: inventory.cost,
+      price: inventory.price,
+      manufactureDate: inventory.manufactureDate,
+      expiryDate: inventory.expiryDate,
+      updatedAt: new Date(),
     },
   });
-  const { errors, isSubmitting, isSubmitSuccessful } = formState;
+  const { errors, isSubmitting } = formState;
 
   // Submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = { ...data, manufactureDate, expiryDate };
+      const newData = {
+        ...data,
+        manufactureDate: manufactureDate?.toDate() || null,
+        expiryDate: expiryDate?.toDate() || null,
+      };
 
-      await DB.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteInventoryCollectionId,
-        inventory.id,
-        formData
-      ).then(() => {
-        toast.success("Stock Updated succefully");
-      });
+      const response = await editInventory(newData, inventory.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Inventory updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        setManufactureDate(null);
+        setExpiryDate(null);
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error updating Inventory:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      setManufactureDate(null);
-      setExpiryDate(null);
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>
@@ -107,7 +110,7 @@ const EditStock = ({ open, handleClose, inventory }: EditStockProps) => {
                 <TextField
                   id="productName"
                   type="text"
-                  value={inventory?.productName}
+                  value={inventory?.product}
                   placeholder="Product Name"
                   disabled
                 />
@@ -134,21 +137,14 @@ const EditStock = ({ open, handleClose, inventory }: EditStockProps) => {
                 <div className="flex flex-col gap-2 flex-1">
                   <FormLabel htmlFor="quantity">
                     <span className="text-primaryDark font-semibold">
-                      Quantity
+                      Available Quantity
                     </span>
-                    <span className="text-redColor"> *</span>
                   </FormLabel>
                   <TextField
                     id="quantity"
                     type="number"
                     defaultValue={inventory?.quantity}
-                    inputProps={{ min: 0 }}
-                    {...register("quantity", {
-                      required: "Quantity is required",
-                      valueAsNumber: true,
-                    })}
-                    error={!!errors.quantity}
-                    helperText={errors.quantity?.message}
+                    disabled
                   />
                 </div>
               </div>

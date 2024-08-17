@@ -42,6 +42,7 @@ export default function ProductsTable({ products }: ProductsTableProps) {
         data={products ?? []}
         customStyles={invoiceTableStyles}
         dense
+        persistTableHead
       />
     </div>
   );

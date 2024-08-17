@@ -38,7 +38,7 @@ export default function ViewProductStockDetails({
                   Product Name
                 </TableCell>
                 <TableCell className="text-[17px] text-primaryDark">
-                  {inventory.productName}
+                  {inventory.product}
                 </TableCell>
               </TableRow>
               <TableRow>

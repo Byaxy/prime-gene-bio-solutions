@@ -1,4 +1,3 @@
-import React, { ReactNode, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -9,8 +8,7 @@ import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { ProductType } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB, ID } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { addType } from "@/server/actions/types";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
@@ -26,38 +24,30 @@ type AddTypeProps = {
   handleClose: () => void;
 };
 
-export default function AddType({
-  open,
-  handleClose,
-}: AddTypeProps): ReactNode {
+export default function AddType({ open, handleClose }: AddTypeProps) {
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues: defaultValues,
   });
-  const { errors, isSubmitSuccessful, isSubmitting } = formState;
+  const { errors, isSubmitting } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      await DB.createDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductTypesCollectionId,
-        ID.unique(),
-        data
-      ).then(() => {
-        toast.success("Type Added Successfully");
-      });
+      const response = await addType(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Type added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error adding Type:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
 
   return (
     <div>

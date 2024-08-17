@@ -35,7 +35,6 @@ export type ProductCategory = {
   id: string;
   code: string;
   name: string;
-  parentCategory: string;
   description: string;
   createdAt: Date;
   updatedAt: Date;
@@ -48,7 +47,6 @@ export type ExpenseCategory = {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export enum Gender {
   MALE = "MALE",
@@ -56,8 +54,8 @@ export enum Gender {
   OTHER = "OTHER",
 }
 export enum UserRole {
-  USER = "USER",
-  ADMIN = "ADMIN",
+  USER = "user",
+  ADMIN = "admin",
 }
 export type User = {
   id: string;
@@ -66,6 +64,9 @@ export type User = {
   email: string;
   phone: string;
   password: string;
+  confirmPassword: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 export type Supplier = {
   id: string;
@@ -79,13 +80,11 @@ export type Supplier = {
   contactPerson?: ContactPerson;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type ContactPerson = {
   name: string;
   email: string;
   phone: string;
-  isActive: boolean;
 };
 
 export type Customer = {
@@ -111,7 +110,6 @@ export type Expense = {
   image: string;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
 };
 export type Product = {
   id: string;
@@ -122,7 +120,6 @@ export type Product = {
   type: string;
   unit: string;
   category: string;
-  inventory: Inventory[];
   description: string;
   alertQuantity: number;
   createdAt: Date;
@@ -130,7 +127,7 @@ export type Product = {
 };
 export type Inventory = {
   id: string;
-  productName: string;
+  product: string;
   lotNumber: string;
   manufactureDate: Date | null;
   expiryDate: Date | null;
@@ -157,6 +154,8 @@ export type ProductStock = {
 };
 export type SaleProduct = {
   id: string;
+  saleID: string;
+  productID: string;
   lotNumber: string;
   name: string;
   code: string;
@@ -164,6 +163,8 @@ export type SaleProduct = {
   quantity: number;
   price: number;
   subTotal: number;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type Sale = {
@@ -171,10 +172,10 @@ export type Sale = {
   invoiceNumber: string;
   purchaseOrderNumber: string;
   customer: string;
-  tax: number;
+  taxAmount: number;
   subTotal: number;
   total: number;
-  paid: number;
+  amountPaid: number;
   paymentStatus: string;
   saleStatus: string;
   products: SaleProduct[];

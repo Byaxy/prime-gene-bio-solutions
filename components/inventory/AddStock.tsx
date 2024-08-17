@@ -25,20 +25,19 @@ import {
   ArrowDropDownOutlined,
   ArrowDropUpOutlined,
 } from "@mui/icons-material";
-import { DB, query, ID } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import useProducts from "@/utils/hooks/useProducts";
+import { addInventory } from "@/server/actions/inventory";
 
-type FormInput = Omit<
-  Inventory,
-  "id" | "createdAt" | "updatedAt" | "productName" | "unit"
->;
+type FormInput = Omit<Inventory, "id" | "createdAt" | "updatedAt">;
 
 type AddStockProps = {
   open: boolean;
   handleClose: () => void;
 };
 const defaultValues: FormInput = {
+  product: "",
   lotNumber: "",
+  unit: "",
   manufactureDate: null,
   expiryDate: null,
   quantity: 0,
@@ -47,42 +46,53 @@ const defaultValues: FormInput = {
 };
 
 const AddStock = ({ open, handleClose }: AddStockProps) => {
-  const [products, setProducts] = useState<Product[]>([]);
+  // fetch products
+  const { data: products } = useProducts();
+
   const [manufactureDate, setManufactureDate] = useState<Dayjs | null>(null);
   const [expiryDate, setExpiryDate] = useState<Dayjs | null>(null);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<string>("");
+  const [unit, setUnit] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([
-    ...products,
+    ...(products?.success || []),
   ]);
 
   const { handleSubmit, reset, register, formState } = useForm<FormInput>({
     defaultValues,
   });
-  const { errors, isSubmitting, isSubmitSuccessful } = formState;
+  const { errors, isSubmitting } = formState;
 
   // Submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      const formData = {
+      if (!product) {
+        toast.error("Please select a product");
+        return;
+      }
+
+      const newData = {
         ...data,
-        manufactureDate,
-        expiryDate,
-        product: product?.id,
+        product: product,
+        unit: unit,
+        manufactureDate: manufactureDate?.toDate() || null,
+        expiryDate: expiryDate?.toDate() || null,
       };
 
-      await DB.createDocument(
-        config.appwriteDatabaseId,
-        config.appwriteInventoryCollectionId,
-        ID.unique(),
-        formData
-      ).then(() => {
-        toast.success("Stock Added Succefully");
-      });
+      const response = await addInventory(newData);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Inventory added successfully");
+        handleReset();
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Error adding Inventory:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 
@@ -91,7 +101,8 @@ const AddStock = ({ open, handleClose }: AddStockProps) => {
 
   // handle product selection
   const handleSelectProduct = (product: Product) => {
-    setProduct(product);
+    setProduct(product.name);
+    setUnit(product.unit);
     setAnchorEl(null);
   };
 
@@ -108,64 +119,24 @@ const AddStock = ({ open, handleClose }: AddStockProps) => {
 
   // handle reset
   const handleReset = useCallback(() => {
-    reset();
-    setProduct(null);
+    reset({}, { keepDefaultValues: true });
+    setProduct("");
+    setUnit("");
     setManufactureDate(null);
     setExpiryDate(null);
     setAnchorEl(null);
   }, [reset]);
 
-  // fetch products
+  // handle search
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const { documents } = await DB.listDocuments(
-          config.appwriteDatabaseId,
-          config.appwriteProductsCollectionId,
-          query
-        );
-        const products = documents.map((doc: any) => ({
-          id: doc.$id,
-          name: doc.name,
-          code: doc.code,
-          image: doc.image,
-          brand: doc.brand ? doc.brand.name : null,
-          type: doc.type ? doc.type.name : null,
-          unit: doc.unit ? doc.unit.code : null,
-          category: doc.category ? doc.category.name : null,
-          inventory: doc.inventory,
-          description: doc.description,
-          alertQuantity: doc.alertQuantity,
-          createdAt: doc.$createdAt,
-          updatedAt: doc.$updatedAt,
-        }));
-
-        setProducts(products);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchProducts();
-  }, [products]);
-
-  // search
-  useEffect(() => {
-    let searchedProducts = products.filter((product) => {
+    let searchedProducts = products?.success?.filter((product) => {
       return (
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.code.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-    setFilteredProducts(searchedProducts);
+    if (searchedProducts) setFilteredProducts(searchedProducts);
   }, [products, searchTerm]);
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      handleReset();
-    }
-  }, [handleClose, handleReset, isSubmitSuccessful]);
 
   return (
     <div>
@@ -221,8 +192,9 @@ const AddStock = ({ open, handleClose }: AddStockProps) => {
                   <TextField
                     id="productName"
                     type="text"
-                    value={product?.name}
+                    value={product}
                     placeholder="Product Name"
+                    helperText={"Please select a product"}
                     disabled
                   />
                 </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -8,79 +8,46 @@ import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
 import toast from "react-hot-toast";
-import { DB, Query } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
-import type { Option, ProductCategory } from "@/components/Types";
-import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
+import type { ProductCategory } from "@/components/Types";
+import { editCategory } from "@/server/actions/categories";
 
-type FormInput = Omit<ProductCategory, "id" | "createdAt" | "updatedAt">;
+type FormInput = Omit<ProductCategory, "id" | "createdAt">;
 type EditCategoryProps = {
   open: boolean;
   handleClose: () => void;
   category: ProductCategory;
 };
 const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
-  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
-
   const { handleSubmit, reset, control, register, formState } =
     useForm<FormInput>({
       defaultValues: {
         name: category.name,
         code: category.code,
-        parentCategory: category.parentCategory,
         description: category.description,
+        updatedAt: new Date(),
       },
     });
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      await DB.updateDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductCategoriesCollectionId,
-        category.id,
-        data
-      ).then(() => {
-        toast.success("Product Category Edited Successfully");
-      });
+      const response = await editCategory(data, category.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Category updated successfully");
+        // Clear form values
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error updating Category:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
-
-  // fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { documents } = await DB.listDocuments(
-          config.appwriteDatabaseId,
-          config.appwriteProductCategoriesCollectionId,
-          [Query.orderDesc("$createdAt"), Query.limit(1000)]
-        );
-
-        const options = documents.map((doc: any) => ({
-          label: doc.name,
-          value: doc.name,
-        }));
-
-        options.unshift({ label: "None", value: null });
-        setCategoryOptions(options);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   return (
     <div>
@@ -122,37 +89,17 @@ const EditCategory = ({ open, handleClose, category }: EditCategoryProps) => {
               />
               <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
-                <span className="text-redColor"> *</span>
               </FormLabel>
               <TextField
                 id="code"
                 type="text"
                 label="Code"
                 defaultValue={category.code}
-                {...register("code", {
-                  required: "Code is required",
-                })}
+                {...register("code")}
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
-              <FormLabel htmlFor="parentCategory">
-                <span className="text-primaryDark font-semibold">
-                  Parent Category
-                </span>
-              </FormLabel>
-              <FormInputDropdown
-                id="parentCategory"
-                control={control}
-                label="Select Category"
-                defaultValue={category.parentCategory}
-                options={categoryOptions}
-                {...register("parentCategory")}
-              />
-              {errors.parentCategory && (
-                <span className="text-redColor text-sm">
-                  {errors.parentCategory?.message}
-                </span>
-              )}
+
               <FormLabel htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description

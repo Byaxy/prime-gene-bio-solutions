@@ -1,4 +1,3 @@
-import React, { ReactNode, useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,11 +6,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { Button, FormLabel, TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import CancelIcon from "@mui/icons-material/Cancel";
-import type { Option, ProductCategory } from "@/components/Types";
+import type { ProductCategory } from "@/components/Types";
 import toast from "react-hot-toast";
-import { DB, ID, Query } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
-import { FormInputDropdown } from "@/components/form-components/FormInputDropdown";
+
+import { addCategory } from "@/server/actions/categories";
 
 // Even though these fields are optional in schema.prisma, the auto-generated type
 // marks them as required. Therefore, omit these fields manually.
@@ -22,7 +20,6 @@ const defaultValues: FormInput = {
   name: "",
   code: "",
   description: "",
-  parentCategory: "",
 };
 
 type AddCategoryProps = {
@@ -30,65 +27,30 @@ type AddCategoryProps = {
   handleClose: () => void;
 };
 
-export default function AddCategory({
-  open,
-  handleClose,
-}: AddCategoryProps): ReactNode {
-  const { handleSubmit, reset, control, register, formState } =
-    useForm<FormInput>({
-      defaultValues: defaultValues,
-    });
-  const { errors, isSubmitting, isSubmitSuccessful } = formState;
-  const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
+export default function AddCategory({ open, handleClose }: AddCategoryProps) {
+  const { handleSubmit, reset, register, formState } = useForm<FormInput>({
+    defaultValues: defaultValues,
+  });
+  const { errors, isSubmitting } = formState;
 
+  // submit form data
   const onSubmit = async (data: FormInput) => {
     try {
-      await DB.createDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductCategoriesCollectionId,
-        ID.unique(),
-        data
-      ).then(() => {
-        toast.success("Product Category Added Successfully");
-      });
+      const response = await addCategory(data);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Category added successfully");
+        reset({}, { keepDefaultValues: true });
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error adding Category:", error);
+      toast.error(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
-
-  // Reset form to defaults on Successfull submission of data
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset();
-      handleClose();
-    }
-  }, [handleClose, isSubmitSuccessful, reset]);
-
-  // fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { documents } = await DB.listDocuments(
-          config.appwriteDatabaseId,
-          config.appwriteProductCategoriesCollectionId,
-          [Query.orderDesc("$createdAt"), Query.limit(1000)]
-        );
-
-        const options = documents.map((doc: any) => ({
-          label: doc.name,
-          value: doc.name,
-        }));
-
-        options.unshift({ label: "None", value: null });
-        setCategoryOptions(options);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   return (
     <div>
@@ -127,37 +89,19 @@ export default function AddCategory({
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
+
               <FormLabel htmlFor="code">
                 <span className="text-primaryDark font-semibold">Code</span>
-                <span className="text-redColor"> *</span>
               </FormLabel>
               <TextField
                 id="code"
                 type="text"
                 label="Code"
-                {...register("code", {
-                  required: "Code is required",
-                })}
+                {...register("code")}
                 error={!!errors.code}
                 helperText={errors.code?.message}
               />
-              <FormLabel htmlFor="parentCategory">
-                <span className="text-primaryDark font-semibold">
-                  Parent Category
-                </span>
-              </FormLabel>
-              <FormInputDropdown
-                id="parentCategory"
-                control={control}
-                label="Select Category"
-                options={categoryOptions}
-                {...register("parentCategory")}
-              />
-              {errors.parentCategory && (
-                <span className="text-redColor text-sm">
-                  {errors.parentCategory?.message}
-                </span>
-              )}
+
               <FormLabel htmlFor="description">
                 <span className="text-primaryDark font-semibold">
                   Description

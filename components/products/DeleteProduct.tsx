@@ -7,8 +7,8 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { DB } from "@/appwrite/appwriteConfig";
-import { config } from "@/config/config";
+import { useState } from "react";
+import { deleteProduct } from "@/server/actions/products";
 
 type DeleteProductProps = {
   open: boolean;
@@ -16,19 +16,29 @@ type DeleteProductProps = {
   product: Product;
 };
 const DeleteProduct = ({ open, handleClose, product }: DeleteProductProps) => {
+  const [deleting, setDeleting] = useState(false);
+
   // delete product
-  const deleteProduct = async () => {
+  const handleDeleteProduct = async () => {
+    setDeleting(true);
     try {
-      await DB.deleteDocument(
-        config.appwriteDatabaseId,
-        config.appwriteProductsCollectionId,
-        product.id
-      ).then(() => {
-        toast.success("Product Deleted Successfully");
-      });
+      const response = await deleteProduct(product.id);
+
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Product deleted successfully");
+        handleClose();
+      }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Product:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Product"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -66,12 +76,13 @@ const DeleteProduct = ({ open, handleClose, product }: DeleteProductProps) => {
             variant="outlined"
             size="large"
             onClick={() => {
-              deleteProduct();
+              handleDeleteProduct();
               handleClose();
             }}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

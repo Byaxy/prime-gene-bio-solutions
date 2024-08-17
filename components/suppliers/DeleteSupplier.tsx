@@ -7,6 +7,7 @@ import { Button } from "@mui/material";
 import type { Supplier } from "@/components/Types";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { deleteSupplier } from "@/server/actions/suppliers";
 
 type DeleteSupplierProps = {
   open: boolean;
@@ -19,17 +20,28 @@ const DeleteSupplier = ({
   handleClose,
   supplier,
 }: DeleteSupplierProps) => {
-  const deleteSupplier = async () => {
+  const [deleting, setDeleting] = useState(false);
+
+  // delete supplier
+  const handleDeleteSupplier = async () => {
+    setDeleting(true);
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/suppliers/${supplier.id}`
-      );
-      if (response.status === 200) {
-        toast.success("Supplier Deleted Successfully");
+      const response = await deleteSupplier(supplier.id);
+      if (response?.error) {
+        toast.error(response.error);
+      } else {
+        toast.success("Supplier deleted successfully");
+        handleClose();
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong!");
+      console.error("Error deleting Supplier:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "An unexpected error occurred while deleting the Supplier"
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -66,13 +78,11 @@ const DeleteSupplier = ({
           <Button
             variant="outlined"
             size="large"
-            onClick={() => {
-              deleteSupplier();
-              handleClose();
-            }}
+            onClick={() => handleDeleteSupplier()}
             className="cancelBtn"
+            disabled={deleting}
           >
-            Delete
+            {deleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
